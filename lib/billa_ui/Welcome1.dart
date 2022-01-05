@@ -20,25 +20,35 @@ class _Welcome1State extends State<Welcome1> {
             alignment: Alignment.center,
             width: 360,
             height: 250,
-            child: Text("Welcome",style: TextStyle(fontSize: 34,fontFamily: "Brand Bold",color: Colors.white),)),
+            child: Text("Welcome",
+
+              style: TextStyle(fontFamily: 'Montserrat',fontSize: 34,color: Colors.white,fontWeight:FontWeight.bold),)),
           SlidingUpPanel(
+              maxHeight:MediaQuery.of(context).size.height *0.65,
             color: Colors.blue,
           panel: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
             children: [
               Container(
                   alignment: Alignment.center,
                 width: 230,
                 height: 40,
-                  child:Text('Cold Start Delay', style: TextStyle(fontSize: 20.0,color: Colors.white),)
+                  child:Text('Cold Start Delay',
+                    style: TextStyle(fontFamily: 'Montserrat',fontSize: 30,color: Colors.white,fontWeight:FontWeight.bold),),
+
+            // style: TextStyle(fontSize: 20.0,color: Colors.white),)
               ),
 
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                      alignment: Alignment.center,
-                      width: 360,
-
-                      child: Text('Active', style: TextStyle(fontSize: 20.0,color: Colors.white),)),
+                  Icon(Icons.circle,color: Colors.green,size: 20,),
+                  Container(width: 5,),
+                  Text('ACTIVE',
+                    style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
                 ],
               ),
               Stack(
@@ -56,16 +66,20 @@ class _Welcome1State extends State<Welcome1> {
 
               Center(
                 child: Container(
-                  width: 130,
+
+                  decoration: new BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: new BorderRadius.all( Radius.circular(10.0))
+                  ),
                   height: 40,
                   child: FlatButton(
                     child: Text('SKIP', style: TextStyle(fontSize: 20.0),),
-                    color: Colors.black,
                     textColor: Colors.white,
                     onPressed: () {},
                   ),
                 ),
               ),
+              Container(height: 10,)
             ],
           )
           )
