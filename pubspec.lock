@@ -230,6 +230,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.2"
+  flutter_restart:
+    dependency: "direct dev"
+    description:
+      name: flutter_restart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -289,6 +296,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  horizontal_picker:
+    dependency: "direct main"
+    description:
+      name: horizontal_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   http:
     dependency: transitive
     description:
@@ -345,13 +359,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  list_wheel_scroll_view_x:
-    dependency: "direct dev"
-    description:
-      name: list_wheel_scroll_view_x
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
   logging:
     dependency: transitive
     description:

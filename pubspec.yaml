@@ -23,6 +23,7 @@ dependencies:
   sliding_up_panel: ^2.0.0+1
   hexcolor: ^2.0.5
   carousel_slider: ^4.0.0
+  horizontal_picker: ^1.2.0
 
 
   
@@ -33,7 +34,12 @@ dev_dependencies:
   build_runner: ^2.1.4
   dependency_validator: ^3.1.0
   functional_data_generator: ^1.1.2
-  list_wheel_scroll_view_x: ^0.0.2
+  flutter_restart: ^0.0.3
+
+
+
+
+
 dependency_overrides:
   flutter_reactive_ble: ^5.0.2
   reactive_ble_mobile: ^5.0.2
