@@ -148,12 +148,12 @@ class _Welcome1State extends State<Welcome1> {
   }
 
 
-   readtime(){
+   readtime() async {
      print('2');
 
 
     // while(int.parse(timeRemaining)>0){
-      coommunicatewithDevice('201');
+     await coommunicatewithDevice('201');
       // sleep(Duration(seconds:1));
       // print("readtime whilw");
 
@@ -180,8 +180,18 @@ class _Welcome1State extends State<Welcome1> {
 
 
     setState(() {
-      readOutput = result.toString();
-      timeRemaining = String.fromCharCodes(result).replaceAll("#WUT_", "").replaceAll("#", "");
+      readOutput  = result.toString();
+      String resultString = String.fromCharCodes(result);
+
+      if(resultString.startsWith("#WUT_")    ){
+        timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
+
+      }
+      else if ((int.parse(timeRemaining) )!=1){
+        timeRemaining = (int.parse(timeRemaining) -1).toString();
+      }
+
+
     });
   }
 
@@ -210,7 +220,7 @@ class _Welcome1State extends State<Welcome1> {
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
     print(widget.characteristic);
-
+    print('5');
     await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
       print('v');
 
@@ -220,20 +230,18 @@ class _Welcome1State extends State<Welcome1> {
     });
   }
 
-  coommunicatewithDevice(msg){
+  coommunicatewithDevice(msg) async {
     print('3');
 
-    writeCharacteristicWithoutResponse(msg).then((value){
-      print("write ${msg}");
+   await writeCharacteristicWithoutResponse(msg).then((value){
 
+     print("write ${msg}");
+
+     readCharacteristic();
     });
     print('4');
 
-    // Future.delayed(Duration(seconds:2),(){
-    //
-    //   readCharacteristic();
-    //
-    // });
+
   }
   @override
   Widget build(BuildContext context) {
@@ -361,12 +369,18 @@ class _Welcome1State extends State<Welcome1> {
                         child: FlatButton(
                           child: Text('SKIP', style: TextStyle(fontSize: 20.0),),
                           textColor: Colors.white,
-                          onPressed: () {
+                          onPressed: () async {
                             ctr =0;
                             print('1');
-                            readtime();
 
-                            while(ctr<5){
+                            for (int i =0 ; int.parse(timeRemaining)>0 ; i++){
+print("trying ${i}");
+await readtime();
+sleep(Duration(seconds:1));
+
+                            }
+
+                            // while(ctr<5){
 
 
       // Future.delayed(Duration(seconds: ctr+1),(){
@@ -375,7 +389,7 @@ class _Welcome1State extends State<Welcome1> {
       //   readtime();
       //   sleep(Duration(seconds:4));
       // });
-                                        }
+      //                                   }
 
                             // coommunicatewithDevice("205");
                             // Navigator.push(context,  (MaterialPageRoute<void>(
