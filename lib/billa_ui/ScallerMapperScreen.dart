@@ -1,12 +1,119 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
+
+
 import 'package:bluespark/billa_ui/ui_strings.dart';
+import 'package:bluespark/src/ble/ble_device_connector.dart';
+import 'package:bluespark/src/ble/ble_device_interactor.dart';
+import 'package:bluespark/src/ble/ble_scanner.dart';
+import 'package:bluespark/src/ui/device_detail/device_interaction_tab.dart';
+import 'package:bluespark/src/ui/device_list.dart';
+import 'package:bluespark/util/config.dart';
+import 'package:bluespark/util/functions.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dart:math';
 import 'package:horizontal_picker/horizontal_picker.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+
+
+
+class ScallerMapperManager extends StatelessWidget {
+  const ScallerMapperManager({
+    required this.characteristic,
+    Key? key,
+  }) : super(key: key);
+  final QualifiedCharacteristic characteristic;
+
+
+
+  @override
+  Widget build(BuildContext context) => Consumer2<BleScanner, BleScannerState?>(
+    builder: (_, bleScanner, bleScannerState, __)
+    => bleScanner.btfound==null? DeviceList(
+      scannerState: bleScannerState ?? const BleScannerState(
+        discoveredDevices: [],
+        scanIsInProgress: false,
+      ),
+      startScan: bleScanner.startScan,
+      stopScan: bleScanner.stopScan,
+    ):Consumer<BleDeviceInteractor>(
+        builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
+            builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
+                __) => ScallerMapperScreen(
+              characteristic: characteristic,
+              readCharacteristic: interactor.readCharacteristic,
+              writeWithResponse: interactor.writeCharacterisiticWithResponse,
+              writeWithoutResponse:
+              interactor.writeCharacterisiticWithoutResponse,
+              subscribeToCharacteristic: interactor.subScribeToCharacteristic,
+
+              viewModel:    DeviceInteractionViewModel(
+                  deviceId:  bleScanner.btfound.id,
+                  connectionStatus: connectionStateUpdate.connectionState,
+                  deviceConnector: deviceConnector,
+                  discoverServices: () =>
+                      serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
+            ))),
+  );
+
+// @override
+// Widget build(BuildContext context) => Consumer<BleDeviceInteractor>(
+//     builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
+// builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
+// __) => Welcome1(
+//       characteristic: characteristic,
+//       readCharacteristic: interactor.readCharacteristic,
+//       writeWithResponse: interactor.writeCharacterisiticWithResponse,
+//       writeWithoutResponse:
+//       interactor.writeCharacterisiticWithoutResponse,
+//       subscribeToCharacteristic: interactor.subScribeToCharacteristic,
+//
+//   viewModel:    DeviceInteractionViewModel(
+//       deviceId:  bleScanner.btfound.id,
+//       connectionStatus: connectionStateUpdate.connectionState,
+//       deviceConnector: deviceConnector,
+//       discoverServices: () =>
+//           serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
+//     )));
+}
 
 class ScallerMapperScreen extends StatefulWidget {
-  const ScallerMapperScreen({Key? key}) : super(key: key);
+  const ScallerMapperScreen(
+  {
+    required this.characteristic,
+    required this.readCharacteristic,
+    required this.writeWithResponse,
+    required this.writeWithoutResponse,
+    required this.subscribeToCharacteristic,
+    required this.viewModel,
+}
+      );
+
+
+
+
+
+  final DeviceInteractionViewModel viewModel;
+
+
+  final QualifiedCharacteristic characteristic;
+  final Future<List<int>> Function(QualifiedCharacteristic characteristic)
+  readCharacteristic;
+  final Future<void> Function(
+      QualifiedCharacteristic characteristic, List<int> value)
+  writeWithResponse;
+
+  final Stream<List<int>> Function(QualifiedCharacteristic characteristic)
+  subscribeToCharacteristic;
+
+  final Future<void> Function(
+      QualifiedCharacteristic characteristic, List<int> value)
+  writeWithoutResponse;
 
   @override
   _Slider1State createState() => _Slider1State();
@@ -22,6 +129,38 @@ class _Slider1State extends State<ScallerMapperScreen> {
     "D",
     "E",
   ];
+  late StreamSubscription<List<int>>? subscribeStream;
+  String maperResponse = "31";
+  String scallerResponse = "31";
+
+  String readOutput="";
+  String writeOutput="";
+  String subscribeOutput="";
+  bool showSuccessMessage = false;
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    print(widget.viewModel.connectionStatus);
+
+    if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
+      restartApp();
+
+    }
+
+
+  }
+
+
+  @override
+  void dispose() {
+    subscribeStream?.cancel();
+    super.dispose();
+  }
 
   toggleDrawer() async {
     if (_scaffoldKey.currentState!.isDrawerOpen) {
@@ -39,8 +178,179 @@ class _Slider1State extends State<ScallerMapperScreen> {
   FixedExtentScrollController ScallerfixedExtentScrollController =
       new FixedExtentScrollController(initialItem: 2);
 
+
+
+
+  readtime() async {
+    // print('2');
+    // subscribeCharacteristic();
+    //
+    // // while(int.parse(maperResponse)>0){
+    // await coommunicatewithDevice('201');
+    // // sleep(Duration(seconds:1));
+    // // print("readtime whilw");
+    //
+    // // }
+  }
+
+
+  Future<void> subscribeCharacteristic() async {
+    subscribeStream =
+        widget.subscribeToCharacteristic(widget.characteristic).listen((event) {
+          setState(() {
+            subscribeOutput = event.toString();
+          });
+        });
+    setState(() {
+      subscribeOutput = 'Notification set';
+    });
+  }
+
+  Future<void> readCharacteristic() async {
+
+    final result = await widget.readCharacteristic(widget.characteristic);
+    print("read ${result}");
+
+
+    setState(() {
+      readOutput  = result.toString();
+      String resultString = String.fromCharCodes(result);
+      print(resultString);
+
+      if(resultString.startsWith("#MAP_")    ){
+
+          maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
+          setState(() {
+            // showSuccessMessage = true;
+          });
+
+      }
+      else   if(resultString.startsWith("#SCA_")    ){
+        scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
+
+        // setState(() {
+        //   showSuccessMessage = true;
+        // });
+        // Future.delayed(Duration(seconds: 2), (){
+        //   setState(() {
+        //     showSuccessMessage = false;
+        //   });
+        // });
+      }
+      else{
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.ERROR,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'Load Too High',
+          desc: " Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
+          btnCancelOnPress: () {},
+          btnOkOnPress: () {},
+        )..show();
+      }
+
+
+
+    });
+  }
+
+  List<int> _parseInput(msg) {
+
+
+    var lst = msg
+        .split(',')
+        .map(
+      int.parse,
+    )
+        .toList();
+    List<int> ints = List<int>.from(lst);
+
+
+    return ints;
+  }
+
+  Future<void> writeCharacteristicWithResponse(msg) async {
+    await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
+    setState(() {
+      writeOutput = 'Ok';
+    });
+  }
+
+
+  Future<void> writeCharacteristicWithoutResponse(msg) async {
+    print(widget.characteristic);
+    print('5');
+    await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
+      print('v');
+
+    });
+    setState(() {
+      writeOutput = 'Done';
+    });
+  }
+
+  coommunicatewithDevice(msg) async {
+
+
+    await writeCharacteristicWithoutResponse(msg);
+return "okay";
+
+
+  }
+
+  setScallerMapper() async {
+
+    try {
+setState(() {
+  _btnController.start();
+});
+
+        coommunicatewithDevice(mapsArray[ mapperList[Mapperselected].toString()]).then((d){
+          print(d);
+          sleep(Duration(seconds:1));
+           readCharacteristic().then((value) {
+             sleep(Duration(seconds:1));
+             coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]).then((d){
+               print(d);
+               sleep(Duration(seconds:1));
+               readCharacteristic();
+             });
+           });
+        });
+
+
+// sleep(Duration(seconds:1));
+//     await   coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]);
+//         sleep(Duration(seconds:1));
+//         print("8484848");
+
+        // await readCharacteristic();
+print("848ddd 4848");
+
+    } catch (e) {
+      print(e);
+      // setState(() {
+      //   // _btnController.error();
+      //
+      // });
+
+    }
+    setState(() {
+      _btnController.stop();
+
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    print(widget.viewModel.connectionStatus );
+    if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
+      restartApp();
+
+    }
+
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -206,7 +516,10 @@ class _Slider1State extends State<ScallerMapperScreen> {
         body: Container(
             child: Column(
           children: [
-            Padding(
+            Text(
+              "Status: ${widget.viewModel.connectionStatus}",
+              style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
+            showSuccessMessage?    Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -214,7 +527,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                   Stack(
                     alignment: Alignment.centerLeft,
                     children: [
-                      Container(
+                    Container(
                         decoration: BoxDecoration(
                             color: blueColor,
                             borderRadius:
@@ -272,7 +585,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                   ),
                 ],
               ),
-            ),
+            ):Container(),
             Padding(
               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
               child: Container(
@@ -307,35 +620,19 @@ class _Slider1State extends State<ScallerMapperScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  mapperWidget(),
-                  ScallerWidget(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: greenColor,
-                          borderRadius:
-                              new BorderRadius.all(Radius.circular(10.0))),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 10),
-                        child: Text(
-                          "Done",
-                          style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 30,
-                              color: blackColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+
+             Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    mapperWidget(),
+                    ScallerWidget(),
+                    doneButton()
+
+                  ],
+                ),
               ),
-            )
+
           ],
         )),
       ),
@@ -349,7 +646,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Map Select",
+              "Map Select"+maperResponse,
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,
@@ -440,10 +737,10 @@ class _Slider1State extends State<ScallerMapperScreen> {
     return Container(
       child: Column(
         children: [
-          const Padding(
+           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Scaler Select",
+              "Scaler Select"+scallerResponse.toString(),
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,
@@ -488,7 +785,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                   },
                   controller: ScallerfixedExtentScrollController,
                   children: scallerList.map((mp) {
-                    print(mp);
+
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -530,6 +827,35 @@ class _Slider1State extends State<ScallerMapperScreen> {
         ],
       ),
     );
+  }
+
+  doneButton(){
+
+    return  RoundedLoadingButton(
+      color: greenColor,
+        child:Container(
+          decoration: BoxDecoration(
+
+              borderRadius:
+              new BorderRadius.all(Radius.circular(10.0))),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10, left: 10),
+            child: Text(
+              "Done",
+              style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 30,
+                  color: blackColor,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        controller: _btnController,
+        onPressed: setScallerMapper,
+
+    );
+
+
   }
 }
 

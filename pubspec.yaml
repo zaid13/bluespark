@@ -35,6 +35,9 @@ dev_dependencies:
   dependency_validator: ^3.1.0
   functional_data_generator: ^1.1.2
   flutter_restart: ^0.0.3
+  rounded_loading_button: ^2.0.8
+  awesome_dialog: ^2.1.2
+
 
 
 

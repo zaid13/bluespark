@@ -150,9 +150,9 @@ class _Welcome1State extends State<Welcome1> {
 
    readtime() async {
      print('2');
+     subscribeCharacteristic();
 
-
-    // while(int.parse(timeRemaining)>0){
+     // while(int.parse(timeRemaining)>0){
      await coommunicatewithDevice('201');
       // sleep(Duration(seconds:1));
       // print("readtime whilw");
@@ -399,7 +399,31 @@ sleep(Duration(seconds:1));
                         ),
                       ),
                     ),
-                    Container(height: 10,)
+                    Container(height: 10,),
+                    Center(
+                      child: Container(
+
+                        decoration: new BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: new BorderRadius.all( Radius.circular(10.0))
+                        ),
+                        height: 40,
+                        child: FlatButton(
+                          child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0),),
+                          textColor: Colors.white,
+                          onPressed: () async {
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ScallerMapperManager(
+                                    characteristic:widget.characteristic,
+                                  ),
+                                ));
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 )
             )

@@ -24,6 +24,9 @@ class BleScanner implements ReactiveState<BleScannerState> {
   final _devices = <DiscoveredDevice>[];
    var btfound ;
 
+   setFoundDevices(newbtfound){
+     btfound = newbtfound;
+   }
   @override
   Stream<BleScannerState> get state => _stateStreamController.stream;
 

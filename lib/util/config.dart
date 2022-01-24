@@ -1,14 +1,12 @@
 
 
 
-List<Map<String,String>> mapsArray = [
-                                        {"A":"231"},
-                                        {"B":"232"},
-                                        {"C":"233"},
-                                        {"D":"234"},
-                                        {"E":"235"},
-                                     ] ;
-
+Map<String,String> mapsArray = {
+                                        "A":"231",
+                                        "B":"232",
+                                        "C":"233",
+                                        "D":"234",
+                                        "E":"235" }  ;
 List<String> scalerArray =  [
                               "240",
                               "241",
