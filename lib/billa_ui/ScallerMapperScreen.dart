@@ -130,7 +130,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
     "E",
   ];
   late StreamSubscription<List<int>>? subscribeStream;
-  String maperResponse = "31";
+  String maperResponse = "1";
   String scallerResponse = "31";
 
   String readOutput="";
@@ -139,12 +139,14 @@ class _Slider1State extends State<ScallerMapperScreen> {
   bool showSuccessMessage = false;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
+  String subscitioResonse ="NO RESPONSE";
 
+  bool errorMessageIsOpen = false;
 
   @override
   void initState() {
     super.initState();
-
+    subscribeCharacteristicStream();
     print(widget.viewModel.connectionStatus);
 
     if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
@@ -225,7 +227,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
           });
 
       }
-      else   if(resultString.startsWith("#SCA_")    ){
+      else   if(resultString.startsWith("#SCA_")    )
+
+      {
         scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
 
         // setState(() {
@@ -235,18 +239,19 @@ class _Slider1State extends State<ScallerMapperScreen> {
         //   setState(() {
         //     showSuccessMessage = false;
         //   });
+
         // });
       }
       else{
-        AwesomeDialog(
-          context: context,
-          dialogType: DialogType.ERROR,
-          animType: AnimType.BOTTOMSLIDE,
-          title: 'Load Too High',
-          desc: " Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
-          btnCancelOnPress: () {},
-          btnOkOnPress: () {},
-        )..show();
+        // AwesomeDialog(
+        //   context: context,
+        //   dialogType: DialogType.ERROR,
+        //   animType: AnimType.BOTTOMSLIDE,
+        //   title: 'Load Too High',
+        //   desc: resultString+" Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
+        //   btnCancelOnPress: () {},
+        //   btnOkOnPress: () {},
+        // )..show();
       }
 
 
@@ -307,15 +312,15 @@ setState(() {
 
         coommunicatewithDevice(mapsArray[ mapperList[Mapperselected].toString()]).then((d){
           print(d);
-          sleep(Duration(seconds:1));
-           readCharacteristic().then((value) {
-             sleep(Duration(seconds:1));
-             coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]).then((d){
-               print(d);
-               sleep(Duration(seconds:1));
-               readCharacteristic();
-             });
-           });
+          sleep(Duration(milliseconds:400));
+           // readCharacteristic().then((value) {
+           //   // sleep(Duration(milliseconds:300));
+    coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]).then((d){});
+           //   //   print(d);
+           //   //   // sleep(Duration(milliseconds:300));
+           //   //   readCharacteristic();
+           //   // });
+           // });
         });
 
 
@@ -342,7 +347,81 @@ print("848ddd 4848");
 
   }
 
+   subscribeCharacteristicStream()  {
+    // subscribeStream =
+       widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+         setState(() {
+           subscitioResonse = result.toString();
+         });
 
+
+         print("read ${result}");
+
+
+
+         setState(() {
+           readOutput  = result.toString();
+           String resultString = String.fromCharCodes(result);
+           print(resultString);
+
+           if(resultString.startsWith("#MAP_")    ){
+
+             maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
+             setState(() {
+               // showSuccessMessage = true;
+             });
+
+           }
+           else   if(resultString.startsWith("#SCA_")    )
+
+           {
+             scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
+
+             // setState(() {
+             //   showSuccessMessage = true;
+             // });
+             // Future.delayed(Duration(seconds: 2), (){
+             //   setState(() {
+             //     showSuccessMessage = false;
+             //   });
+
+             // });
+           } else   if(resultString.startsWith("#WUT_")){}
+           else if (resultString.startsWith("^") && !errorMessageIsOpen ) {
+
+             setState(() {
+               errorMessageIsOpen = true;
+             });
+             print('resultString');
+             print(resultString);
+             AwesomeDialog(
+               context: context,
+               dialogType: DialogType.ERROR,
+               animType: AnimType.BOTTOMSLIDE,
+               title: 'Load Too High',
+               desc: resultString,
+               btnCancelOnPress: () {
+                 setState(() {
+                   errorMessageIsOpen = false;
+                 });
+               },
+               btnOkOnPress: () {
+                 setState(() {
+                   errorMessageIsOpen = false;
+                 });
+
+               },
+             ).show();
+           }
+
+
+         });
+
+       });
+    // // setState(() {
+    subscitioResonse = 'Notification set';
+    // });
+  }
   @override
   Widget build(BuildContext context) {
     print(widget.viewModel.connectionStatus );
@@ -516,6 +595,12 @@ print("848ddd 4848");
         body: Container(
             child: Column(
           children: [
+
+
+       Text(subscitioResonse,
+
+              style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
+
             Text(
               "Status: ${widget.viewModel.connectionStatus}",
               style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
@@ -646,7 +731,7 @@ print("848ddd 4848");
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Map Select"+maperResponse,
+              "Map Select"+mapsArray.keys.elementAt(int.parse(maperResponse)<0?0:int.parse(maperResponse)-1),
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,

@@ -136,6 +136,10 @@ class _Welcome1State extends State<Welcome1> {
 
      }
 
+     Future.delayed(Duration(seconds:1),(){
+       autoCallTimer();
+     });
+     subscribeCharacteristic();
 
    }
 
@@ -150,7 +154,7 @@ class _Welcome1State extends State<Welcome1> {
 
    readtime() async {
      print('2');
-     subscribeCharacteristic();
+     // subscribeCharacteristic();
 
      // while(int.parse(timeRemaining)>0){
      await coommunicatewithDevice('201');
@@ -160,26 +164,21 @@ class _Welcome1State extends State<Welcome1> {
     // }
    }
 
-
-  Future<void> subscribeCharacteristic() async {
-    subscribeStream =
-        widget.subscribeToCharacteristic(widget.characteristic).listen((event) {
-          setState(() {
-            subscribeOutput = event.toString();
-          });
-        });
-    setState(() {
-      subscribeOutput = 'Notification set';
-    });
-  }
-
-  Future<void> readCharacteristic() async {
-
-    final result = await widget.readCharacteristic(widget.characteristic);
-    print("write ${result}");
+   autoCallTimer() async {
 
 
-    setState(() {
+     for (int i =0 ; int.parse(timeRemaining)>0 ; i++){
+       print("trying ${i}");
+       await readtime();
+       sleep(Duration(milliseconds:300));
+
+     }
+
+   }
+  Stream subscribeCharacteristicStream() async* {
+     // subscribeStream =
+    yield   widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+      setState(() {
       readOutput  = result.toString();
       String resultString = String.fromCharCodes(result);
 
@@ -192,7 +191,56 @@ class _Welcome1State extends State<Welcome1> {
       }
 
 
-    });
+      });
+         });
+     // // setState(() {
+     subscribeOutput = 'Notification set';
+     // });
+   }
+
+  Future<void> subscribeCharacteristic() async {
+    subscribeStream =
+        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+          setState(() {
+            readOutput  = result.toString();
+            String resultString = String.fromCharCodes(result).split("\n")[0];
+
+            if(resultString.startsWith("#WUT_")    ){
+              timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
+
+            }
+            // else if ((int.parse(timeRemaining) )!=1){
+            //   timeRemaining = (int.parse(timeRemaining) -1).toString();
+            // }
+
+
+          });
+        });
+    // setState(() {
+      subscribeOutput = 'Notification set';
+    // });
+  }
+
+  Future<void> readCharacteristic() async {
+
+    final result = await widget.readCharacteristic(widget.characteristic);
+    print("write ${result}");
+
+
+    // setState(() {
+      readOutput  = result.toString();
+      String resultString = String.fromCharCodes(result);
+
+      if(resultString.startsWith("#WUT_")    ){
+        timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
+
+      }
+      else if ((int.parse(timeRemaining) )!=1){
+        timeRemaining = (int.parse(timeRemaining) -1).toString();
+      }
+
+
+    // });
   }
 
   List<int> _parseInput(msg) {
@@ -212,9 +260,9 @@ class _Welcome1State extends State<Welcome1> {
 
   Future<void> writeCharacteristicWithResponse(msg) async {
     await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
-    setState(() {
+    // setState(() {
       writeOutput = 'Ok';
-    });
+    // });
   }
 
 
@@ -225,9 +273,9 @@ class _Welcome1State extends State<Welcome1> {
       print('v');
 
     });
-    setState(() {
+    // setState(() {
       writeOutput = 'Done';
-    });
+    // });
   }
 
   coommunicatewithDevice(msg) async {
@@ -237,12 +285,26 @@ class _Welcome1State extends State<Welcome1> {
 
      print("write ${msg}");
 
-     readCharacteristic();
+     // readCharacteristic();
     });
     print('4');
 
 
   }
+   Stream getStreamofTime() async* {
+     int n =4;
+     int i = 0;
+     while (i < n) {
+       yield i;
+       print("_________");
+       print(i);
+       print(n);
+       i++;
+       // await  readtime();
+       await Future.delayed(Duration(seconds: 2));
+     }
+   }
+
   @override
   Widget build(BuildContext context) {
      print(widget.viewModel.connectionStatus );
@@ -261,6 +323,8 @@ class _Welcome1State extends State<Welcome1> {
             Column(
 
               children: [
+
+
 
 
                 Text(
@@ -309,6 +373,7 @@ class _Welcome1State extends State<Welcome1> {
             ),
             SlidingUpPanel(
                 maxHeight:MediaQuery.of(context).size.height *0.65,
+                minHeight: MediaQuery.of(context).size.height *0.65,
                 color: Colors.blue,
                 panel: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -341,14 +406,14 @@ class _Welcome1State extends State<Welcome1> {
                           Image.asset('images/Welcome/Ellipse.png'),
                           Container(
                               height: 340,
-                              child: Center(child: FutureBuilder(
-                                future: Future.delayed(Duration(milliseconds:1, ),
-                                        (){
-                                          // readtime();
-                                        }
-                                    ),
+                              child: Center(child: StreamBuilder(
+                                stream: getStreamofTime(),
                                 builder: (context, snapshot) {
+                                  // if(snapshot.hasData){
+                                    return Text("00:"+timeRemaining,style: TextStyle(color:Colors.white,fontSize: 30),);
+                                  // }
                                   return Text("00:"+timeRemaining,style: TextStyle(color:Colors.white,fontSize: 30),);
+
                                 }
                               ))),
                           Container(
@@ -367,16 +432,18 @@ class _Welcome1State extends State<Welcome1> {
                         ),
                         height: 40,
                         child: FlatButton(
-                          child: Text('SKIP', style: TextStyle(fontSize: 20.0),),
+                          child: Text('CHECK TIMER AGAIN', style: TextStyle(fontSize: 20.0),),
                           textColor: Colors.white,
                           onPressed: () async {
                             ctr =0;
                             print('1');
-
+                            setState(() {
+                              timeRemaining = "31";
+                            });
                             for (int i =0 ; int.parse(timeRemaining)>0 ; i++){
 print("trying ${i}");
 await readtime();
-sleep(Duration(seconds:1));
+sleep(Duration(milliseconds:300));
 
                             }
 
@@ -412,6 +479,9 @@ sleep(Duration(seconds:1));
                           child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0),),
                           textColor: Colors.white,
                           onPressed: () async {
+                            setState(() {
+                              timeRemaining = "0";
+                            });
 
                             Navigator.push(
                                 context,
