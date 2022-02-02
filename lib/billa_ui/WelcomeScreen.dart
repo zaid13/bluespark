@@ -15,6 +15,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dart:io';
 
 import 'ScallerMapperScreen.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 
 
@@ -114,12 +115,13 @@ class Welcome1 extends StatefulWidget {
 }
 
 class _Welcome1State extends State<Welcome1> {
-   String readOutput="";
+   // String readOutput="";
    String writeOutput="";
    String subscribeOutput="";
-   String timeRemaining = "31";
-
-   int ctr =0;
+   // String timeRemaining = "31";
+   //
+   // // int ctr =0;
+   // bool cancelledRequest = false;
 
 
 
@@ -135,9 +137,9 @@ class _Welcome1State extends State<Welcome1> {
        restartApp();
 
      }
-
-     Future.delayed(Duration(seconds:1),(){
-       autoCallTimer();
+     // todo intiL CODE RUNNING PROBEM
+     Future.delayed(Duration(seconds:1),() async {
+      await autoCallTimer();
      });
      subscribeCharacteristic();
 
@@ -152,161 +154,219 @@ class _Welcome1State extends State<Welcome1> {
   }
 
 
+
+  // Stream subscribeCharacteristicStream() async* {
+  //    // subscribeStream =
+  //   yield   widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+  //     setState(() {
+  //     readOutput  = result.toString();
+  //     String resultString = String.fromCharCodes(result);
+  //     if(resultString.startsWith("201")    ) {
+  //         cancelledRequest = true;
+  //
+  //       }
+  //     else  if (resultString.startsWith("#WUT_")    ){
+  //       timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
+  //
+  //     }
+  //     else if ((int.parse(timeRemaining) )!=1){
+  //       timeRemaining = (int.parse(timeRemaining) -1).toString();
+  //     }
+  //
+  //
+  //     });
+  //        });
+  //    // // setState(() {
+  //    subscribeOutput = 'Notification set';
+  //    // });
+  //  }
+
+
+  // Future<void> readCharacteristic() async {
+  //
+  //   final result = await widget.readCharacteristic(widget.characteristic);
+  //   print("write ${result}");
+  //
+  //
+  //   // setState(() {
+  //     readOutput  = result.toString();
+  //     String resultString = String.fromCharCodes(result);
+  //
+  //     if(resultString.startsWith("#WUT_")    ){
+  //       timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
+  //
+  //     }
+  //     else if ((int.parse(timeRemaining) )!=1){
+  //       timeRemaining = (int.parse(timeRemaining) -1).toString();
+  //     }
+  //
+  //
+  //   // });
+  // }
+
+
+   // Stream getStreamofTime() async* {
+   //   int n =4;
+   //   int i = 0;
+   //   while (i < n) {
+   //     yield i;
+   //     print("_________");
+   //     print(i);
+   //     print(n);
+   //     i++;
+   //     // await  readtime();
+   //     await Future.delayed(Duration(seconds: 2));
+   //   }
+   // }
+   // void _onLoading() {
+   //   showDialog(
+   //     context: context,
+   //     barrierDismissible: false,
+   //     builder: (BuildContext context) {
+   //       return Dialog(
+   //         child: new Row(
+   //           mainAxisSize: MainAxisSize.min,
+   //           children: [
+   //             new CircularProgressIndicator(),
+   //             new Text("Loading"),
+   //           ],
+   //         ),
+   //       );
+   //     },
+   //   );
+   //   new Future.delayed(new Duration(seconds: 3), () {
+   //     Navigator.pop(context); //pop dialog
+   //
+   //   });
+   // }
+   //
+   // Future<void> writeCharacteristicWithResponse(msg) async {
+   //   await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
+   //   // setState(() {
+   //   writeOutput = 'Ok';
+   //   // });
+   // }
+
+   Future<void> subscribeCharacteristic() async {
+     subscribeStream =
+         widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+
+           // print('readOutput');
+           // print(result);
+
+           // setState(() {
+             context.read<CommandProvider>().setReadOutput( result.toString());
+             String resultString = String.fromCharCodes(result).split("\n")[0];
+
+             if(resultString == "201"    ) {
+               context.read<CommandProvider>().   stopSendingRequests();
+
+             }
+             else    if(resultString.startsWith("#WUT_")  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+               context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("#", ""));
+
+             }
+             // else if ((int.parse(timeRemaining) )!=1){
+             //   timeRemaining = (int.parse(timeRemaining) -1).toString();
+             // }
+
+
+           // });
+         });
+     // setState(() {
+     subscribeOutput = 'Notification set';
+     // });
+   }
+   List<int> _parseInput(msg) {
+
+
+     var lst = msg
+         .split(',')
+         .map(
+       int.parse,
+     )
+         .toList();
+     List<int> ints = List<int>.from(lst);
+
+
+     return ints;
+   }
+   Future<void> writeCharacteristicWithoutResponse(msg) async {
+     // print(widget.characteristic);
+     // print('5');
+     await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
+       // print('v');
+
+     });
+     // setState(() {
+     writeOutput = 'Done';
+     // });
+   }
+   coommunicatewithDevice(msg) async {
+     // print('3');
+
+     await writeCharacteristicWithoutResponse(msg).then((value){
+
+       // print("write ${msg}");
+
+       // readCharacteristic();
+     });
+     // print('4');
+
+
+   }
    readtime() async {
-     print('2');
+     // print('2');
      // subscribeCharacteristic();
 
      // while(int.parse(timeRemaining)>0){
      await coommunicatewithDevice('201');
-      // sleep(Duration(seconds:1));
-      // print("readtime whilw");
+     // sleep(Duration(seconds:1));
+     // print("readtime whilw");
 
-    // }
+     // }
    }
 
    autoCallTimer() async {
+     //
+     // _onLoading();
 
 
-     for (int i =0 ; int.parse(timeRemaining)>0 ; i++){
-       print("trying ${i}");
+     String timeRemaining  = "31";
+     bool   cancelledRequest  = false;
+
+
+
+
+     for (int i =0 ; int.parse(timeRemaining)>0 && !cancelledRequest ; i++){
+        timeRemaining  = context.read<CommandProvider>().timeRemaining;
+          cancelledRequest  = context.read<CommandProvider>().cancelledRequest;
+
+       // print("trying ${i}");
        await readtime();
-       sleep(Duration(milliseconds:300));
+       sleep(Duration(milliseconds:500));
+
+       if(i >=3  && timeRemaining =='31'){
+         break;
+       }
 
      }
 
    }
-  Stream subscribeCharacteristicStream() async* {
-     // subscribeStream =
-    yield   widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-      setState(() {
-      readOutput  = result.toString();
-      String resultString = String.fromCharCodes(result);
-
-      if(resultString.startsWith("#WUT_")    ){
-        timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
-
-      }
-      else if ((int.parse(timeRemaining) )!=1){
-        timeRemaining = (int.parse(timeRemaining) -1).toString();
-      }
 
 
-      });
-         });
-     // // setState(() {
-     subscribeOutput = 'Notification set';
-     // });
-   }
-
-  Future<void> subscribeCharacteristic() async {
-    subscribeStream =
-        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-          setState(() {
-            readOutput  = result.toString();
-            String resultString = String.fromCharCodes(result).split("\n")[0];
-
-            if(resultString.startsWith("#WUT_")    ){
-              timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
-
-            }
-            // else if ((int.parse(timeRemaining) )!=1){
-            //   timeRemaining = (int.parse(timeRemaining) -1).toString();
-            // }
 
 
-          });
-        });
-    // setState(() {
-      subscribeOutput = 'Notification set';
-    // });
-  }
-
-  Future<void> readCharacteristic() async {
-
-    final result = await widget.readCharacteristic(widget.characteristic);
-    print("write ${result}");
-
-
-    // setState(() {
-      readOutput  = result.toString();
-      String resultString = String.fromCharCodes(result);
-
-      if(resultString.startsWith("#WUT_")    ){
-        timeRemaining = resultString.replaceAll("#WUT_", "").replaceAll("#", "");
-
-      }
-      else if ((int.parse(timeRemaining) )!=1){
-        timeRemaining = (int.parse(timeRemaining) -1).toString();
-      }
-
-
-    // });
-  }
-
-  List<int> _parseInput(msg) {
-
-
-    var lst = msg
-      .split(',')
-      .map(
-    int.parse,
-  )
-      .toList();
-    List<int> ints = List<int>.from(lst);
-
-
-    return ints;
-  }
-
-  Future<void> writeCharacteristicWithResponse(msg) async {
-    await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
-    // setState(() {
-      writeOutput = 'Ok';
-    // });
-  }
-
-
-  Future<void> writeCharacteristicWithoutResponse(msg) async {
-    print(widget.characteristic);
-    print('5');
-    await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
-      print('v');
-
-    });
-    // setState(() {
-      writeOutput = 'Done';
-    // });
-  }
-
-  coommunicatewithDevice(msg) async {
-    print('3');
-
-   await writeCharacteristicWithoutResponse(msg).then((value){
-
-     print("write ${msg}");
-
-     // readCharacteristic();
-    });
-    print('4');
-
-
-  }
-   Stream getStreamofTime() async* {
-     int n =4;
-     int i = 0;
-     while (i < n) {
-       yield i;
-       print("_________");
-       print(i);
-       print(n);
-       i++;
-       // await  readtime();
-       await Future.delayed(Duration(seconds: 2));
-     }
-   }
-
-  @override
+   @override
   Widget build(BuildContext context) {
+     // final commandProvider = context.watch<CommandProvider>();
+
+
+
+
+
+
+
      print(widget.viewModel.connectionStatus );
     if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
       restartApp();
@@ -344,7 +404,7 @@ class _Welcome1State extends State<Welcome1> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
-                    child: Text("readOutput   "+readOutput,
+                    child: Text("readOutput   "+'commandProvider.readOutput',
 
                       style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
                   ),
@@ -371,83 +431,80 @@ class _Welcome1State extends State<Welcome1> {
 
 
             ),
-            SlidingUpPanel(
-                maxHeight:MediaQuery.of(context).size.height *0.65,
-                minHeight: MediaQuery.of(context).size.height *0.65,
-                color: Colors.blue,
-                panel: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            ModalProgressHUD(
+              inAsyncCall:      context.watch<CommandProvider>().MovingToNextScreen,
+              child: SlidingUpPanel(
+                  maxHeight:MediaQuery.of(context).size.height *0.65,
+                  minHeight: MediaQuery.of(context).size.height *0.65,
+                  color: Colors.blue,
+                  panel: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
 
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      width: 230,
-                      height: 40,
-                      child:Text('Cold Start Delay',
-
-                        style: TextStyle(fontFamily: 'Montserrat',fontSize: 30,color: Colors.white,fontWeight:FontWeight.bold),),
-
-                      // style: TextStyle(fontSize: 20.0,color: Colors.white),)
-                    ),
-
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.circle,color: Colors.green,size: 20,),
-                        Container(width: 5,),
-                        Text('ACTIVE',
-                          style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
-                      ],
-                    ),
-                    Stack(
-                        children: <Widget>[
-                          Image.asset('images/Welcome/Ellipse.png'),
-                          Container(
-                              height: 340,
-                              child: Center(child: StreamBuilder(
-                                stream: getStreamofTime(),
-                                builder: (context, snapshot) {
-                                  // if(snapshot.hasData){
-                                    return Text("00:"+timeRemaining,style: TextStyle(color:Colors.white,fontSize: 30),);
-                                  // }
-                                  return Text("00:"+timeRemaining,style: TextStyle(color:Colors.white,fontSize: 30),);
-
-                                }
-                              ))),
-                          Container(
-                              height: 390,
-                              child: Center(child: Text("Remaining",style: TextStyle(color:Colors.white,fontSize: 20),))),
-                        ]
-                    ),
+                    children: [
 
 
-                    Center(
-                      child: Container(
-
-                        decoration: new BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: new BorderRadius.all( Radius.circular(10.0))
-                        ),
+                      Consumer<CommandProvider>(
+                        builder: (context, model, widget) => Column(
+                            children: <Widget>[
+                        Text(  model.readOutput,
+                      ),])),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 230,
                         height: 40,
-                        child: FlatButton(
-                          child: Text('CHECK TIMER AGAIN', style: TextStyle(fontSize: 20.0),),
-                          textColor: Colors.white,
-                          onPressed: () async {
-                            ctr =0;
-                            print('1');
-                            setState(() {
-                              timeRemaining = "31";
-                            });
-                            for (int i =0 ; int.parse(timeRemaining)>0 ; i++){
-print("trying ${i}");
-await readtime();
-sleep(Duration(milliseconds:300));
+                        child:Text('Cold Start Delay',
 
-                            }
+                          style: TextStyle(fontFamily: 'Montserrat',fontSize: 30,color: Colors.white,fontWeight:FontWeight.bold),),
 
-                            // while(ctr<5){
+                        // style: TextStyle(fontSize: 20.0,color: Colors.white),)
+                      ),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.circle,color: Colors.green,size: 20,),
+                          Container(width: 5,),
+                          Text('ACTIVE',
+                            style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
+                        ],
+                      ),
+                      Stack(
+                          children: <Widget>[
+                            Image.asset('images/Welcome/Ellipse.png'),
+                            Container(
+                                height: 340,
+                                child: Center(child:  Text("00:"+context.watch<CommandProvider>().getTime(),style: TextStyle(color:Colors.white,fontSize: 30),)
+                            )),
+                            Container(
+                                height: 390,
+                                child: Center(child: Text("Remaining",style: TextStyle(color:Colors.white,fontSize: 20),))),
+                          ]
+                      ),
+
+
+                      Center(
+                        child: Container(
+
+                          decoration: new BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: new BorderRadius.all( Radius.circular(10.0))
+                          ),
+                          height: 40,
+                          child: FlatButton(
+                            child: Text('CHECK TIMER AGAIN', style: TextStyle(fontSize: 20.0),),
+                            textColor: Colors.white,
+                            onPressed: () async {
+                              // ctr =0;
+                              print('1');
+                              // setState(() { todo
+                              context.read<CommandProvider>() .restartListening();
+                              // });
+                              Future.delayed(Duration(milliseconds:100),() async {
+                               await  autoCallTimer();
+                              });
+                              // while(ctr<5){
 
 
       // Future.delayed(Duration(seconds: ctr+1),(){
@@ -458,44 +515,55 @@ sleep(Duration(milliseconds:300));
       // });
       //                                   }
 
-                            // coommunicatewithDevice("205");
-                            // Navigator.push(context,  (MaterialPageRoute<void>(
-                            //   builder: (BuildContext context) => const ScallerMapperScreen(),)));
+                              // coommunicatewithDevice("205");
+                              // Navigator.push(context,  (MaterialPageRoute<void>(
+                              //   builder: (BuildContext context) => const ScallerMapperScreen(),)));
 
-                          },
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    Container(height: 10,),
-                    Center(
-                      child: Container(
+                      Container(height: 10,),
+                      Center(
+                        child: Container(
 
-                        decoration: new BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: new BorderRadius.all( Radius.circular(10.0))
-                        ),
-                        height: 40,
-                        child: FlatButton(
-                          child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0),),
-                          textColor: Colors.white,
-                          onPressed: () async {
-                            setState(() {
-                              timeRemaining = "0";
-                            });
+                          decoration: new BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: new BorderRadius.all( Radius.circular(10.0))
+                          ),
+                          height: 40,
+                          child: GestureDetector(
+                            child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0,color: Colors.white,fontWeight:FontWeight.bold),),
+                            // textColor: Colors.white,
+                            onTap: () async {
 
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ScallerMapperManager(
-                                    characteristic:widget.characteristic,
-                                  ),
-                                ));
-                          },
+                              context.read<CommandProvider>().    startMovingTonextScreen();
+                              context.read<CommandProvider>() .stopSendingRequests();
+                              // setState(() {
+                              //   // commandProvider.stopSendingRequests();  todo
+                              //   // commandProvider.cancelledRequest = true;
+                              //   //
+                              //   // commandProvider.   timeRemaining = "0";
+                              // });
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ScallerMapperManager(
+                                      characteristic:widget.characteristic,
+                                    ),
+                                  )).then((value) {
+
+                              });
+
+                              context.read<CommandProvider>().stopMovingTonextScreen();
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+              ),
             )
           ],
         ),

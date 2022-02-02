@@ -1,4 +1,5 @@
 
+import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/ConnectionProvider.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
@@ -41,6 +42,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => CommandProvider()),
+
         Provider.value(value: _scanner),
         Provider.value(value: _monitor),
         Provider.value(value: _connector),

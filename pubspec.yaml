@@ -37,7 +37,8 @@ dev_dependencies:
   flutter_restart: ^0.0.3
   rounded_loading_button: ^2.0.8
   awesome_dialog: ^2.1.2
-
+  loader_overlay: ^2.0.0-nullsafety.0
+  modal_progress_hud_nsn: ^0.1.0-nullsafety-1
 
 
 
