@@ -350,16 +350,16 @@ print("848ddd 4848");
    subscribeCharacteristicStream()  {
     // subscribeStream =
        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-         setState(() {
+         // setState(() {
            subscitioResonse = result.toString();
-         });
+         // });
 
 
          print("read ${result}");
 
 
 
-         setState(() {
+         // setState(() {
            readOutput  = result.toString();
            String resultString = String.fromCharCodes(result);
            print(resultString);
@@ -367,9 +367,6 @@ print("848ddd 4848");
            if(resultString.startsWith("#MAP_")    ){
 
              maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
-             setState(() {
-               // showSuccessMessage = true;
-             });
 
            }
            else   if(resultString.startsWith("#SCA_")    )
@@ -389,9 +386,9 @@ print("848ddd 4848");
            } else   if(resultString.startsWith("#WUT_")){}
            else if (resultString.startsWith("^") && !errorMessageIsOpen ) {
 
-             setState(() {
+             // setState(() {
                errorMessageIsOpen = true;
-             });
+             // });
              print('resultString');
              print(resultString);
              AwesomeDialog(
@@ -415,7 +412,7 @@ print("848ddd 4848");
            }
 
 
-         });
+         // });
 
        });
     // // setState(() {
