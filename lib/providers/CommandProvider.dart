@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 
 class CommandProvider with ChangeNotifier {
@@ -15,6 +18,65 @@ class CommandProvider with ChangeNotifier {
 
 
 
+  getErrorString(errorKey){
+
+
+    return scallerMapperErrorTable[errorKey];
+  }
+
+  isMapperError(){
+
+    if(!scllerMapper.MAP_ERROR_IS_OPEN){
+      scllerMapper.MAP_ERROR_IS_OPEN = true;
+      notifyListeners();
+    }
+
+  }
+
+  isScallerError(){
+
+    if(!scllerMapper.SCALLER_ERROR_IS_OPEN){
+      scllerMapper.SCALLER_ERROR_IS_OPEN = true;
+      notifyListeners();
+    }
+
+  }
+
+  MAPPER_ERROR_CLOSED(){
+
+    if(scllerMapper.MAP_ERROR_IS_OPEN){
+      scllerMapper.MAP_ERROR_IS_OPEN = false;
+      notifyListeners();
+    }
+  }
+  SCALLER_ERROR_CLOSED(){
+
+    if(scllerMapper.SCALLER_ERROR_IS_OPEN){
+      scllerMapper.SCALLER_ERROR_IS_OPEN = false;
+      notifyListeners();
+    }
+  }
+
+
+
+  ScallerMapperUpdateSucessfully(){
+
+    if(!scllerMapper.UpdateSucessfully){
+      scllerMapper.UpdateSucessfully = true;
+      notifyListeners();
+      print("*********");
+
+     Future.delayed(Duration(seconds:1),(){
+
+       scllerMapper.UpdateSucessfully = false;
+
+       notifyListeners();
+
+     });
+
+
+    }}
+
   setScaller(newScallerValue){
 
     if(scllerMapper.scallerSelected!=newScallerValue){
@@ -28,6 +90,25 @@ class CommandProvider with ChangeNotifier {
     if(scllerMapper.mapperSelected!=newMapperValue){
       scllerMapper.mapperSelected=newMapperValue;
       notifyListeners();
+    }
+
+  }
+  set_RESPONSE_Scaller(newScallerValue){
+
+    if(scllerMapper.RESPONSE_scallerSelected!=newScallerValue){
+      scllerMapper.RESPONSE_scallerSelected=newScallerValue;
+
+      notifyListeners();
+      ScallerMapperUpdateSucessfully();
+    }
+
+  }
+  set_RESPONSE_Mapper(newMapperValue){
+
+    if(scllerMapper.RESPONSE_mapperSelected!=newMapperValue){
+      scllerMapper.RESPONSE_mapperSelected=newMapperValue;
+      notifyListeners();
+      ScallerMapperUpdateSucessfully();
     }
 
   }
@@ -137,9 +218,16 @@ class ScallerMapper{
 
   bool isRequesting = false;
   bool onlyScaller = false;
+  bool UpdateSucessfully = false;
+  bool MAP_ERROR_IS_OPEN = false;
+  bool SCALLER_ERROR_IS_OPEN = false;
 
   String mapperSelected = "A";
   String scallerSelected = "3";
+
+
+  String RESPONSE_mapperSelected = "2";
+  String RESPONSE_scallerSelected = "3";
 
 
 

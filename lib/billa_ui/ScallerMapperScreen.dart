@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 
@@ -130,30 +131,37 @@ class _Slider1State extends State<ScallerMapperScreen> {
     "E",
   ];
   late StreamSubscription<List<int>>? subscribeStream;
-  String maperResponse = "1";
-  String scallerResponse = "31";
+  // String maperResponse = "1";
+  // String scallerResponse = "31";
 
-  String readOutput="";
-  String writeOutput="";
-  String subscribeOutput="";
-  bool showSuccessMessage = false;
+  // String readOutput="";
+  // String writeOutput="";
+  // String subscribeOutput="";
+  // bool showSuccessMessage = false;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
-  String subscitioResonse ="NO RESPONSE";
+  // String subscitioResonse ="NO RESPONSE";
 
-  bool errorMessageIsOpen = false;
+  // bool errorMessageIsOpen = false;
 
   @override
   void initState() {
     super.initState();
-    subscribeCharacteristicStream();
+    subscribeCharacteristic();
+
+
+    InitsetScallerMapper();
+
     print(widget.viewModel.connectionStatus);
 
     if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
       restartApp();
 
     }
-
+    // MapperfixedExtentScrollController =
+    // new FixedExtentScrollController(initialItem: mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected));
+    // ScallerfixedExtentScrollController =
+    // new FixedExtentScrollController(initialItem: int.parse( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected));
 
   }
 
@@ -172,8 +180,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
     }
   }
 
-  var Mapperselected = 2;
-  var Scallerselected = 2;
+  // var Mapperselected = 2;
+  // var Scallerselected = 2;
   FixedExtentScrollController MapperfixedExtentScrollController =
       new FixedExtentScrollController(initialItem: 2);
 
@@ -195,69 +203,69 @@ class _Slider1State extends State<ScallerMapperScreen> {
     // // }
   }
 
+  //
+  // Future<void> subscribeCharacteristic() async {
+  //   subscribeStream =
+  //       widget.subscribeToCharacteristic(widget.characteristic).listen((event) {
+  //         setState(() {
+  //           subscribeOutput = event.toString();
+  //         });
+  //       });
+  //   setState(() {
+  //     subscribeOutput = 'Notification set';
+  //   });
+  // }
 
-  Future<void> subscribeCharacteristic() async {
-    subscribeStream =
-        widget.subscribeToCharacteristic(widget.characteristic).listen((event) {
-          setState(() {
-            subscribeOutput = event.toString();
-          });
-        });
-    setState(() {
-      subscribeOutput = 'Notification set';
-    });
-  }
-
-  Future<void> readCharacteristic() async {
-
-    final result = await widget.readCharacteristic(widget.characteristic);
-    print("read ${result}");
-
-
-    setState(() {
-      readOutput  = result.toString();
-      String resultString = String.fromCharCodes(result);
-      print(resultString);
-
-      if(resultString.startsWith("#MAP_")    ){
-
-          maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
-          setState(() {
-            // showSuccessMessage = true;
-          });
-
-      }
-      else   if(resultString.startsWith("#SCA_")    )
-
-      {
-        scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
-
-        // setState(() {
-        //   showSuccessMessage = true;
-        // });
-        // Future.delayed(Duration(seconds: 2), (){
-        //   setState(() {
-        //     showSuccessMessage = false;
-        //   });
-
-        // });
-      }
-      else{
-        // AwesomeDialog(
-        //   context: context,
-        //   dialogType: DialogType.ERROR,
-        //   animType: AnimType.BOTTOMSLIDE,
-        //   title: 'Load Too High',
-        //   desc: resultString+" Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
-        //   btnCancelOnPress: () {},
-        //   btnOkOnPress: () {},
-        // )..show();
-      }
-
-
-
-    });
-  }
+  // Future<void> readCharacteristic() async {
+  //
+  //   final result = await widget.readCharacteristic(widget.characteristic);
+  //   print("read ${result}");
+  //
+  //
+  //   setState(() {
+  //     readOutput  = result.toString();
+  //     String resultString = String.fromCharCodes(result);
+  //     print(resultString);
+  //
+  //     if(resultString.startsWith("#MAP_")    ){
+  //
+  //         maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
+  //         setState(() {
+  //           // showSuccessMessage = true;
+  //         });
+  //
+  //     }
+  //     else   if(resultString.startsWith("#SCA_")    )
+  //
+  //     {
+  //       scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
+  //
+  //       // setState(() {
+  //       //   showSuccessMessage = true;
+  //       // });
+  //       // Future.delayed(Duration(seconds: 2), (){
+  //       //   setState(() {
+  //       //     showSuccessMessage = false;
+  //       //   });
+  //
+  //       // });
+  //     }
+  //     else{
+  //       // AwesomeDialog(
+  //       //   context: context,
+  //       //   dialogType: DialogType.ERROR,
+  //       //   animType: AnimType.BOTTOMSLIDE,
+  //       //   title: 'Load Too High',
+  //       //   desc: resultString+" Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
+  //       //   btnCancelOnPress: () {},
+  //       //   btnOkOnPress: () {},
+  //       // )..show();
+  //     }
+  //
+  //
+  //
+  //   });
+  // }
 
   List<int> _parseInput(msg) {
 
@@ -274,12 +282,12 @@ class _Slider1State extends State<ScallerMapperScreen> {
     return ints;
   }
 
-  Future<void> writeCharacteristicWithResponse(msg) async {
-    await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
-    setState(() {
-      writeOutput = 'Ok';
-    });
-  }
+  // Future<void> writeCharacteristicWithResponse(msg) async {
+  //   await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
+  //   setState(() {
+  //     writeOutput = 'Ok';
+  //   });
+  // }
 
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
@@ -289,9 +297,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
       print('v');
 
     });
-    setState(() {
-      writeOutput = 'Done';
-    });
+    // setState(() {
+    //   writeOutput = 'Done';
+    // });
   }
 
   coommunicatewithDevice(msg) async {
@@ -303,6 +311,52 @@ return "okay";
 
   }
 
+
+  InitsetScallerMapper() async {
+
+    try {
+
+
+      coommunicatewithDevice(GetMapperCode).then((d){
+        print(d);
+        sleep(Duration(milliseconds:400));
+        coommunicatewithDevice(GetScallerCode).then((d){
+          sleep(Duration(milliseconds:400));
+          print('Yyyyyyyyy');
+
+          context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
+          context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1]);
+
+          MapperfixedExtentScrollController.animateToItem(
+            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ,
+            duration: Duration(milliseconds: 100),
+            curve: Curves.fastOutSlowIn,);
+
+
+          ScallerfixedExtentScrollController.animateToItem(
+            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
+            duration: Duration(milliseconds: 100),
+            curve: Curves.fastOutSlowIn,);
+        });
+
+      });
+
+
+
+
+
+    } catch (e) {
+      print(e);
+
+
+    }
+    // setState(() {
+    //   _btnController.stop();
+    //
+    // });
+
+  }
+
   setScallerMapper() async {
 
     try {
@@ -310,34 +364,20 @@ setState(() {
   _btnController.start();
 });
 
-        coommunicatewithDevice(mapsArray[ mapperList[Mapperselected].toString()]).then((d){
+        coommunicatewithDevice(mapsArray[context.read<CommandProvider>().scllerMapper.mapperSelected].toString()).then((d){
           print(d);
           sleep(Duration(milliseconds:400));
-           // readCharacteristic().then((value) {
-           //   // sleep(Duration(milliseconds:300));
-    coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]).then((d){});
-           //   //   print(d);
-           //   //   // sleep(Duration(milliseconds:300));
-           //   //   readCharacteristic();
-           //   // });
-           // });
+          coommunicatewithDevice(scalerArray[ int.parse(  context.read<CommandProvider>().scllerMapper.scallerSelected)]).then((d){});
+
         });
 
 
-// sleep(Duration(seconds:1));
-//     await   coommunicatewithDevice(scalerArray[ int.parse(scallerList[Scallerselected])]);
-//         sleep(Duration(seconds:1));
-//         print("8484848");
 
-        // await readCharacteristic();
-print("848ddd 4848");
+
 
     } catch (e) {
       print(e);
-      // setState(() {
-      //   // _btnController.error();
-      //
-      // });
+
 
     }
     setState(() {
@@ -347,78 +387,225 @@ print("848ddd 4848");
 
   }
 
-   subscribeCharacteristicStream()  {
-    // subscribeStream =
-       widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-         // setState(() {
-           subscitioResonse = result.toString();
-         // });
+  List<int> PrevDump = [];
 
 
-         print("read ${result}");
+  scanAndRespond(String intactString) async {
+
+print("intactString");
+print(intactString);
+print("#ERR_01#");
+
+
+    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')){
+      print("intactString        1111");
+
+      context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("#", ''));
+      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
+
+    }
+    else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("#", '')){
+      print("intactString        22222");
 
 
 
-         // setState(() {
-           readOutput  = result.toString();
-           String resultString = String.fromCharCodes(result);
-           print(resultString);
+      context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("#", ''));
+      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
 
-           if(resultString.startsWith("#MAP_")    ){
+    }
+    else if((intactString.startsWith( "#ERR_01")  && !context.read<CommandProvider>().scllerMapper.MAP_ERROR_IS_OPEN )){
+      print("intactString        33333");
 
-             maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
-
-           }
-           else   if(resultString.startsWith("#SCA_")    )
-
-           {
-             scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
-
-             // setState(() {
-             //   showSuccessMessage = true;
-             // });
-             // Future.delayed(Duration(seconds: 2), (){
-             //   setState(() {
-             //     showSuccessMessage = false;
-             //   });
-
-             // });
-           } else   if(resultString.startsWith("#WUT_")){}
-           else if (resultString.startsWith("^") && !errorMessageIsOpen ) {
-
-             // setState(() {
-               errorMessageIsOpen = true;
-             // });
-             print('resultString');
-             print(resultString);
-             AwesomeDialog(
-               context: context,
-               dialogType: DialogType.ERROR,
-               animType: AnimType.BOTTOMSLIDE,
-               title: 'Load Too High',
-               desc: resultString,
-               btnCancelOnPress: () {
-                 setState(() {
-                   errorMessageIsOpen = false;
-                 });
-               },
-               btnOkOnPress: () {
-                 setState(() {
-                   errorMessageIsOpen = false;
-                 });
-
-               },
-             ).show();
-           }
+      context.read<CommandProvider>().isMapperError();
+      print("777777");
+              await   AwesomeDialog(
+                   context: context,
+                   dialogType: DialogType.ERROR,
+                   animType: AnimType.BOTTOMSLIDE,
+                   title: 'Map Not Set',
+                   desc: context.read<CommandProvider>().getErrorString('#ERR_01#'),
+                   // btnCancelOnPress: () {
+                   //
+                   // },
+                   btnOkOnPress: () {
 
 
-         // });
+                   },
+                 ).show().then((value) {
+                context.read<CommandProvider>().MAPPER_ERROR_CLOSED();
 
-       });
-    // // setState(() {
-    subscitioResonse = 'Notification set';
+              });
+    }
+    else if((intactString.startsWith( "#ERR_02")  && !context.read<CommandProvider>().scllerMapper.SCALLER_ERROR_IS_OPEN  )  ){  //&& context.read<CommandProvider>().scllerMapper.ERROR==0
+      print("8888888``");
+
+
+context.read<CommandProvider>().isScallerError();
+      await   AwesomeDialog(
+        context: context,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Scaller Not Set',
+        desc: context.read<CommandProvider>().getErrorString('#ERR_02#'),
+        // btnCancelOnPress: () {
+        //
+        // },
+        btnOkOnPress: () {
+          // context.read<CommandProvider>().ERROR_CLOSED();
+
+        },
+      ).show().then((value) {
+        context.read<CommandProvider>().SCALLER_ERROR_CLOSED();
+
+      });
+
+    }
+
+
+  }
+
+  Future<void> subscribeCharacteristic() async {
+    subscribeStream =
+        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+
+          // print('readOutput   ${result}');
+
+
+          // setState(() {
+          context.read<CommandProvider>().setReadOutput( result.toString());
+          String resultString = String.fromCharCodes(result).split("\n")[0];
+          // print('readOutput CONVERTED    ${resultString}');
+
+          print('resultString');
+          print(resultString);
+          print('result');
+          print(result);
+          if(resultString == "201"    ) {
+            // context.read<CommandProvider>().   stopSendingRequests();
+
+          }
+          else    if(result.first==35  && result.last==10    ){
+
+            scanAndRespond(resultString);
+
+
+            // setTime(resultString);
+          }
+
+
+          else    if((result.first==35  && result.last!=10 )){
+
+            PrevDump  = result;
+            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+
+          }
+
+          else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
+            // print(PrevDump);
+            // print(resultString);
+
+            PrevDump  += result;
+            // print("FOUND SECOND PART -------------------------------_____=-");
+            print(PrevDump);
+
+
+
+
+            if((PrevDump.first==35  && PrevDump.last!=10 )){
+               resultString = String.fromCharCodes(PrevDump).split("\n")[0];
+               scanAndRespond(resultString);
+               ;
+              // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+
+            }
+          }
+
+
+
+
+        });
+    // setState(() {
+    // subscribeOutput = 'Notification set';
     // });
   }
+
+  //  subscribeCharacteristicStream()  {
+  //   // subscribeStream =
+  //      widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+  //        // setState(() {
+  //          subscitioResonse = result.toString();
+  //        // });
+  //
+  //
+  //        print("read ${result}");
+  //
+  //
+  //
+  //        // setState(() {
+  //          readOutput  = result.toString();
+  //          String resultString = String.fromCharCodes(result);
+  //          print(resultString);
+  //
+  //          if(resultString.startsWith("#MAP_")    ){
+  //
+  //            maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
+  //
+  //          }
+  //          else   if(resultString.startsWith("#SCA_")    )
+  //
+  //          {
+  //            scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
+  //
+  //            // setState(() {
+  //            //   showSuccessMessage = true;
+  //            // });
+  //            // Future.delayed(Duration(seconds: 2), (){
+  //            //   setState(() {
+  //            //     showSuccessMessage = false;
+  //            //   });
+  //
+  //            // });
+  //          } else   if(resultString.startsWith("#WUT_")){}
+  //          else if (resultString.startsWith("^") && !errorMessageIsOpen ) {
+  //
+  //            // setState(() {
+  //              errorMessageIsOpen = true;
+  //            // });
+  //            print('resultString');
+  //            print(resultString);
+  //            AwesomeDialog(
+  //              context: context,
+  //              dialogType: DialogType.ERROR,
+  //              animType: AnimType.BOTTOMSLIDE,
+  //              title: 'Load Too High',
+  //              desc: resultString,
+  //              btnCancelOnPress: () {
+  //                setState(() {
+  //                  errorMessageIsOpen = false;
+  //                });
+  //              },
+  //              btnOkOnPress: () {
+  //                setState(() {
+  //                  errorMessageIsOpen = false;
+  //                });
+  //
+  //              },
+  //            ).show();
+  //          }
+  //
+  //
+  //        // });
+  //
+  //      });
+  //   // // setState(() {
+  //   subscitioResonse = 'Notification set';
+  //   // });
+  // }
+
+
+
   @override
   Widget build(BuildContext context) {
     print(widget.viewModel.connectionStatus );
@@ -594,14 +781,14 @@ print("848ddd 4848");
           children: [
 
 
-       Text(subscitioResonse,
 
-              style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
 
             Text(
               "Status: ${widget.viewModel.connectionStatus}",
               style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
-            showSuccessMessage?    Padding(
+            // showSuccessMessage todo
+
+            context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -703,6 +890,30 @@ print("848ddd 4848");
               ),
             ),
 
+             Padding(
+               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
+
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.end,
+                 children: [
+                   GestureDetector(
+                     onTap: InitsetScallerMapper,
+                     child: Container(
+
+                         decoration: BoxDecoration(
+
+                             color: Colors.white,
+                             borderRadius: new BorderRadius.all(Radius.circular(50.0))),
+
+                     child: Padding(
+                       padding: const EdgeInsets.all(8.0),
+                       child: Icon(Icons.sync_outlined,size: 30),
+                     )),
+                   )
+                 ],
+               ),
+             ),
+
              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -728,7 +939,7 @@ print("848ddd 4848");
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Map Select"+mapsArray.keys.elementAt(int.parse(maperResponse)<0?0:int.parse(maperResponse)-1),
+              "Map Select: "+   mapperList[int.parse(context.watch<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ] ,
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,
@@ -747,7 +958,7 @@ print("848ddd 4848");
                 borderRadius: new BorderRadius.all(Radius.circular(10.0))),
             child: Center(
               child: Text(
-                mapperList[Mapperselected].toString(),
+    context.watch<CommandProvider>().scllerMapper.mapperSelected,
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 45,
@@ -763,9 +974,9 @@ print("848ddd 4848");
                 quarterTurns: 3,
                 child: ListWheelScrollView(
                   onSelectedItemChanged: (x) {
-                    setState(() {
-                      Mapperselected = x;
-                    });
+
+                    context.read<CommandProvider>().setMapper(mapperList[x]);
+
                   },
                   controller: MapperfixedExtentScrollController,
                   children: mapperList.map((mp) {
@@ -776,11 +987,11 @@ print("848ddd 4848");
                           // width:(selected-(mapperList.indexOf(month))).abs()==1? 110:  (selected-(mapperList.indexOf(month))).abs()==0? 120:90,
 
                           decoration: BoxDecoration(
-                              color: (Mapperselected - (mapperList.indexOf(mp)))
+                              color: (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
                                           .abs() ==
                                       1
                                   ? lightBlueColor
-                                  : (Mapperselected - (mapperList.indexOf(mp)))
+                                  : (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
                                               .abs() ==
                                           0
                                       ? blueColor
@@ -795,7 +1006,7 @@ print("848ddd 4848");
                                 style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 30,
-                                    color: (Mapperselected -
+                                    color: (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) -
                                                     (mapperList.indexOf(mp)))
                                                 .abs() ==
                                             1
@@ -822,7 +1033,7 @@ print("848ddd 4848");
            Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Scaler Select"+scallerResponse.toString(),
+              "Scaler Select: "+context.watch<CommandProvider>().scllerMapper.RESPONSE_scallerSelected,
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,
@@ -841,7 +1052,7 @@ print("848ddd 4848");
                 borderRadius: new BorderRadius.all(Radius.circular(10.0))),
             child: Center(
               child: Text(
-                scallerList[Scallerselected].toString(),
+                context.watch<CommandProvider>().scllerMapper.scallerSelected,
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 45,
@@ -861,9 +1072,9 @@ print("848ddd 4848");
 
 
     onSelectedItemChanged: (x) {
-                    setState(() {
-                      Scallerselected = x;
-                    });
+
+      context.read<CommandProvider>().setScaller(scallerList[x]);
+
                   },
                   controller: ScallerfixedExtentScrollController,
                   children: scallerList.map((mp) {
@@ -876,9 +1087,9 @@ print("848ddd 4848");
 
                           decoration: BoxDecoration(
                               color:
-                                  (Scallerselected - (scallerList.indexOf(mp))).abs() == 1
+                                  ( int.parse(context.watch<CommandProvider>().scllerMapper.scallerSelected) - (scallerList.indexOf(mp))).abs() == 1
                                       ? lightBlueColor
-                                      : (Scallerselected - (scallerList.indexOf(mp))).abs() == 0
+                                      : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
                                           ? blueColor
                                           : Colors.white,
                               borderRadius:
@@ -891,7 +1102,7 @@ print("848ddd 4848");
                                 style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 30,
-                                    color: (Scallerselected -
+                                    color: (scalerArray.indexOf( context.watch<CommandProvider>().scllerMapper.scallerSelected)  -
                                                     (scallerList.indexOf(mp)))
                                                 .abs() ==
                                             1
