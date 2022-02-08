@@ -251,11 +251,14 @@ class _Welcome1State extends State<Welcome1> {
 
    setTime(resultString) async {
    if(  context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("#", ""))){
-     await writeCharacteristicWithoutResponse(endTimerMSG).then((value){
+     Navigator.push(
+         context,
+         MaterialPageRoute(
+           builder: (context) => ScallerMapperManager(
+             characteristic:widget.characteristic,
+           ),
+         )).then((value) {
 
-       // print("write ${msg}");
-
-       // readCharacteristic();
      });
    }
    }
@@ -473,30 +476,7 @@ class _Welcome1State extends State<Welcome1> {
                 ),
 
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text("readOutput   "+'commandProvider.readOutput',
 
-                      style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text( "writeOutput   "+writeOutput,
-
-                      style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text( "subscribeOutput   "+subscribeOutput,
-
-                      style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
-                  ),
-                ),
 
 
               ],
@@ -605,7 +585,10 @@ class _Welcome1State extends State<Welcome1> {
                           ),
                           height: 40,
                           child: GestureDetector(
-                            child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0,color: Colors.white,fontWeight:FontWeight.bold),),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                              child: Text('SKIP TO SCALLER MAPPER', style: TextStyle(fontSize: 20.0,color: Colors.white,fontWeight:FontWeight.bold),),
+                            ),
                             // textColor: Colors.white,
                             onTap: () async {
                               context.read<CommandProvider>().    startMovingTonextScreen();
