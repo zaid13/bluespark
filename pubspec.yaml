@@ -39,7 +39,8 @@ dev_dependencies:
   awesome_dialog: ^2.1.2
   loader_overlay: ^2.0.0-nullsafety.0
   modal_progress_hud_nsn: ^0.1.0-nullsafety-1
-
+  location: ^4.3.0
+  screen: ^0.0.5
 
 
 
@@ -55,6 +56,9 @@ flutter:
   uses-material-design: true
 
   assets:
+    - images/main_screen/
+    - images/Montserrat/
+    - images/Welcome/
     - images/
 
   fonts:

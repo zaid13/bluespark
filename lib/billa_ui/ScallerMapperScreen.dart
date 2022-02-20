@@ -27,8 +27,11 @@ class ScallerMapperManager extends StatelessWidget {
   const ScallerMapperManager({
     required this.characteristic,
     Key? key,
+    required this.isScaler
   }) : super(key: key);
   final QualifiedCharacteristic characteristic;
+  final bool isScaler;
+
 
 
 
@@ -59,6 +62,7 @@ class ScallerMapperManager extends StatelessWidget {
                   deviceConnector: deviceConnector,
                   discoverServices: () =>
                       serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
+              isScaler: isScaler,
             ))),
   );
 
@@ -92,12 +96,14 @@ class ScallerMapperScreen extends StatefulWidget {
     required this.writeWithoutResponse,
     required this.subscribeToCharacteristic,
     required this.viewModel,
+    required this.isScaler
 }
       );
 
 
 
 
+  final bool isScaler;
 
   final DeviceInteractionViewModel viewModel;
 
@@ -146,7 +152,13 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
   @override
   void initState() {
+
+
+
+
     super.initState();
+
+
     subscribeCharacteristic();
 
 
@@ -163,7 +175,12 @@ class _Slider1State extends State<ScallerMapperScreen> {
     // ScallerfixedExtentScrollController =
     // new FixedExtentScrollController(initialItem: int.parse( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected));
 
+
+    Future.delayed(Duration(seconds:5),(){
+      context.read<CommandProvider>(). setSwipeToChangeIsDisable();
+    });
   }
+
 
 
   @override
@@ -324,19 +341,36 @@ return "okay";
           sleep(Duration(milliseconds:400));
           print('Yyyyyyyyy');
 
-          context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
+
+
+
           context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1]);
+
+
+          if(widget.isScaler){
+            context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
+
+          }
+
+
 
           MapperfixedExtentScrollController.animateToItem(
             int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ,
             duration: Duration(milliseconds: 100),
             curve: Curves.fastOutSlowIn,);
 
+          if(widget.isScaler){
 
-          ScallerfixedExtentScrollController.animateToItem(
-            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
-            duration: Duration(milliseconds: 100),
-            curve: Curves.fastOutSlowIn,);
+            ScallerfixedExtentScrollController.animateToItem(
+              int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
+              duration: Duration(milliseconds: 100),
+              curve: Curves.fastOutSlowIn,);
+
+
+          }
+
+
+
         });
 
       });
@@ -366,8 +400,11 @@ setState(() {
 
         coommunicatewithDevice(mapsArray[context.read<CommandProvider>().scllerMapper.mapperSelected].toString()).then((d){
           print(d);
-          sleep(Duration(milliseconds:400));
-          coommunicatewithDevice(scalerArray[ int.parse(  context.read<CommandProvider>().scllerMapper.scallerSelected)]).then((d){});
+          if(   widget.isScaler){
+            sleep(Duration(milliseconds:400));
+            coommunicatewithDevice(scalerArray[ int.parse(  context.read<CommandProvider>().scllerMapper.scallerSelected)]).then((d){});
+
+          }
 
         });
 
@@ -397,7 +434,7 @@ print(intactString);
 print("#ERR_01#");
 
 
-    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')){
+    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')   && widget.isScaler){
       print("intactString        1111");
 
       context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("#", ''));
@@ -445,7 +482,7 @@ context.read<CommandProvider>().isScallerError();
         context: context,
         dialogType: DialogType.ERROR,
         animType: AnimType.BOTTOMSLIDE,
-        title: 'Scaller Not Set',
+        title: 'Scaler Not Set',
         desc: context.read<CommandProvider>().getErrorString('#ERR_02#'),
         // btnCancelOnPress: () {
         //
@@ -465,6 +502,7 @@ context.read<CommandProvider>().isScallerError();
   }
 
   Future<void> subscribeCharacteristic() async {
+    context.watch<CommandProvider>().setSwipeToChangeIsEnable();
     subscribeStream =
         widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
 
@@ -605,6 +643,13 @@ context.read<CommandProvider>().isScallerError();
   // }
 
 
+  showPopUp(String heading){
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => _buildAboutDialog(context,heading),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -613,6 +658,8 @@ context.read<CommandProvider>().isScallerError();
       restartApp();
 
     }
+
+
 
     return SafeArea(
       child: Scaffold(
@@ -635,11 +682,21 @@ context.read<CommandProvider>().isScallerError();
                     Container(
                       height: 50,
                     ),
+
+
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+
+
+
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('images/main_screen/logo.png',),
+                          )),
                           GestureDetector(
                             onTap: () {
                               toggleDrawer();
@@ -657,6 +714,9 @@ context.read<CommandProvider>().isScallerError();
                       height: 100,
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("Step Guide");
+                      },
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -673,6 +733,9 @@ context.read<CommandProvider>().isScallerError();
                       height: 0.1,
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("User Guide");
+                      },
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -686,6 +749,9 @@ context.read<CommandProvider>().isScallerError();
                       ),
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("Using the Bypass Plug");
+                      },
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -699,6 +765,9 @@ context.read<CommandProvider>().isScallerError();
                       ),
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("Safety Information");
+                      },
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -712,6 +781,9 @@ context.read<CommandProvider>().isScallerError();
                       ),
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("App Information");
+                      },
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -725,6 +797,10 @@ context.read<CommandProvider>().isScallerError();
                       ),
                     ),
                     ListTile(
+                      onTap: (){
+                        showPopUp("Contact BLUESPARK");
+                      },
+
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
@@ -777,15 +853,17 @@ context.read<CommandProvider>().isScallerError();
         // appBar:AppBar(backgroundColor: blackColor, elevation: 0.0,),
 
         body: Container(
-            child: Column(
+            child: ListView(
           children: [
 
 
 
 
-            Text(
-              "Status: ${widget.viewModel.connectionStatus}",
-              style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
+            // Center(
+            //   child: Text(
+            //     "Status: ${widget.viewModel.connectionStatus}",
+            //     style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
+            // ),
             // showSuccessMessage todo
 
             context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
@@ -855,6 +933,9 @@ context.read<CommandProvider>().isScallerError();
                 ],
               ),
             ):Container(),
+
+
+
             Padding(
               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
               child: Container(
@@ -864,15 +945,22 @@ context.read<CommandProvider>().isScallerError();
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
+                    context.watch<CommandProvider>().swipeToChangeIsEnable?    Text(
                       "Swipe to change",
                       style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 20,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
+                    ):Text(
+                      'Click "Done" to update settings',
+                      style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
-                    Padding(
+                    context.watch<CommandProvider>().swipeToChangeIsEnable?     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         decoration: BoxDecoration(
@@ -884,47 +972,24 @@ context.read<CommandProvider>().isScallerError();
                           height: 40,
                         ),
                       ),
-                    )
+                    ):Container( height: 40,)
                   ],
                 ),
               ),
             ),
 
-             Padding(
-               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
 
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.end,
-                 children: [
-                   GestureDetector(
-                     onTap: InitsetScallerMapper,
-                     child: Container(
 
-                         decoration: BoxDecoration(
+             Column(
+               mainAxisAlignment: MainAxisAlignment.spaceAround,
+               children: [
+                 mapperWidget(),
+                widget.isScaler?   ScallerWidget():Container(),
+                 Container(height: 50,),
+                 doneButton()
 
-                             color: Colors.white,
-                             borderRadius: new BorderRadius.all(Radius.circular(50.0))),
-
-                     child: Padding(
-                       padding: const EdgeInsets.all(8.0),
-                       child: Icon(Icons.sync_outlined,size: 30),
-                     )),
-                   )
-                 ],
-               ),
+               ],
              ),
-
-             Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    mapperWidget(),
-                    ScallerWidget(),
-                    doneButton()
-
-                  ],
-                ),
-              ),
 
           ],
         )),
@@ -974,7 +1039,6 @@ context.read<CommandProvider>().isScallerError();
                 quarterTurns: 3,
                 child: ListWheelScrollView(
                   onSelectedItemChanged: (x) {
-
                     context.read<CommandProvider>().setMapper(mapperList[x]);
 
                   },
@@ -1152,3 +1216,70 @@ context.read<CommandProvider>().isScallerError();
   }
 }
 
+Widget _buildAboutDialog(BuildContext context,String heading ) {
+  return AlertDialog(
+      title:  Text(heading),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildAboutText(),
+          Expanded(child: _buildLogoAttribution()),
+        ],
+      ),
+      actions: <Widget>[
+  new FlatButton(
+  onPressed: () {
+    Navigator.of(context).pop();
+  },
+  textColor: Theme.of(context).primaryColor,
+  child: const Text('Okay, got it!'),
+  ),
+  ],
+  );
+}
+
+
+
+Widget _buildAboutText() {
+  return new RichText(
+    text: new TextSpan(
+      text: 'Android Popup Menu displays the menu below the anchor text if space is available otherwise above the anchor text. It disappears if you click outside the popup menu.\n\n'*3,
+      style: const TextStyle(color: Colors.black87),
+      children: <TextSpan>[
+        const TextSpan(text: 'The app was developed with '),
+        new TextSpan(
+          text: 'Flutter',
+
+        ),
+        const TextSpan(
+          text: ' and it\'s open source; check out the source '
+              'code yourself from ',
+        ),
+        new TextSpan(
+          text: 'www.codesnippettalk.com',
+
+        ),
+        const TextSpan(text: '.'),
+      ],
+    ),
+  );
+}
+
+Widget _buildLogoAttribution() {
+  return new Padding(
+    padding: const EdgeInsets.only(top: 16.0),
+    child: new Row(
+      children: <Widget>[
+
+        const Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: const Text(
+            'Popup window ',
+            style: const TextStyle(fontSize: 12.0),
+          ),
+        ),
+      ],
+    ),
+  );
+}

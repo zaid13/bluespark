@@ -15,13 +15,18 @@ import 'package:provider/provider.dart';
 import 'billa_ui/SplashScreen.dart';
 import 'billa_ui/ScallerMapperScreen.dart';
 import 'billa_ui/WelcomeScreen.dart';
+import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
+import 'package:screen/screen.dart';
 
 const _themeColor = Colors.lightGreen;
 
 
-void main() {
+Future<void> main() async {
+
+  Screen.keepOn(true);
   WidgetsFlutterBinding.ensureInitialized();
+  await   getLocation();
 
   final _bleLogger = BleLogger();
   final _ble = FlutterReactiveBle();
@@ -90,6 +95,9 @@ class HomeScreen extends StatelessWidget {
 
 
           if (status == BleStatus.ready) {
+
+
+
             return       SpalshScreenStateManager();
             return      DeviceListScreen1(); //SpalshScreenStateManager();
 

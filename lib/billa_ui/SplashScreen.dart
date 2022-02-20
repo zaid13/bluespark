@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bluespark/billa_ui/WelcomeScreen.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
@@ -10,6 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
+
+import 'ScallerMapperScreen.dart';
 
 
 
@@ -163,6 +167,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
   }
 
 
+  bool push = true;
   @override
   Widget build(BuildContext context) {
 
@@ -201,44 +206,26 @@ class _SpalshScreenState extends State<SpalshScreen> {
 
                 List<DiscoveredService> discoveredSevices = await widget.viewModel.discoverServices();
 
-//       discoveredSevices.forEach((element) {
-//         print('             serviceId');
-//         print(element.serviceId);
-//
-//
-//
-//         element.characteristics.forEach((characteristic){
-//           print('   characteristic.characteristicId');
-//           print(characteristic.characteristicId);
-//           print(RequiredCharacteristicId);
-//           print(RequiredCharacteristicId==characteristic.characteristicId);
-//
-//           print('   characteristic.isWritableWithResponse');
-//           print(characteristic.isWritableWithResponse);
-// if(characteristic.characteristicId==RequiredCharacteristicId  &&  RequiredServiceId == element.serviceId){
-//
-// }
-//
-//
-//
-//
-//         });
-//       });
+
+if(push) {
+  push = false;
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            WelcomeStateManager(
+              characteristic: QualifiedCharacteristic(
+                characteristicId: discoveredSevices.last.characteristics.last
+                    .characteristicId,
+                serviceId: discoveredSevices.last.serviceId,
+                deviceId: deviceId,
+
+              ),
+            ),
+      ));
+}
 
 
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WelcomeStateManager(
-                        characteristic:QualifiedCharacteristic(
-                          characteristicId: discoveredSevices.last.characteristics.last.characteristicId,
-                          serviceId: discoveredSevices.last.serviceId,
-                          deviceId: deviceId,
-
-                        ),
-                      ),
-                    ));
 
               }
 
@@ -276,20 +263,22 @@ class _SpalshScreenState extends State<SpalshScreen> {
       body: Stack(
         children: [
           Center(
-            child: Image.asset('images/main_screen/logo.png')),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('images/main_screen/logo.png'),
+                Container(
+                  height: 10,
+                ),
+                Text(
+                  "Loading...",
+                  style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color:Colors.white,fontWeight:FontWeight.bold),),
 
-          GestureDetector(
-            onTap: () {
-             widget. disconnect(deviceId);
+              ],
+            )),
 
-            },
-            child: Container(
-              color:Colors.deepOrangeAccent,
-              height: 100,
-              width: 100,
-              child:Text("Retry")
-            ),
-          )
+
         ],
       ),
     );

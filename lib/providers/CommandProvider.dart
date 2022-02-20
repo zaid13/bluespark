@@ -8,15 +8,40 @@ class CommandProvider with ChangeNotifier {
 
   CommandProvider();
   String readOutput = "";
-  String timeRemaining = "31";
+  String timeRemaining = "0";
   bool cancelledRequest = false;
   bool MovingToNextScreen = false;
+  bool swipeToChangeIsEnable = true;
 
 
   ScallerMapper scllerMapper = ScallerMapper();
 
 
 
+  setSwipeToChangeIsEnable(){
+    swipeToChangeIsEnable = true;
+    notifyListeners();
+  }
+
+   setSwipeToChangeIsDisable(){
+     swipeToChangeIsEnable = false;
+     notifyListeners();
+  }
+  isScallerSet(){
+
+    scllerMapper.isScallerSet = true;
+    notifyListeners();
+  }
+
+  isScaller(){
+    scllerMapper. isScaller = true;
+    notifyListeners();
+  }
+
+  isNotScaller(){
+    scllerMapper. isScaller = false;
+    notifyListeners();
+  }
 
   getErrorString(errorKey){
 
@@ -145,14 +170,14 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  decreasetimeRemaining() {
-    int intTimeReaamiaining = int.parse(timeRemaining);
-    if (intTimeReaamiaining > 0) {
-      intTimeReaamiaining++;
-    }
-    timeRemaining = intTimeReaamiaining.toString();
-    notifyListeners();
-  }
+  // decreasetimeRemaining() {
+  //   int intTimeReaamiaining = int.parse(timeRemaining);
+  //   if (intTimeReaamiaining > 0) {
+  //     intTimeReaamiaining++;
+  //   }
+  //   timeRemaining = intTimeReaamiaining.toString();
+  //   notifyListeners();
+  // }
 
   stopSendingRequests() {
     timeRemaining = "0";
@@ -187,13 +212,13 @@ class CommandProvider with ChangeNotifier {
     readOutput = newPOutput;
     notifyListeners();
   }
-
-  restartListening() {
-    timeRemaining = "31";
-    cancelledRequest = false;
-
-    notifyListeners();
-  }
+  //
+  // restartListening() {
+  //   timeRemaining = "31";
+  //   cancelledRequest = false;
+  //
+  //   notifyListeners();
+  // }
 
   // write(){}
   // Future<void> _getDeviceType() async {}
@@ -203,6 +228,8 @@ class CommandProvider with ChangeNotifier {
   // Future<void> _IntializeBlueSparkService() async {}
   //
   //
+
+
 
 }
 
@@ -217,7 +244,8 @@ bool isNumeric(String s) {
 class ScallerMapper{
 
   bool isRequesting = false;
-  bool onlyScaller = false;
+  bool isScaller = true;
+  bool isScallerSet = false;
   bool UpdateSucessfully = false;
   bool MAP_ERROR_IS_OPEN = false;
   bool SCALLER_ERROR_IS_OPEN = false;

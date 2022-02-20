@@ -34,3 +34,4 @@ Map<String,String> scallerMapperErrorTable = {
 
 String GetScallerCode = "203";
 String GetMapperCode = "204";
+String GetDviceType = "105";
