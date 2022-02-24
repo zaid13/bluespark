@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 
+import '../utils.dart';
+
 class BleScanner implements ReactiveState<BleScannerState> {
 
 
@@ -42,9 +44,12 @@ class BleScanner implements ReactiveState<BleScannerState> {
       if (knownDeviceIndex >= 0) {
         _devices[knownDeviceIndex] = device;
       } else {
-        if(device.name=="BT05"){
-          btfound = device;
+        for (String device_name in KnownDeviceList){
+          if(device_name == device.name){
+            btfound = device;
+          }
         }
+
         _devices.add(device);
       }
       _pushState();

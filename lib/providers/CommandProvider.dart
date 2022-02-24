@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 
 class CommandProvider with ChangeNotifier {
 
+  String time = "25";
+  late Function fun ;
+
+
 
   CommandProvider();
   String readOutput = "";

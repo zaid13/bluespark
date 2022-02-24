@@ -26,6 +26,7 @@ Future<void> main() async {
 
   Screen.keepOn(true);
   WidgetsFlutterBinding.ensureInitialized();
+
   await   getLocation();
 
   final _bleLogger = BleLogger();

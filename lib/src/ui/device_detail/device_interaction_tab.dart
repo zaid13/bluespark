@@ -37,7 +37,7 @@ class DeviceInteractionTab extends StatelessWidget {
 @immutable
 @FunctionalData()
 class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
-  const DeviceInteractionViewModel({
+   DeviceInteractionViewModel({
     required this.deviceId,
     required this.connectionStatus,
     required this.deviceConnector,
@@ -45,6 +45,8 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
   });
 
   final String deviceId;
+  bool isconnecting = true;
+
     final DeviceConnectionState connectionStatus;
   final BleDeviceConnector deviceConnector;
   @CustomEquality(Ignore())
@@ -56,10 +58,13 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
 
 
   Future<void> connect() async {
-    print("print function in DeviceInteractionViewModel");
 
-   await  deviceConnector.connect(deviceId);
+    if(isconnecting ) {
+     isconnecting = false;
+      print("print function in DeviceInteractionViewModel");
 
+      await deviceConnector.connect(deviceId);
+    }
   }
 
   void disconnect() {

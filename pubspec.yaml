@@ -24,23 +24,27 @@ dependencies:
   hexcolor: ^2.0.5
   carousel_slider: ^4.0.0
   horizontal_picker: ^1.2.0
-
-
-  
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_lints: ^1.0.0
   build_runner: ^2.1.4
   dependency_validator: ^3.1.0
   functional_data_generator: ^1.1.2
   flutter_restart: ^0.0.3
+
   rounded_loading_button: ^2.0.8
   awesome_dialog: ^2.1.2
   loader_overlay: ^2.0.0-nullsafety.0
   modal_progress_hud_nsn: ^0.1.0-nullsafety-1
   location: ^4.3.0
   screen: ^0.0.5
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.9.2"
+
+
 
 
 
@@ -75,3 +79,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/applogo.jpeg"
