@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bluespark/src/ble/reactive_state.dart';
 import 'package:bluespark/src/ui/device_detail/device_detail_screen.dart';
+import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';

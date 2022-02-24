@@ -11,22 +11,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'billa_ui/SplashScreen.dart';
 import 'billa_ui/ScallerMapperScreen.dart';
 import 'billa_ui/WelcomeScreen.dart';
 import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
-import 'package:screen/screen.dart';
+
 
 const _themeColor = Colors.lightGreen;
 
 
 Future<void> main() async {
 
-  Screen.keepOn(true);
-  WidgetsFlutterBinding.ensureInitialized();
 
+
+  WidgetsFlutterBinding.ensureInitialized();
+  Wakelock.toggle(enable:true);
   await   getLocation();
 
   final _bleLogger = BleLogger();

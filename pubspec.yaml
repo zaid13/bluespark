@@ -35,7 +35,8 @@ dependencies:
   loader_overlay: ^2.0.0-nullsafety.0
   modal_progress_hud_nsn: ^0.1.0-nullsafety-1
   location: ^4.3.0
-  screen: ^0.0.5
+#  screen: ^0.0.5
+  wakelock: ^0.6.1+1
 
 
 

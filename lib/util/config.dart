@@ -35,3 +35,7 @@ Map<String,String> scallerMapperErrorTable = {
 String GetScallerCode = "203";
 String GetMapperCode = "204";
 String GetDviceType = "105";
+
+
+void log(String text) => print("[FlutterReactiveBLEApp] $text");
+List<String> KnownDeviceList = ["BT05","TUNINGBOX","HM-10"];

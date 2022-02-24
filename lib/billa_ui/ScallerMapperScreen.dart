@@ -146,7 +146,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
   // bool showSuccessMessage = false;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
-  // String subscitioResonse ="NO RESPONSE";
+  // String subscitioResonse =Z"NO RESPONSE";
 
   // bool errorMessageIsOpen = false;
 
@@ -392,7 +392,7 @@ return "okay";
   }
 
   setScallerMapper() async {
-
+    context.read<CommandProvider>().setSwipeToChangeIsEnable();
     try {
 setState(() {
   _btnController.start();
@@ -939,11 +939,13 @@ context.read<CommandProvider>().isScallerError();
             Padding(
               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
               child: Container(
+                alignment:Alignment.center,
+                width: MediaQuery.of(context).size.width*0.9,
                 decoration: BoxDecoration(
                     color: blueColor,
                     borderRadius: new BorderRadius.all(Radius.circular(50.0))),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
                   children: [
                     context.watch<CommandProvider>().swipeToChangeIsEnable?    Text(
                       "Swipe to change",
@@ -956,7 +958,7 @@ context.read<CommandProvider>().isScallerError();
                       'Click "Done" to update settings',
                       style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 20,
+                          fontSize: 18,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
@@ -1059,7 +1061,7 @@ context.read<CommandProvider>().isScallerError();
                                               .abs() ==
                                           0
                                       ? blueColor
-                                      : Colors.white,
+                                      :lightBlueColor,
                               borderRadius:
                                   new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
@@ -1070,12 +1072,15 @@ context.read<CommandProvider>().isScallerError();
                                 style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 30,
-                                    color: (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) -
-                                                    (mapperList.indexOf(mp)))
-                                                .abs() ==
-                                            1
+                                    color: (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
+                                        .abs() ==
+                                        1
                                         ? Colors.black
-                                        : Colors.white,
+                                        : (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
+                                        .abs() ==
+                                        0
+                                        ? Colors.white
+                                        :Colors.black,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1155,7 +1160,7 @@ context.read<CommandProvider>().isScallerError();
                                       ? lightBlueColor
                                       : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
                                           ? blueColor
-                                          : Colors.white,
+                                          : lightBlueColor,
                               borderRadius:
                                   new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
@@ -1166,12 +1171,11 @@ context.read<CommandProvider>().isScallerError();
                                 style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 30,
-                                    color: (scalerArray.indexOf( context.watch<CommandProvider>().scllerMapper.scallerSelected)  -
-                                                    (scallerList.indexOf(mp)))
-                                                .abs() ==
-                                            1
+                                    color: ( int.parse(context.watch<CommandProvider>().scllerMapper.scallerSelected) - (scallerList.indexOf(mp))).abs() == 1
                                         ? Colors.black
-                                        : Colors.white,
+                                        : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
+                                        ? Colors.white
+                                        : Colors.black,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
