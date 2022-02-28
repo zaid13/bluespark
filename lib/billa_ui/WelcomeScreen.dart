@@ -552,123 +552,127 @@ futureCall() async {
                     ),
                   ),
                   Container(height: 100,),
-                  ModalProgressHUD(
-                      inAsyncCall:      context.watch<CommandProvider>().MovingToNextScreen,
+                  Container(
+                    height:MediaQuery.of(context).size.height*0.75<500 ?600  :MediaQuery.of(context).size.height*0.75,
+
+                    child: ModalProgressHUD(
+                        inAsyncCall:      context.watch<CommandProvider>().MovingToNextScreen,
 
 
-                      child:   Container(
-                          height:MediaQuery.of(context).size.height*0.75<500 ?600  :MediaQuery.of(context).size.height*0.75,
-                          width: MediaQuery.of(context).size.width ,
-                          color: Colors.blue,
-                          child:Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                        child:   Container(
+                            height:MediaQuery.of(context).size.height*0.75<500 ?600  :MediaQuery.of(context).size.height*0.75,
+                            width: MediaQuery.of(context).size.width ,
+                            color: Colors.blue,
+                            child:Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
 
-                            children: [
+                              children: [
 
 
-                              Container(
-                                alignment: Alignment.center,
-                                width: 230,
-                                height: 40,
-                                child:Text('Cold Start Delay',
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: 230,
+                                  height: 40,
+                                  child:Text('Cold Start Delay',
 
-                                  style: TextStyle(fontFamily: 'Montserrat',fontSize: 30,color: Colors.white,fontWeight:FontWeight.bold),),
+                                    style: TextStyle(fontFamily: 'Montserrat',fontSize: 30,color: Colors.white,fontWeight:FontWeight.bold),),
 
-                                // style: TextStyle(fontSize: 20.0,color: Colors.white),)
-                              ),
-
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.circle,color: Colors.green,size: 20,),
-                                  Container(width: 5,),
-                                  Text('ACTIVE',
-                                    style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
-                                ],
-                              ),
-                              Container(
-
-                                height: 350,
-                                child: Container(
-                                    width: 300,
-                                    height: 300,
-                                    alignment:Alignment.center ,
-
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.black87),
-
-                                    child:     Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Text( processNumber(),style: TextStyle(color:Colors.white,fontSize: 60),),
-                                        Text("Remaining",style: TextStyle(color:Colors.white,fontSize: 30),),
-                                      ],
-                                    )
-
+                                  // style: TextStyle(fontSize: 20.0,color: Colors.white),)
                                 ),
-                              ),
+
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.circle,color: Colors.green,size: 20,),
+                                    Container(width: 5,),
+                                    Text('ACTIVE',
+                                      style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: Colors.white,fontWeight:FontWeight.bold),),
+                                  ],
+                                ),
+                                Container(
+
+                                  height: 350,
+                                  child: Container(
+                                      width: 300,
+                                      height: 300,
+                                      alignment:Alignment.center ,
+
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black87),
+
+                                      child:     Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text( processNumber(),style: TextStyle(color:Colors.white,fontSize: 60),),
+                                          Text("Remaining",style: TextStyle(color:Colors.white,fontSize: 30),),
+                                        ],
+                                      )
+
+                                  ),
+                                ),
 
 
-                              GestureDetector(
+                                GestureDetector(
 
-                                onTap: () async {
-                                  context.read<CommandProvider>().    startMovingTonextScreen();
-                                  context.read<CommandProvider>() .stopSendingRequests();
-                                  await writeCharacteristicWithoutResponse(endTimerMSG).then((value){
+                                  onTap: () async {
+                                    context.read<CommandProvider>().    startMovingTonextScreen();
+                                    context.read<CommandProvider>() .stopSendingRequests();
+                                    await writeCharacteristicWithoutResponse(endTimerMSG).then((value){
 
-                                    // setState(() {
-                                    //   // commandProvider.stopSendingRequests();  todo
-                                    //   // commandProvider.cancelledRequest = true;
-                                    //   //
-                                    //   // commandProvider.   timeRemaining = "0";
-                                    // });
+                                      // setState(() {
+                                      //   // commandProvider.stopSendingRequests();  todo
+                                      //   // commandProvider.cancelledRequest = true;
+                                      //   //
+                                      //   // commandProvider.   timeRemaining = "0";
+                                      // });
 
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ScallerMapperManager(
-                                              characteristic:widget.characteristic,
-                                              isScaler:   context.read<CommandProvider>().scllerMapper.isScaller
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ScallerMapperManager(
+                                                characteristic:widget.characteristic,
+                                                isScaler:   context.read<CommandProvider>().scllerMapper.isScaller
 
-                                          ),
-                                        )).then((value) {
+                                            ),
+                                          )).then((value) {
 
+                                      });
+
+                                      context.read<CommandProvider>().stopMovingTonextScreen();
+
+                                      print("write }");
+
+                                      // readCharacteristic();
                                     });
 
-                                    context.read<CommandProvider>().stopMovingTonextScreen();
-
-                                    print("write }");
-
-                                    // readCharacteristic();
-                                  });
 
 
+                                  },
+                                  child: Container(
 
-                                },
-                                child: Container(
-
-                                  decoration: new BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: new BorderRadius.all( Radius.circular(10.0))
-                                  ),
-                                  // height: `50`,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
-                                    child: Text('Skip Cold Start Delay', style: TextStyle(fontSize: 20.0,color: Colors.white,fontWeight:FontWeight.bold),),
+                                    decoration: new BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: new BorderRadius.all( Radius.circular(10.0))
+                                    ),
+                                    // height: `50`,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
+                                      child: Text('Skip Cold Start Delay', style: TextStyle(fontSize: 20.0,color: Colors.white,fontWeight:FontWeight.bold),),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(height: 30,),
+                                Container(height: 30,),
 
-                            ],
-                          ),
-                      )
+                              ],
+                            ),
+                        )
 
 
+                    ),
                   ),
 
 

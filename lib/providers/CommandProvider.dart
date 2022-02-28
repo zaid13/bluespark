@@ -42,11 +42,11 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
-
-  setSwipeToChangeIsEnable(){
-    swipeToChangeIsEnable = 1;
-    notifyListeners();
-  }
+  //
+  // setSwipeToChangeIsEnable(){
+  //   swipeToChangeIsEnable = 1;
+  //   notifyListeners();
+  // }
 
    setSwipeToChangeIsDisable(){
     if(swipeToChangeIsEnable == 1){

@@ -396,7 +396,7 @@ return "okay";
   }
 
   setScallerMapper() async {
-    context.read<CommandProvider>().setSwipeToChangeIsEnable();
+
     try {
 setState(() {
   _btnController.start();
@@ -506,7 +506,7 @@ context.read<CommandProvider>().isScallerError();
   }
 
   Future<void> subscribeCharacteristic() async {
-    context.watch<CommandProvider>().setSwipeToChangeIsEnable();
+
     subscribeStream =
         widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
 
@@ -706,10 +706,10 @@ context.read<CommandProvider>().isScallerError();
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Expanded(child: Padding(
+                      child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset('images/main_screen/logo.png',),
-                      )),
+                      ),
                     ),
                     Container(
                       height: 100,
@@ -875,7 +875,7 @@ context.read<CommandProvider>().isScallerError();
 
 
 
-
+            Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
             // Center(
             //   child: Text(
@@ -938,16 +938,7 @@ context.read<CommandProvider>().isScallerError();
                       ))
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _scaffoldKey.currentState!.openEndDrawer();
-                    },
-                    child: const Icon(
-                      Icons.table_rows_rounded,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
+
                 ],
               ),
             ):Container(),
@@ -1079,7 +1070,7 @@ context.read<CommandProvider>().isScallerError();
                                               .abs() ==
                                           0
                                       ? blueColor
-                                      :lightBlueColor,
+                                      :Colors.white,
                               borderRadius:
                                   new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
@@ -1178,7 +1169,7 @@ context.read<CommandProvider>().isScallerError();
                                       ? lightBlueColor
                                       : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
                                           ? blueColor
-                                          : lightBlueColor,
+                                          : Colors.white,
                               borderRadius:
                                   new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
