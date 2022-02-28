@@ -311,6 +311,9 @@ if (resultString.startsWith('#DEV_')){
 
 
    Future<void> subscribeCharacteristic() async {
+     context.read<CommandProvider>().getData();
+
+
      subscribeStream =
          widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
 

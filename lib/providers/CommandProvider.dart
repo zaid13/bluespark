@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommandProvider with ChangeNotifier {
 
@@ -15,21 +16,52 @@ class CommandProvider with ChangeNotifier {
   String timeRemaining = "0";
   bool cancelledRequest = false;
   bool MovingToNextScreen = false;
-  bool swipeToChangeIsEnable = true;
+  int swipeToChangeIsEnable = 1;
+
+
+
 
 
   ScallerMapper scllerMapper = ScallerMapper();
 
+  getData() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    var data = await prefs.getBool('isFirstTime');
+
+    print("________________________________________________________________");
+    print(data.toString());
+    if(data==null){
+
+    }
+    else if(data){
+      disable_all_messages();
+    }
+    else{
+      disable_all_messages();
+    }
+
+  }
 
   setSwipeToChangeIsEnable(){
-    swipeToChangeIsEnable = true;
+    swipeToChangeIsEnable = 1;
     notifyListeners();
   }
 
    setSwipeToChangeIsDisable(){
-     swipeToChangeIsEnable = false;
-     notifyListeners();
+    if(swipeToChangeIsEnable == 1){
+      swipeToChangeIsEnable = 2;
+      notifyListeners();
+    }
+
+  }
+  disable_all_messages() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isFirstTime',true);
+
+
+    swipeToChangeIsEnable = 0;
+    notifyListeners();
   }
   isScallerSet(){
 

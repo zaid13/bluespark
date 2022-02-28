@@ -178,6 +178,10 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
     Future.delayed(Duration(seconds:5),(){
       context.read<CommandProvider>(). setSwipeToChangeIsDisable();
+
+      Future.delayed(Duration(seconds:5),(){
+        context.read<CommandProvider>(). disable_all_messages();
+      });
     });
   }
 
@@ -684,31 +688,28 @@ context.read<CommandProvider>().isScallerError();
                     ),
 
 
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            toggleDrawer();
+                          },
+                          child: Icon(
+                            Icons.table_rows_rounded,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                        Container(width: 10,)
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-
-
-
-                          Expanded(child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('images/main_screen/logo.png',),
-                          )),
-                          GestureDetector(
-                            onTap: () {
-                              toggleDrawer();
-                            },
-                            child: Icon(
-                              Icons.table_rows_rounded,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: Expanded(child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('images/main_screen/logo.png',),
+                      )),
                     ),
                     Container(
                       height: 100,
@@ -850,11 +851,28 @@ context.read<CommandProvider>().isScallerError();
             ),
           ),
         ),
-        // appBar:AppBar(backgroundColor: blackColor, elevation: 0.0,),
+        appBar:AppBar(backgroundColor: blackColor, elevation: 0.0,actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                    onTap: (){
+                      print('swsw');
+                      _scaffoldKey.     currentState!.openEndDrawer();
+                    },
+                    child: Icon(Icons.table_rows_rounded,color: Colors.white,size: 35,)),
+              ],
+            ),
+          ),
+        ],),
 
         body: Container(
             child: ListView(
           children: [
+
+
 
 
 
@@ -936,7 +954,7 @@ context.read<CommandProvider>().isScallerError();
 
 
 
-            Padding(
+            context.watch<CommandProvider>().swipeToChangeIsEnable==0?Container():  Padding(
               padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
               child: Container(
                 alignment:Alignment.center,
@@ -945,9 +963,9 @@ context.read<CommandProvider>().isScallerError();
                     color: blueColor,
                     borderRadius: new BorderRadius.all(Radius.circular(50.0))),
                 child: Row(
-                  mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
+                  mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable==1?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
                   children: [
-                    context.watch<CommandProvider>().swipeToChangeIsEnable?    Text(
+                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?    Text(
                       "Swipe to change",
                       style: TextStyle(
                           fontFamily: 'Montserrat',
@@ -962,7 +980,7 @@ context.read<CommandProvider>().isScallerError();
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
-                    context.watch<CommandProvider>().swipeToChangeIsEnable?     Padding(
+                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         decoration: BoxDecoration(
