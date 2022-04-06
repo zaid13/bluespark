@@ -34,7 +34,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:label="bluespark"
+        android:label="Bluespark"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

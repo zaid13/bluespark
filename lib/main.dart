@@ -16,6 +16,7 @@ import 'package:wakelock/wakelock.dart';
 import 'billa_ui/SplashScreen.dart';
 import 'billa_ui/ScallerMapperScreen.dart';
 import 'billa_ui/WelcomeScreen.dart';
+import 'billa_ui/testFile.dart';
 import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
 
@@ -95,6 +96,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<BleStatus?>(
         builder: (_, status, __) {
+
 
 
           if (status == BleStatus.ready) {

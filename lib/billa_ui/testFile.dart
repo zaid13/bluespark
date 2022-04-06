@@ -1,8 +1,11 @@
+
+
 import 'dart:async';
 import 'dart:io';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 import 'package:bluespark/billa_ui/ui_strings.dart';
@@ -21,52 +24,18 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dart:math';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 
-class ScallerMapperManager extends StatelessWidget {
-  const ScallerMapperManager({
-    required this.characteristic,
-    Key? key,
-    required this.isScaler
-  }) : super(key: key);
-  final QualifiedCharacteristic characteristic;
-  final bool isScaler;
+class ScallerMapperManagerTEST extends StatelessWidget {
+  const ScallerMapperManagerTEST() ;
+
 
 
 
 
   @override
-  Widget build(BuildContext context) => Consumer2<BleScanner, BleScannerState?>(
-    builder: (_, bleScanner, bleScannerState, __)
-    => bleScanner.btfound==null? DeviceList(
-      scannerState: bleScannerState ?? const BleScannerState(
-        discoveredDevices: [],
-        scanIsInProgress: false,
-      ),
-      startScan: bleScanner.startScan,
-      stopScan: bleScanner.stopScan,
-    ):Consumer<BleDeviceInteractor>(
-        builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
-            builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
-                __) => ScallerMapperScreen(
-              characteristic: characteristic,
-              readCharacteristic: interactor.readCharacteristic,
-              writeWithResponse: interactor.writeCharacterisiticWithResponse,
-              writeWithoutResponse:
-              interactor.writeCharacterisiticWithoutResponse,
-              subscribeToCharacteristic: interactor.subScribeToCharacteristic,
-
-              viewModel:    DeviceInteractionViewModel(
-                  deviceId:  bleScanner.btfound.id,
-                  connectionStatus: connectionStateUpdate.connectionState,
-                  deviceConnector: deviceConnector,
-                  discoverServices: () =>
-                      serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
-              isScaler: isScaler,
-            ))),
-  );
+  Widget build(BuildContext context) => ScallerMapperScreen();
 
 // @override
 // Widget build(BuildContext context) => Consumer<BleDeviceInteractor>(
@@ -90,39 +59,10 @@ class ScallerMapperManager extends StatelessWidget {
 }
 
 class ScallerMapperScreen extends StatefulWidget {
-  const ScallerMapperScreen(
-  {
-    required this.characteristic,
-    required this.readCharacteristic,
-    required this.writeWithResponse,
-    required this.writeWithoutResponse,
-    required this.subscribeToCharacteristic,
-    required this.viewModel,
-    required this.isScaler
-}
-      );
+   ScallerMapperScreen();
 
 
 
-
-  final bool isScaler;
-
-  final DeviceInteractionViewModel viewModel;
-
-
-  final QualifiedCharacteristic characteristic;
-  final Future<List<int>> Function(QualifiedCharacteristic characteristic)
-  readCharacteristic;
-  final Future<void> Function(
-      QualifiedCharacteristic characteristic, List<int> value)
-  writeWithResponse;
-
-  final Stream<List<int>> Function(QualifiedCharacteristic characteristic)
-  subscribeToCharacteristic;
-
-  final Future<void> Function(
-      QualifiedCharacteristic characteristic, List<int> value)
-  writeWithoutResponse;
 
   @override
   _Slider1State createState() => _Slider1State();
@@ -152,40 +92,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
   // bool errorMessageIsOpen = false;
 
-  @override
-  void initState() {
 
-
-
-
-    super.initState();
-
-
-    subscribeCharacteristic();
-
-
-    InitsetScallerMapper();
-
-    print(widget.viewModel.connectionStatus);
-
-    if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
-      restartApp();
-
-    }
-    // MapperfixedExtentScrollController =
-    // new FixedExtentScrollController(initialItem: mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected));
-    // ScallerfixedExtentScrollController =
-    // new FixedExtentScrollController(initialItem: int.parse( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected));
-
-
-    Future.delayed(Duration(seconds:5),(){
-      context.read<CommandProvider>(). setSwipeToChangeIsDisable();
-
-      Future.delayed(Duration(seconds:5),(){
-        context.read<CommandProvider>(). disable_all_messages();
-      });
-    });
-  }
 
 
 
@@ -206,10 +113,10 @@ class _Slider1State extends State<ScallerMapperScreen> {
   // var Mapperselected = 2;
   // var Scallerselected = 2;
   FixedExtentScrollController MapperfixedExtentScrollController =
-      new FixedExtentScrollController(initialItem: 2);
+  new FixedExtentScrollController(initialItem: 2);
 
   FixedExtentScrollController ScallerfixedExtentScrollController =
-      new FixedExtentScrollController(initialItem: 2);
+  new FixedExtentScrollController(initialItem: 2);
 
 
 
@@ -290,290 +197,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
   //   });
   // }
 
-  List<int> _parseInput(msg) {
 
-
-    var lst = msg
-        .split(',')
-        .map(
-      int.parse,
-    )
-        .toList();
-    List<int> ints = List<int>.from(lst);
-
-
-    return ints;
-  }
-
-  // Future<void> writeCharacteristicWithResponse(msg) async {
-  //   await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
-  //   setState(() {
-  //     writeOutput = 'Ok';
-  //   });
-  // }
-
-
-  Future<void> writeCharacteristicWithoutResponse(msg) async {
-    print(widget.characteristic);
-    print('5');
-    await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
-      print('v');
-
-    });
-    // setState(() {
-    //   writeOutput = 'Done';
-    // });
-  }
-
-  coommunicatewithDevice(msg) async {
-
-
-    await writeCharacteristicWithoutResponse(msg);
-return "okay";
-
-
-  }
-
-
-  InitsetScallerMapper() async {
-
-    try {
-
-
-      coommunicatewithDevice(GetMapperCode).then((d){
-        print(d);
-        sleep(Duration(milliseconds:400));
-        coommunicatewithDevice(GetScallerCode).then((d){
-          sleep(Duration(milliseconds:400));
-          print('Yyyyyyyyy');
-
-
-
-
-          context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1]);
-
-
-          if(widget.isScaler){
-            context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
-
-          }
-
-
-
-          MapperfixedExtentScrollController.animateToItem(
-            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ,
-            duration: Duration(milliseconds: 100),
-            curve: Curves.fastOutSlowIn,);
-
-          if(widget.isScaler){
-
-            ScallerfixedExtentScrollController.animateToItem(
-              int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
-              duration: Duration(milliseconds: 100),
-              curve: Curves.fastOutSlowIn,);
-
-
-          }
-
-
-
-        });
-
-      });
-
-
-
-
-
-    } catch (e) {
-      print(e);
-
-
-    }
-    // setState(() {
-    //   _btnController.stop();
-    //
-    // });
-
-  }
-
-  setScallerMapper() async {
-
-    try {
-setState(() {
-  _btnController.start();
-});
-
-        coommunicatewithDevice(mapsArray[context.read<CommandProvider>().scllerMapper.mapperSelected].toString()).then((d){
-          print(d);
-          if(   widget.isScaler){
-            sleep(Duration(milliseconds:400));
-            coommunicatewithDevice(scalerArray[ int.parse(  context.read<CommandProvider>().scllerMapper.scallerSelected)]).then((d){});
-
-          }
-
-        });
-
-
-
-
-
-    } catch (e) {
-      print(e);
-
-
-    }
-    setState(() {
-      _btnController.stop();
-
-    });
-
-  }
-
-  List<int> PrevDump = [];
-
-
-  scanAndRespond(String intactString) async {
-
-print("intactString");
-print(intactString);
-print("#ERR_01#");
-
-
-    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')   && widget.isScaler){
-      print("intactString        1111");
-
-      context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("#", ''));
-      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
-
-    }
-    else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("#", '')){
-      print("intactString        22222");
-
-
-
-      context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("#", ''));
-      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
-
-    }
-    else if((intactString.startsWith( "#ERR_01")  && !context.read<CommandProvider>().scllerMapper.MAP_ERROR_IS_OPEN )){
-      print("intactString        33333");
-
-      context.read<CommandProvider>().isMapperError();
-      print("777777");
-              await   AwesomeDialog(
-                   context: context,
-                   dialogType: DialogType.ERROR,
-                   animType: AnimType.BOTTOMSLIDE,
-                   title: 'Map Not Set',
-                   desc: context.read<CommandProvider>().getErrorString('#ERR_01#'),
-                   // btnCancelOnPress: () {
-                   //
-                   // },
-                   btnOkOnPress: () {
-
-
-                   },
-                 ).show().then((value) {
-                context.read<CommandProvider>().MAPPER_ERROR_CLOSED();
-
-              });
-    }
-    else if((intactString.startsWith( "#ERR_02")  && !context.read<CommandProvider>().scllerMapper.SCALLER_ERROR_IS_OPEN  )  ){  //&& context.read<CommandProvider>().scllerMapper.ERROR==0
-      print("8888888``");
-
-
-context.read<CommandProvider>().isScallerError();
-      await   AwesomeDialog(
-        context: context,
-        dialogType: DialogType.ERROR,
-        animType: AnimType.BOTTOMSLIDE,
-        title: 'Scaler Not Set',
-        desc: context.read<CommandProvider>().getErrorString('#ERR_02#'),
-        // btnCancelOnPress: () {
-        //
-        // },
-        btnOkOnPress: () {
-          // context.read<CommandProvider>().ERROR_CLOSED();
-
-        },
-      ).show().then((value) {
-        context.read<CommandProvider>().SCALLER_ERROR_CLOSED();
-
-      });
-
-    }
-
-
-  }
-
-  Future<void> subscribeCharacteristic() async {
-
-    subscribeStream =
-        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-
-          // print('readOutput   ${result}');
-
-
-          // setState(() {
-          context.read<CommandProvider>().setReadOutput( result.toString());
-          String resultString = String.fromCharCodes(result).split("\n")[0];
-          // print('readOutput CONVERTED    ${resultString}');
-
-          print('resultString');
-          print(resultString);
-          print('result');
-          print(result);
-          if(resultString == "201"    ) {
-            // context.read<CommandProvider>().   stopSendingRequests();
-
-          }
-          else    if(result.first==35  && result.last==10    ){
-
-            scanAndRespond(resultString);
-
-
-            // setTime(resultString);
-          }
-
-
-          else    if((result.first==35  && result.last!=10 )){
-
-            PrevDump  = result;
-            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-
-
-          }
-
-          else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
-            // print(PrevDump);
-            // print(resultString);
-
-            PrevDump  += result;
-            // print("FOUND SECOND PART -------------------------------_____=-");
-            print(PrevDump);
-
-
-
-
-            if((PrevDump.first==35  && PrevDump.last!=10 )){
-               resultString = String.fromCharCodes(PrevDump).split("\n")[0];
-               scanAndRespond(resultString);
-               ;
-              // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-
-
-            }
-          }
-
-
-
-
-        });
-    // setState(() {
-    // subscribeOutput = 'Notification set';
-    // });
-  }
 
   //  subscribeCharacteristicStream()  {
   //   // subscribeStream =
@@ -653,12 +277,6 @@ context.read<CommandProvider>().isScallerError();
 
   @override
   Widget build(BuildContext context) {
-    print(widget.viewModel.connectionStatus );
-    if(DeviceConnectionState.disconnected ==widget.viewModel.connectionStatus ){
-      restartApp();
-
-    }
-
 
 
     return SafeArea(
@@ -892,143 +510,134 @@ context.read<CommandProvider>().isScallerError();
             ),
           ),
         ],),
-
         body: Container(
             child: ListView(
-          children: [
+              children: [
 
 
 
 
-            Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
+                Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
-            // Center(
-            //   child: Text(
-            //     "Status: ${widget.viewModel.connectionStatus}",
-            //     style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
-            // ),
-            // showSuccessMessage todo
+                // Center(
+                //   child: Text(
+                //     "Status: ${widget.viewModel.connectionStatus}",
+                //     style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
+                // ),
+                // showSuccessMessage todo
 
-            context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Stack(
-                    alignment: Alignment.centerLeft,
+                context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius:
-                                new BorderRadius.all(Radius.circular(50.0))),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 15,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 50, right: 20, top: 5, bottom: 5),
-                              child: Text(
-                                'Change Confirmed',
-                                style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 22,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          child: Row(
+                      Stack(
+                        alignment: Alignment.centerLeft,
                         children: [
-                          Stack(
-                            children: [
-                              Container(
-                                color: blackColor,
-                                height: 60,
-                                width: 50,
-                              ),
-                              Icon(
-                                Icons.check_circle,
-                                color: greenColor,
-                                size: 60,
-                              ),
-                            ],
+                          Container(
+                            decoration: BoxDecoration(
+                                color: blueColor,
+                                borderRadius:
+                                new BorderRadius.all(Radius.circular(50.0))),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 15,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 50, right: 20, top: 5, bottom: 5),
+                                  child: Text(
+                                    'Change Confirmed',
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          Positioned(
+                              child: Row(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Container(
+                                        color: blackColor,
+                                        height: 60,
+                                        width: 50,
+                                      ),
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: greenColor,
+                                        size: 60,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ))
                         ],
-                      ))
+                      ),
+
                     ],
                   ),
-
-                ],
-              ),
-            ):Container(),
+                ):Container(),
 
 
 
-            context.watch<CommandProvider>().swipeToChangeIsEnable==0?Container():  Padding(
-              padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
-              child: Container(
-                alignment:Alignment.center,
-                width: MediaQuery.of(context).size.width*0.9,
-                decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: new BorderRadius.all(Radius.circular(50.0))),
-                child: Row(
-                  mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable==1?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
-                  children: [
-                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?    Text(
-                      "Swipe to change",
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ):Text(
-                      'Click "Done" to update settings',
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                new BorderRadius.all(Radius.circular(10.0))),
-                        child: Image.asset(
-                          'images/img.png',
-                          height: 40,
+                context.watch<CommandProvider>().swipeToChangeIsEnable==0?Container():  Padding(
+                  padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
+                  child: Container(
+                    alignment:Alignment.center,
+                    width: MediaQuery.of(context).size.width*0.9,
+                    decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: new BorderRadius.all(Radius.circular(50.0))),
+                    child: Row(
+                      mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable==1?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
+                      children: [
+                        context.watch<CommandProvider>().swipeToChangeIsEnable==1?    Text(
+                          "Swipe to change",
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ):Text(
+                          'Click "Done" to update settings',
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ):Container( height: 40,)
-                  ],
+                        context.watch<CommandProvider>().swipeToChangeIsEnable==1?     Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                new BorderRadius.all(Radius.circular(10.0))),
+                            child: Image.asset(
+                              'images/img.png',
+                              height: 40,
+                            ),
+                          ),
+                        ):Container( height: 40,)
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
 
 
 
-             Column(
-               mainAxisAlignment: MainAxisAlignment.spaceAround,
-               children: [
-                 mapperWidget(),
-                widget.isScaler?   ScallerWidget():Container(),
-                 Container(height: 50,),
-                 doneButton()
 
-               ],
-             ),
 
-          ],
-        )),
+              ],
+            )),
+
       ),
     );
   }
@@ -1059,7 +668,7 @@ context.read<CommandProvider>().isScallerError();
                 borderRadius: new BorderRadius.all(Radius.circular(10.0))),
             child: Center(
               child: Text(
-    context.watch<CommandProvider>().scllerMapper.mapperSelected,
+                context.watch<CommandProvider>().scllerMapper.mapperSelected,
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 45,
@@ -1088,16 +697,16 @@ context.read<CommandProvider>().isScallerError();
 
                           decoration: BoxDecoration(
                               color: (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
-                                          .abs() ==
-                                      1
+                                  .abs() ==
+                                  1
                                   ? lightBlueColor
                                   : (mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.mapperSelected) - (mapperList.indexOf(mp)))
-                                              .abs() ==
-                                          0
-                                      ? blueColor
-                                      :Colors.white,
+                                  .abs() ==
+                                  0
+                                  ? blueColor
+                                  :Colors.white,
                               borderRadius:
-                                  new BorderRadius.all(Radius.circular(10.0))),
+                              new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
                             quarterTurns: -3,
                             child: Center(
@@ -1133,7 +742,7 @@ context.read<CommandProvider>().isScallerError();
     return Container(
       child: Column(
         children: [
-           Padding(
+          Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
               "Scaler Select: "+context.watch<CommandProvider>().scllerMapper.RESPONSE_scallerSelected,
@@ -1170,13 +779,13 @@ context.read<CommandProvider>().isScallerError();
             child: RotatedBox(
                 quarterTurns: 3,
                 child: ListWheelScrollView(
-    itemExtent: 50,
+                  itemExtent: 50,
 
 
 
-    onSelectedItemChanged: (x) {
+                  onSelectedItemChanged: (x) {
 
-      context.read<CommandProvider>().setScaller(scallerList[x]);
+                    context.read<CommandProvider>().setScaller(scallerList[x]);
 
                   },
                   controller: ScallerfixedExtentScrollController,
@@ -1190,13 +799,13 @@ context.read<CommandProvider>().isScallerError();
 
                           decoration: BoxDecoration(
                               color:
-                                  ( int.parse(context.watch<CommandProvider>().scllerMapper.scallerSelected) - (scallerList.indexOf(mp))).abs() == 1
-                                      ? lightBlueColor
-                                      : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
-                                          ? blueColor
-                                          : Colors.white,
+                              ( int.parse(context.watch<CommandProvider>().scllerMapper.scallerSelected) - (scallerList.indexOf(mp))).abs() == 1
+                                  ? lightBlueColor
+                                  : (int.parse( context.watch<CommandProvider>().scllerMapper.scallerSelected)  - (scallerList.indexOf(mp))).abs() == 0
+                                  ? blueColor
+                                  : Colors.white,
                               borderRadius:
-                                  new BorderRadius.all(Radius.circular(10.0))),
+                              new BorderRadius.all(Radius.circular(10.0))),
                           child: RotatedBox(
                             quarterTurns: -3,
                             child: Center(
@@ -1224,42 +833,15 @@ context.read<CommandProvider>().isScallerError();
     );
   }
 
-  doneButton(){
 
-    return  RoundedLoadingButton(
-      color: greenColor,
-        child:Container(
-          decoration: BoxDecoration(
-
-              borderRadius:
-              new BorderRadius.all(Radius.circular(10.0))),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 10, left: 10),
-            child: Text(
-              "Done",
-              style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 30,
-                  color: blackColor,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-        controller: _btnController,
-        onPressed: setScallerMapper,
-
-    );
-
-
-  }
 }
-
 
 
 
 void _launchURL(_url) async {
   if (!await launch(_url)) throw 'Could not launch $_url';
 }
+
 Widget _buildAboutDialog(BuildContext context,String heading,widget ) {
   return AlertDialog(
     title:  Text(heading),
@@ -1269,7 +851,7 @@ Widget _buildAboutDialog(BuildContext context,String heading,widget ) {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          widget,
+         widget,
 
         ],
       ),
@@ -1285,6 +867,7 @@ Widget _buildAboutDialog(BuildContext context,String heading,widget ) {
     ],
   );
 }
+
 Widget _buildSetupText() {
   return new RichText(
     text: new TextSpan(
