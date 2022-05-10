@@ -23,6 +23,8 @@ import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'configPage.dart';
+
 
 
 class ScallerMapperManager extends StatelessWidget {
@@ -507,73 +509,73 @@ context.read<CommandProvider>().isScallerError();
 
   }
 
-  Future<void> subscribeCharacteristic() async {
+    Future<void> subscribeCharacteristic() async {
 
-    subscribeStream =
-        widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+      subscribeStream =
+          widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
 
-          // print('readOutput   ${result}');
-
-
-          // setState(() {
-          context.read<CommandProvider>().setReadOutput( result.toString());
-          String resultString = String.fromCharCodes(result).split("\n")[0];
-          // print('readOutput CONVERTED    ${resultString}');
-
-          print('resultString');
-          print(resultString);
-          print('result');
-          print(result);
-          if(resultString == "201"    ) {
-            // context.read<CommandProvider>().   stopSendingRequests();
-
-          }
-          else    if(result.first==35  && result.last==10    ){
-
-            scanAndRespond(resultString);
+            // print('readOutput   ${result}');
 
 
-            // setTime(resultString);
-          }
+            // setState(() {
+            context.read<CommandProvider>().setReadOutput( result.toString());
+            String resultString = String.fromCharCodes(result).split("\n")[0];
+            // print('readOutput CONVERTED    ${resultString}');
+
+            print('resultString');
+            print(resultString);
+            print('result');
+            print(result);
+            if(resultString == "201"    ) {
+              // context.read<CommandProvider>().   stopSendingRequests();
+
+            }
+            else    if(result.first==35  && result.last==10    ){
+
+              scanAndRespond(resultString);
 
 
-          else    if((result.first==35  && result.last!=10 )){
-
-            PrevDump  = result;
-            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+              // setTime(resultString);
+            }
 
 
-          }
+            else    if((result.first==35  && result.last!=10 )){
 
-          else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
-            // print(PrevDump);
-            // print(resultString);
-
-            PrevDump  += result;
-            // print("FOUND SECOND PART -------------------------------_____=-");
-            print(PrevDump);
-
-
-
-
-            if((PrevDump.first==35  && PrevDump.last!=10 )){
-               resultString = String.fromCharCodes(PrevDump).split("\n")[0];
-               scanAndRespond(resultString);
-               ;
+              PrevDump  = result;
               // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
 
 
             }
-          }
+
+            else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
+              // print(PrevDump);
+              // print(resultString);
+
+              PrevDump  += result;
+              // print("FOUND SECOND PART -------------------------------_____=-");
+              print(PrevDump);
 
 
 
 
-        });
-    // setState(() {
-    // subscribeOutput = 'Notification set';
-    // });
-  }
+              if((PrevDump.first==35  && PrevDump.last!=10 )){
+                 resultString = String.fromCharCodes(PrevDump).split("\n")[0];
+                 scanAndRespond(resultString);
+                 ;
+                // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+
+              }
+            }
+
+
+
+
+          });
+      // setState(() {
+      // subscribeOutput = 'Notification set';
+      // });
+    }
 
   //  subscribeCharacteristicStream()  {
   //   // subscribeStream =
@@ -710,6 +712,48 @@ context.read<CommandProvider>().isScallerError();
                     Container(
                       height: 100,
                     ),
+
+
+                    ListTile(
+                      onTap: (){
+
+
+                        Navigator.push(context,MaterialPageRoute(builder: ((context) => ConfigurationPage(
+
+                          characteristic: widget.characteristic,
+                          readCharacteristic: widget.readCharacteristic,
+                          writeWithResponse: widget.writeWithResponse,
+                          writeWithoutResponse:
+                          widget.writeWithoutResponse,
+                          subscribeToCharacteristic: widget.subscribeToCharacteristic,
+
+                          viewModel:    widget.viewModel,
+
+
+                        ))));
+
+                      },
+                      title: Container(
+                        alignment: Alignment.centerRight,
+                        child: new Text(
+                          "Configuration",
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+
+
+
+                    Divider(
+                      height: 0.1,
+                    ),
+
+
+
                     ListTile(
                       onTap: (){
 
