@@ -5,13 +5,17 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
 import '../providers/CommandProvider.dart';
 import '../src/ui/device_detail/device_interaction_tab.dart';
 import '../util/config.dart';
 import '../util/functions.dart';
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 class ConfigurationPage extends StatefulWidget {
    ConfigurationPage(
 
@@ -293,8 +297,82 @@ print(ints);
   }
 
 
+  callApi() async {
+    print('jgjfjf');
+    var client = new http.Client();
+    var VehicleDesciption = '3';
+    try {
+      var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/1A3C.bsk'));
+
+      List<String> ls = (tt.body).split('\n');
+      int counter =0;
+      List Mastrerls_SIZE21= [];
+      NumberFormat formatter = new NumberFormat("00");
+
+      for (String i in ls) {
+        counter++;
+        if(counter==2){
+          print('000000000593485945894058943589048530');
+          VehicleDesciption = i.split(',')[0];
+
+          if( int.parse(VehicleDesciption)>16){
+            VehicleDesciption =   int.parse(VehicleDesciption).toRadixString(16).toString();
+          }
+          if( int.parse(VehicleDesciption)<10){
+            VehicleDesciption  =  (VehicleDesciption.padLeft(2,'0'));
+          }
+          else{
+            VehicleDesciption  = int.parse (VehicleDesciption).toRadixString(16).toString();
 
 
+          }
+
+          print(i);
+        }
+        if(counter>4 && counter<26){
+          // print(i);
+          var subStr = i.split(',');
+          var NewLsit = [];
+          for (var j in subStr ){
+            print(j.split(',')[0]);
+            if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))>16){
+              NewLsit.add(int.parse(j.replaceFirst('\r', '')).toRadixString(16));
+
+            }
+            else if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))<10){
+
+              NewLsit.add((formatter.format( int.parse(j.replaceFirst('\r', '')))).toString());
+
+            }
+            else{
+
+              NewLsit.add((int.parse(j.replaceFirst('\r', '')).toRadixString(16)).toString().padLeft(2,'0'));
+
+            }
+
+          }
+
+          Mastrerls_SIZE21.add(NewLsit);
+        }
+      }
+
+
+      // print(Mastrerls_SIZE21);
+
+      // for(int i= 0 ; i< 30 ; i++){
+      //   List result = getDataforNumber(Mastrerls_SIZE21,i);
+      //   print(result);
+      // }
+
+      return {"list":Mastrerls_SIZE21,"type":VehicleDesciption};
+
+
+    }
+    finally {
+      client.close();
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -304,10 +382,22 @@ print(ints);
         children: [
           GestureDetector(
             onTap: () async {
+              var httpRes =  await callApi();
+
+               List result =httpRes['list'];
+               String deviceType = httpRes['type'];
+
 
               for (int i = 0 ; i< 10 ;i++){
                 await Future.delayed(Duration(seconds: 3)).then((value) {
-                  coommunicatewithDevice('%P000000000000030${i}');
+                  List raw_packet = getDataforNumber(result,i);
+                  print("Master Packet");
+                  var MasterPcket ='%P'+raw_packet.join('')+deviceType;
+
+
+
+                  print(MasterPcket);
+                  coommunicatewithDevice(MasterPcket);
 
 
                 });
@@ -330,5 +420,16 @@ print(ints);
 
 
 
+
+}
+getDataforNumber(Mastrerls_SIZE21,int number){
+  List lst = [];
+
+  for (int i = 7*(number%3) ; i<(7*(number%3))+7; i++ ){
+    // print((number/3).toInt());
+    // print(i);
+    lst.add(Mastrerls_SIZE21[i][(number/3).toInt()]);
+  }
+  return  lst;
 
 }

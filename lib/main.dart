@@ -101,6 +101,7 @@ class HomeScreen extends StatelessWidget {
   callApi() async {
     print('jgjfjf');
     var client = new http.Client();
+    var VehicleDesciption = '3';
     try {
       var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/1A3C.bsk'));
 
@@ -111,12 +112,30 @@ class HomeScreen extends StatelessWidget {
 
       for (String i in ls) {
         counter++;
+        if(counter==2){
+          print('000000000593485945894058943589048530');
+          VehicleDesciption = i.split(',')[0];
+
+   if( int.parse(VehicleDesciption)>16){
+     VehicleDesciption =   int.parse(VehicleDesciption).toRadixString(16).toString();
+   }
+    if( int.parse(VehicleDesciption)<10){
+      VehicleDesciption  =  (VehicleDesciption.padLeft(2,'0'));
+    }
+    else{
+      VehicleDesciption  = int.parse (VehicleDesciption).toRadixString(16).toString();
+
+
+    }
+
+          print(i);
+        }
         if(counter>4 && counter<26){
           // print(i);
           var subStr = i.split(',');
           var NewLsit = [];
            for (var j in subStr ){
-             print(j);
+             print(j.split(',')[0]);
              if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))>16){
                NewLsit.add(int.parse(j.replaceFirst('\r', '')).toRadixString(16));
 
@@ -162,8 +181,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<BleStatus?>(
         builder: (_, status, __) {
-
-          callApi();
 
 
 

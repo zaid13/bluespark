@@ -2,28 +2,31 @@
 
 
 Map<String,String> mapsArray = {
-                                        "A":"231",
-                                        "B":"232",
-                                        "C":"233",
-                                        "D":"234",
-                                        "E":"235" }  ;
+                                        "0":"%MAP_0\n",
+                                        "A":"%MAP_1\n",
+                                        "B":"%MAP_2\n",
+                                        "C":"%MAP_3\n",
+                                        "D":"%MAP_4\n",
+                                        "E":"%MAP_5\n" }  ;
 List<String> scalerArray =  [
-                              "240",
-                              "241",
-                              "242",
-                              "243",
-                              "244",
-                              "245",
-                              "246",
-                              "247",
-                              "248",
-                              "249",
+                              "%SCA_0\n",
+                              "%SCA_1\n",
+                              "%SCA_2\n",
+                              "%SCA_3\n",
+                              "%SCA_4\n",
+                              "%SCA_5\n",
+                              "%SCA_6\n",
+                              "%SCA_7\n",
+                              "%SCA_8\n",
+                              "%SCA_9\n",
+
+
                               ];
 
 String RequiredServiceId = "0000ffe0-0000-1000-8000-00805f9b34fb";
 String RequiredCharacteristicId = "0000ffe1-0000-1000-8000-00805f9b34fb";
 
-String endTimerMSG = "194";
+String endTimerMSG = "%SKIP\n";
 
 Map<String,String> scallerMapperErrorTable = {
   "#ERR_01#":"Reduce Load to change Map",
@@ -32,9 +35,9 @@ Map<String,String> scallerMapperErrorTable = {
   "D":"234",
   "E":"235" }  ;
 
-String GetScallerCode = "203";
-String GetMapperCode = "204";
-String GetDviceType = "105";
+String GetScallerCode = "%DIP_?\n";
+String GetMapperCode = "%JUM_?\n";
+String GetDviceType = "%DEV_?";
 
 
 void log(String text) => print("[FlutterReactiveBLEApp] $text");

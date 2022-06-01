@@ -127,7 +127,7 @@ class _Welcome1State extends State<Welcome1> {
 
 
   late StreamSubscription<List<int>>? subscribeStream;
-
+   List<int> PrevDump = [];
    @override
    void initState() {
      super.initState();
@@ -270,17 +270,17 @@ class _Welcome1State extends State<Welcome1> {
 
 
 if (resultString.startsWith('#DEV_')){
-  if(  100<int.parse(resultString.replaceAll("#DEV_", "").replaceAll("#", "")) ){
+  if(  100<int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", "")) ){
     context.read<CommandProvider>().isScaller();
     context.read<CommandProvider>().isScallerSet();
-  }else if(100>=int.parse(resultString.replaceAll("#DEV_", "").replaceAll("#", ""))){
+  }else if(100>=int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))){
     context.read<CommandProvider>().isNotScaller();
     context.read<CommandProvider>().isScallerSet();
   }
 }
 
 
-   if(  context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("#", "")) ){
+   if(  context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("^", "")) ){
 
 
      //move to next screen
@@ -307,12 +307,117 @@ if (resultString.startsWith('#DEV_')){
 
    }
 
-   String PrevDump = "";
 
+//
+//
+//    Future<void> subscribeCharacteristic() async {
+//      context.read<CommandProvider>().getData();
+//
+//
+//      subscribeStream =
+//          widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+//
+//            // print('readOutput   ${result}');
+//
+//
+//            // setState(() {
+//              context.read<CommandProvider>().setReadOutput( result.toString());
+//              String resultString = String.fromCharCodes(result).split("\n")[0];
+//            // print('readOutput CONVERTED    ${resultString}');
+//
+//              // if(resultString == "201"    ) {
+//              //   context.read<CommandProvider>().   stopSendingRequests();
+//              //
+//              // }
+//              // else
+// print('resultString');
+// print(resultString);
+//
+//
+//                if(result.first==35  && result.last==10   && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+//
+//                setTime(resultString);
+//              }
+//
+//
+//              else    if((result.first==35  && result.last!=10 )){
+//
+//                PrevDump  = resultString;
+//                // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+//
+//
+//              }
+//
+//              else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
+//                // print(PrevDump);
+//                // print(resultString);
+//
+//                PrevDump  += resultString;
+//                // print("FOUND SECOND PART -------------------------------_____=-");
+//                print(PrevDump);
+//
+//
+//
+//
+//                if(PrevDump.startsWith("#WUT")  && PrevDump.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+//
+//                  // print("CORRECTED -------------------------------_____=-");
+//                  setTime(PrevDump);
+//
+//                  // context.read<CommandProvider>().setTime( PrevDump.replaceAll("#WUT_", "").replaceAll("#", ""));
+//
+//                }
+//
+//
+//
+//                if(PrevDump.startsWith("#DEV")  && PrevDump.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+//
+//                  // print("CORRECTED -------------------------------_____=-");
+//                  setTime(PrevDump);
+//
+//                  // context.read<CommandProvider>().setTime( PrevDump.replaceAll("#WUT_", "").replaceAll("#", ""));
+//
+//                }
+//
+//
+//              }
+//
+//
+//
+//            // else    if(resultString.contains( (context.read<CommandProvider>().getIntTime()-1).toString()  )){
+//              //   context.read<CommandProvider>().setTime( (int.parse(context.read<CommandProvider>().getTime())-1).toString());
+//              //   prevDumList=[];
+//              // }
+//
+//              // else{
+//              //
+//              //   print('prev   ${prevDumList}');
+//              //   prevDumList+=result;
+//              //   context.read<CommandProvider>().setReadOutput( prevDumList.toString());
+//              //   String resultString = String.fromCharCodes(prevDumList).split("\n")[0];
+//              //   print('current output   ${result}');
+//              //   print('combined   ${prevDumList}');
+//              //   print('combined converted    ${resultString}');
+//              //
+//              //
+//              //   if(resultString.startsWith("#WUT_")  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+//              //     context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("#", ""));
+//              //     prevDumList=[];
+//              //   }
+//              //
+//              // }
+//              // else if ((int.parse(timeRemaining) )!=1){
+//              //   timeRemaining = (int.parse(timeRemaining) -1).toString();
+//              // }
+//
+//
+//            // });
+//          });
+//
+//    }
 
    Future<void> subscribeCharacteristic() async {
      context.read<CommandProvider>().getData();
-
 
      subscribeStream =
          widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
@@ -321,102 +426,66 @@ if (resultString.startsWith('#DEV_')){
 
 
            // setState(() {
-             context.read<CommandProvider>().setReadOutput( result.toString());
-             String resultString = String.fromCharCodes(result).split("\n")[0];
+           context.read<CommandProvider>().setReadOutput( result.toString());
+           String resultString = String.fromCharCodes(result).split("\n")[0];
            // print('readOutput CONVERTED    ${resultString}');
 
-             // if(resultString == "201"    ) {
-             //   context.read<CommandProvider>().   stopSendingRequests();
-             //
-             // }
-             // else
-print('resultString');
-print(resultString);
+           print('resultString');
+           print(resultString);
+           print('result');
+           print(result);
+           print(result.first);
+           print(result.last);
+
+           if(result.first==35  && result.last==10   && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+             print('Complete ');
+             print(result);
+             setTime(resultString);
+
+           }
 
 
-               if(result.first==35  && result.last==10   && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
-
-               setTime(resultString);
-             }
-
-
-             else    if((result.first==35  && result.last!=10 )){
-
-               PrevDump  = resultString;
-               // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+           else    if((result.first==35  && result.last!=10  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime() )){
+             print('Complete 2 ');
+             PrevDump  = result;
+             // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
 
 
-             }
+           }
 
-             else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
-               // print(PrevDump);
-               // print(resultString);
+           else      if((result.first!=35  && result.last==10  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime() )){
+             // print(PrevDump);
+             // print(resultString);
 
-               PrevDump  += resultString;
-               // print("FOUND SECOND PART -------------------------------_____=-");
-               print(PrevDump);
+             PrevDump  += result;
+             result=[];
+             print("FOUND SECOND PART -------------------------------_____=-");
+             print(PrevDump);
+             print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+             setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
 
-
-
-
-               if(PrevDump.startsWith("#WUT")  && PrevDump.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
-
-                 // print("CORRECTED -------------------------------_____=-");
-                 setTime(PrevDump);
-
-                 // context.read<CommandProvider>().setTime( PrevDump.replaceAll("#WUT_", "").replaceAll("#", ""));
-
-               }
+           }
 
 
 
-               if(PrevDump.startsWith("#DEV")  && PrevDump.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
 
-                 // print("CORRECTED -------------------------------_____=-");
-                 setTime(PrevDump);
-
-                 // context.read<CommandProvider>().setTime( PrevDump.replaceAll("#WUT_", "").replaceAll("#", ""));
-
-               }
-
-
-             }
-
-
-
-           // else    if(resultString.contains( (context.read<CommandProvider>().getIntTime()-1).toString()  )){
-             //   context.read<CommandProvider>().setTime( (int.parse(context.read<CommandProvider>().getTime())-1).toString());
-             //   prevDumList=[];
-             // }
-
-             // else{
-             //
-             //   print('prev   ${prevDumList}');
-             //   prevDumList+=result;
-             //   context.read<CommandProvider>().setReadOutput( prevDumList.toString());
-             //   String resultString = String.fromCharCodes(prevDumList).split("\n")[0];
-             //   print('current output   ${result}');
-             //   print('combined   ${prevDumList}');
-             //   print('combined converted    ${resultString}');
-             //
-             //
-             //   if(resultString.startsWith("#WUT_")  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
-             //     context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("#", ""));
-             //     prevDumList=[];
-             //   }
-             //
-             // }
-             // else if ((int.parse(timeRemaining) )!=1){
-             //   timeRemaining = (int.parse(timeRemaining) -1).toString();
-             // }
-
-
-           // });
          });
      // setState(() {
-     subscribeOutput = 'Notification set';
+     // subscribeOutput = 'Notification set';
      // });
    }
+
+
+  ASCII_TO_INT(name){
+    List<int> intList = [];
+
+    //loop to each character in string
+    for(int i = 0; i <name.length; i++){
+      intList.add(name.codeUnitAt(i));
+
+    }
+    return intList+[13];
+  }
 
      List<int> _parseInput(msg) {
 
@@ -435,7 +504,8 @@ print(resultString);
    Future<void> writeCharacteristicWithoutResponse(msg) async {
      // print(widget.characteristic);
      print('5');
-     await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
+     print(ASCII_TO_INT(msg));
+     await widget.writeWithoutResponse(widget.characteristic, ASCII_TO_INT(msg)).then((value){
        print('v');
 
      });
@@ -619,6 +689,10 @@ futureCall() async {
                                 GestureDetector(
 
                                   onTap: () async {
+
+
+
+
                                     context.read<CommandProvider>().    startMovingTonextScreen();
                                     context.read<CommandProvider>() .stopSendingRequests();
                                     await writeCharacteristicWithoutResponse(endTimerMSG).then((value){

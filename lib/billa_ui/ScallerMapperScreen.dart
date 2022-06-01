@@ -134,6 +134,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List scallerList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   List mapperList = [
+    '0',
     "A",
     "B",
     "C",
@@ -307,6 +308,16 @@ class _Slider1State extends State<ScallerMapperScreen> {
     return ints;
   }
 
+  ASCII_TO_INT(name){
+    List<int> intList = [];
+
+    //loop to each character in string
+    for(int i = 0; i <name.length; i++){
+      intList.add(name.codeUnitAt(i));
+
+    }
+    return intList+[13];
+  }
   // Future<void> writeCharacteristicWithResponse(msg) async {
   //   await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
   //   setState(() {
@@ -318,7 +329,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
   Future<void> writeCharacteristicWithoutResponse(msg) async {
     print(widget.characteristic);
     print('5');
-    await widget.writeWithoutResponse(widget.characteristic, _parseInput(msg)).then((value){
+    await widget.writeWithoutResponse(widget.characteristic, ASCII_TO_INT(msg)).then((value){
       print('v');
 
     });
@@ -442,19 +453,19 @@ print(intactString);
 print("#ERR_01#");
 
 
-    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')   && widget.isScaler){
+    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("^", '')   && widget.isScaler){
       print("intactString        1111");
 
-      context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("#", ''));
+      context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("^", ''));
       context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
 
     }
-    else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("#", '')){
+    else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("^", '')){
       print("intactString        22222");
 
 
 
-      context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("#", ''));
+      context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("^", ''));
       context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
 
     }
@@ -509,6 +520,68 @@ context.read<CommandProvider>().isScallerError();
 
   }
 
+
+  // Future<void> subscribeCharacteristic() async {
+  //
+  //   subscribeStream =
+  //       widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
+  //
+  //         // print('readOutput   ${result}');
+  //
+  //
+  //         // setState(() {
+  //         context.read<CommandProvider>().setReadOutput( result.toString());
+  //         String resultString = String.fromCharCodes(result).split("\n")[0];
+  //         // print('readOutput CONVERTED    ${resultString}');
+  //
+  //         print('resultString');
+  //         print(resultString);
+  //         print('result');
+  //         print(result);
+  //         print(result.first);
+  //         print(result.last);
+  //         if(result.first==37  && result.last==94    ){
+  //           print('Complete ');
+  //           print(result);
+  //           // scanAndRespond(resultString);
+  //           scanAndRespond(resultString);
+  //
+  //           // setTime(resultString);
+  //         }
+  //
+  //
+  //         else    if((result.first==37  && result.last!=94 )){
+  //           print('Complete 2 ');
+  //           PrevDump  = result;
+  //           // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+  //
+  //
+  //         }
+  //
+  //         else      if((result.first!=37  && result.last==94 )){
+  //           // print(PrevDump);
+  //           // print(resultString);
+  //
+  //           PrevDump  += result;
+  //           result=[];
+  //           print("FOUND SECOND PART -------------------------------_____=-");
+  //           scanAndRespond(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //
+  //           print(PrevDump);
+  //           print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //
+  //
+  //         }
+  //
+  //
+  //
+  //
+  //       });
+  //   // setState(() {
+  //   // subscribeOutput = 'Notification set';
+  //   // });
+  // }
+
     Future<void> subscribeCharacteristic() async {
 
       subscribeStream =
@@ -520,7 +593,7 @@ context.read<CommandProvider>().isScallerError();
             // setState(() {
             context.read<CommandProvider>().setReadOutput( result.toString());
             String resultString = String.fromCharCodes(result).split("\n")[0];
-            // print('readOutput CONVERTED    ${resultString}');
+            print('resulteadOutput CONVERTED    ${resultString}');
 
             print('resultString');
             print(resultString);
@@ -1084,7 +1157,7 @@ context.read<CommandProvider>().isScallerError();
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Map Select: "+   mapperList[int.parse(context.watch<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ] ,
+              "Map Select: "+   mapperList[int.parse(context.watch<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)] ,
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 30,
