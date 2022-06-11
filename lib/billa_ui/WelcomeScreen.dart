@@ -147,7 +147,7 @@ class _Welcome1State extends State<Welcome1> {
      Future.delayed(Duration(seconds:1),() async {
 
        await readDeviceType();
-       readtime();
+       // readtime();
 
      });
 
@@ -281,11 +281,12 @@ if (resultString.startsWith('#DEV_')){
 
 
    if(  context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("^", "")) ){
+     print('time is up moving to scaller mapper ');
 
 
      //move to next screen
 
-     if(context.read<CommandProvider>().scllerMapper.isScallerSet    ){
+     if(context.read<CommandProvider>().scllerMapper.isScallerSet &&  context.read<CommandProvider>().scllerMapper.disableTimer  ){
 
 
          Navigator.push(
@@ -689,12 +690,16 @@ futureCall() async {
                                 GestureDetector(
 
                                   onTap: () async {
+                                    print('skip is spressed ');
 
+
+                                    context.read<CommandProvider>() .scllerMapper  .disableTimer = false;
 
 
 
                                     context.read<CommandProvider>().    startMovingTonextScreen();
                                     context.read<CommandProvider>() .stopSendingRequests();
+
                                     await writeCharacteristicWithoutResponse(endTimerMSG).then((value){
 
                                       // setState(() {
@@ -704,17 +709,24 @@ futureCall() async {
                                       //   // commandProvider.   timeRemaining = "0";
                                       // });
 
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ScallerMapperManager(
-                                                characteristic:widget.characteristic,
-                                                isScaler:   context.read<CommandProvider>().scllerMapper.isScaller
+                                      print('going to map scaler screen ');
 
-                                            ),
-                                          )).then((value) {
+                                      Future.delayed(Duration(seconds:1),() async {
 
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ScallerMapperManager(
+                                                  characteristic:widget.characteristic,
+                                                  isScaler:   context.read<CommandProvider>().scllerMapper.isScaller
+
+                                              ),
+                                            )).then((value) {
+                                          context.read<CommandProvider>() .scllerMapper  .disableTimer = true;
+                                        });
                                       });
+
+
 
                                       context.read<CommandProvider>().stopMovingTonextScreen();
 

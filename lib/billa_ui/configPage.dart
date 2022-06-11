@@ -2,11 +2,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bluespark/billa_ui/ui_strings.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:intl/intl.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../main.dart';
 import '../providers/CommandProvider.dart';
@@ -66,7 +70,19 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
 
   List<int> PrevDump = [];
 
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
+  var onTapRecognizer;
+
+  TextEditingController textEditingController = TextEditingController();
+// ..text = "123456";
+
+  late StreamController<ErrorAnimationType> errorController;
+
+  bool hasError = false;
+  String currentText = "";
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
 
   scanAndRespond(String intactString) async {
 
@@ -259,15 +275,25 @@ print(ints);
     // });
 
   }
+  @override
+  void dispose() {
+    errorController.close();
 
+    super.dispose();
+  }
 
   @override
   void initState() {
 
 
-
-
+    onTapRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.pop(context);
+      };
+    errorController = StreamController<ErrorAnimationType>();
     super.initState();
+
+
 
 
     subscribeCharacteristic();
@@ -297,12 +323,13 @@ print(ints);
   }
 
 
-  callApi() async {
+  callApi(code) async {
     print('jgjfjf');
     var client = new http.Client();
     var VehicleDesciption = '3';
     try {
-      var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/1A3C.bsk'));
+      //  1A3C
+      var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/$code.bsk'));
 
       List<String> ls = (tt.body).split('\n');
       int counter =0;
@@ -375,50 +402,248 @@ print(ints);
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+      child: Scaffold(    key: scaffoldKey,
+        backgroundColor: blackColor,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
 
-        children: [
-          GestureDetector(
-            onTap: () async {
-              var httpRes =  await callApi();
+          children: [
+            Container(height:MediaQuery.of(context).size.height*0.05),
+            Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
-               List result =httpRes['list'];
-               String deviceType = httpRes['type'];
+            Expanded(
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView(
+                    children: <Widget>[
+                      SizedBox(height: 30),
 
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Enter your 4 digit code for configuration',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22,color:Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8),
+                        child: RichText(
+                          text: TextSpan(
+                              text: " ",
+                              children: [
+                                TextSpan(
+                                    text: ' ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15)),
+                              ],
+                              style: TextStyle(color: Colors.black54, fontSize: 15)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Form(
+                        key: formKey,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 30),
+                            child: PinCodeTextField(
+                              appContext: context,
+                              pastedTextStyle: TextStyle(
+                                color: Colors.green.shade600,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              length: 4,
+                              obscureText: false,
+                              obscuringCharacter: '*',
+                              animationType: AnimationType.fade,
+                              validator: (v) {
+                                if ((v?.length)! < 4) {
+                                  return "There should be 4 characters";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(5),
+                                fieldHeight: 60,
+                                fieldWidth: 50,
+                                activeFillColor:
+                                hasError ? Colors.orange : Colors.white,
+                              ),
+                              cursorColor: Colors.black,
+                              animationDuration: Duration(milliseconds: 300),
+                              textStyle: TextStyle(fontSize: 20, height: 1.6),
+                              backgroundColor:blackColor,
+                              enableActiveFill: true,
+                              errorAnimationController: errorController,
+                              controller: textEditingController,
+                              // keyboardType: TextInputType.number,
+                              boxShadows: [
+                                BoxShadow(
+                                  offset: Offset(0, 1),
+                                  color: blackColor,
+                                  blurRadius: 10,
+                                )
+                              ],
+                              onCompleted: (v) {
+                                print("Completed");
+                              },
+                              // onTap: () {
+                              //   print("Pressed");
+                              // },
+                              onChanged: (value) {
+                                print(value);
+                                setState(() {
+                                  currentText = value;
+                                });
+                              },
+                              beforeTextPaste: (text) {
+                                print("Allowing to paste $text");
+                                //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                                //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                                return true;
+                              },
+                            )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Text(
+                          hasError ? "*Please fill up all the cells properly" : "",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
 
-              for (int i = 0 ; i< 10 ;i++){
-                await Future.delayed(Duration(seconds: 3)).then((value) {
-                  List raw_packet = getDataforNumber(result,i);
-                  print("Master Packet");
-                  var MasterPcket ='%P'+raw_packet.join('')+deviceType;
+                      SizedBox(
+                        height: 14,
+                      ),
+                      doneButton(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FlatButton(
+                            child: Text("Clear",style: TextStyle(color:Colors.white),),
+                            onPressed: () {
+                              textEditingController.clear();
+                            },
+                          ),
 
-
-
-                  print(MasterPcket);
-                  coommunicatewithDevice(MasterPcket);
-
-
-                });
-
-              }
-    },
-            child: Container(
-              height: 200,
-              width: 200,
-              color: Colors.yellow,
-
-              child: Text("send signal"),
-
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+
+          ],
+        ),
+
       ),
     );
   }
 
+  doneButton(){
 
+    return  RoundedLoadingButton(
+      color: greenColor,
+      child:Container(
+        decoration: BoxDecoration(
+
+            borderRadius:
+            new BorderRadius.all(Radius.circular(10.0))),
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Text(
+            "Configure",
+            style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 30,
+                color: blackColor,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      controller: _btnController,
+      onPressed: (){
+        setState(() {_btnController.start();});
+
+
+        formKey.currentState?.validate();
+        // conditions for validating
+        if (currentText.length != 4 ) {
+          errorController.add(ErrorAnimationType
+              .shake); // Triggering error shake animation
+          setState(() {
+            hasError = true;
+          });
+        } else {
+          setState(() async {
+
+            var httpRes =  await callApi(currentText);
+
+            List result =httpRes['list'];
+            String deviceType = httpRes['type'].split(',')[0];
+
+
+            //
+            coommunicatewithDevice('%MP1');
+            coommunicatewithDevice('%AR$deviceType');
+
+            for (int i = 0 ; i< 30 ;i++){
+              await Future.delayed(Duration(milliseconds: 450)).then((value) {
+                List raw_packet = getDataforNumber(result,i);
+                print("Master Packet");
+                var MasterPcket ='%P'+raw_packet.join('')+deviceType;
+
+
+
+                print(MasterPcket);
+                coommunicatewithDevice(MasterPcket);
+
+
+              });
+
+            }
+            coommunicatewithDevice('%SNDC');
+            _btnController.stop();
+            hasError = false;
+            scaffoldKey.currentState?.showSnackBar(SnackBar(
+              content: Text("Aye!!"),
+              duration: Duration(seconds: 2),
+            ));
+          });
+        }
+
+
+
+
+      },
+
+    );
+
+
+  }
 
 
 }
@@ -433,3 +658,10 @@ getDataforNumber(Mastrerls_SIZE21,int number){
   return  lst;
 
 }
+
+
+
+
+
+
+

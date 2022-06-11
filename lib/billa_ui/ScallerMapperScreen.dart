@@ -162,7 +162,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
 
     super.initState();
-
+print('init is caling');
 
     subscribeCharacteristic();
 
@@ -355,15 +355,15 @@ return "okay";
 
       coommunicatewithDevice(GetMapperCode).then((d){
         print(d);
-        sleep(Duration(milliseconds:400));
+        sleep(Duration(seconds:1));
         coommunicatewithDevice(GetScallerCode).then((d){
-          sleep(Duration(milliseconds:400));
+          sleep(Duration(seconds:2));
           print('Yyyyyyyyy');
 
 
 
 
-          context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1]);
+          context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)]);
 
 
           if(widget.isScaler){
@@ -374,7 +374,7 @@ return "okay";
 
 
           MapperfixedExtentScrollController.animateToItem(
-            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)-1 ,
+            int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected),
             duration: Duration(milliseconds: 100),
             curve: Curves.fastOutSlowIn,);
 
@@ -399,7 +399,16 @@ return "okay";
 
 
     } catch (e) {
+
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+
       print(e);
+      print('ERROR 900');
 
 
     }
@@ -521,67 +530,6 @@ context.read<CommandProvider>().isScallerError();
   }
 
 
-  // Future<void> subscribeCharacteristic() async {
-  //
-  //   subscribeStream =
-  //       widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-  //
-  //         // print('readOutput   ${result}');
-  //
-  //
-  //         // setState(() {
-  //         context.read<CommandProvider>().setReadOutput( result.toString());
-  //         String resultString = String.fromCharCodes(result).split("\n")[0];
-  //         // print('readOutput CONVERTED    ${resultString}');
-  //
-  //         print('resultString');
-  //         print(resultString);
-  //         print('result');
-  //         print(result);
-  //         print(result.first);
-  //         print(result.last);
-  //         if(result.first==37  && result.last==94    ){
-  //           print('Complete ');
-  //           print(result);
-  //           // scanAndRespond(resultString);
-  //           scanAndRespond(resultString);
-  //
-  //           // setTime(resultString);
-  //         }
-  //
-  //
-  //         else    if((result.first==37  && result.last!=94 )){
-  //           print('Complete 2 ');
-  //           PrevDump  = result;
-  //           // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-  //
-  //
-  //         }
-  //
-  //         else      if((result.first!=37  && result.last==94 )){
-  //           // print(PrevDump);
-  //           // print(resultString);
-  //
-  //           PrevDump  += result;
-  //           result=[];
-  //           print("FOUND SECOND PART -------------------------------_____=-");
-  //           scanAndRespond(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //
-  //           print(PrevDump);
-  //           print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //
-  //
-  //         }
-  //
-  //
-  //
-  //
-  //       });
-  //   // setState(() {
-  //   // subscribeOutput = 'Notification set';
-  //   // });
-  // }
-
     Future<void> subscribeCharacteristic() async {
 
       subscribeStream =
@@ -650,78 +598,6 @@ context.read<CommandProvider>().isScallerError();
       // });
     }
 
-  //  subscribeCharacteristicStream()  {
-  //   // subscribeStream =
-  //      widget.subscribeToCharacteristic(widget.characteristic).listen((result) {
-  //        // setState(() {
-  //          subscitioResonse = result.toString();
-  //        // });
-  //
-  //
-  //        print("read ${result}");
-  //
-  //
-  //
-  //        // setState(() {
-  //          readOutput  = result.toString();
-  //          String resultString = String.fromCharCodes(result);
-  //          print(resultString);
-  //
-  //          if(resultString.startsWith("#MAP_")    ){
-  //
-  //            maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
-  //
-  //          }
-  //          else   if(resultString.startsWith("#SCA_")    )
-  //
-  //          {
-  //            scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
-  //
-  //            // setState(() {
-  //            //   showSuccessMessage = true;
-  //            // });
-  //            // Future.delayed(Duration(seconds: 2), (){
-  //            //   setState(() {
-  //            //     showSuccessMessage = false;
-  //            //   });
-  //
-  //            // });
-  //          } else   if(resultString.startsWith("#WUT_")){}
-  //          else if (resultString.startsWith("^") && !errorMessageIsOpen ) {
-  //
-  //            // setState(() {
-  //              errorMessageIsOpen = true;
-  //            // });
-  //            print('resultString');
-  //            print(resultString);
-  //            AwesomeDialog(
-  //              context: context,
-  //              dialogType: DialogType.ERROR,
-  //              animType: AnimType.BOTTOMSLIDE,
-  //              title: 'Load Too High',
-  //              desc: resultString,
-  //              btnCancelOnPress: () {
-  //                setState(() {
-  //                  errorMessageIsOpen = false;
-  //                });
-  //              },
-  //              btnOkOnPress: () {
-  //                setState(() {
-  //                  errorMessageIsOpen = false;
-  //                });
-  //
-  //              },
-  //            ).show();
-  //          }
-  //
-  //
-  //        // });
-  //
-  //      });
-  //   // // setState(() {
-  //   subscitioResonse = 'Notification set';
-  //   // });
-  // }
 
 
 

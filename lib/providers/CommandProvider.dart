@@ -223,7 +223,10 @@ class CommandProvider with ChangeNotifier {
   }
 
   bool setTime(String newTime) {
-    if (isNumeric(newTime)) {
+    print('logs from setTime function');
+    print(newTime + '  -' + timeRemaining+'-');
+    if (isNumeric(newTime) &&  timeRemaining != newTime ) {
+
       print("new TIME:${newTime}---");
 
       timeRemaining = newTime;
@@ -278,7 +281,7 @@ bool isNumeric(String s) {
 
 
 class ScallerMapper{
-
+  bool disableTimer = true;
   bool isRequesting = false;
   bool isScaller = true;
   bool isScallerSet = false;
