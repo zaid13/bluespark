@@ -895,12 +895,6 @@ context.read<CommandProvider>().isScallerError();
 
             Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
-            // Center(
-            //   child: Text(
-            //     "Status: ${widget.viewModel.connectionStatus}",
-            //     style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
-            // ),
-            // showSuccessMessage todo
 
             context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
               padding: const EdgeInsets.all(8.0),
