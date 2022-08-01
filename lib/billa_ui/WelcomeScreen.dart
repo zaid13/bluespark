@@ -270,6 +270,7 @@ class _Welcome1State extends State<Welcome1> {
 
 
 if (resultString.startsWith('#DEV_')){
+  print('WE JUST GOT DEV RES:${resultString}');
   if(  100<int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", "")) ){
     context.read<CommandProvider>().isScaller();
     context.read<CommandProvider>().isScallerSet();
@@ -281,7 +282,7 @@ if (resultString.startsWith('#DEV_')){
 
 
    if(  context.read<CommandProvider>().setTime( resultString.replaceAll("#WUT_", "").replaceAll("^", "")) ){
-     print('time is up moving to scaller mapper ');
+     print('time is up moving to scaller mapper scaller is ${context.read<CommandProvider>().scllerMapper.isScallerSet} ');
 
 
      //move to next screen
@@ -468,6 +469,36 @@ if (resultString.startsWith('#DEV_')){
            }
 
 
+         else  if(result.first==35  && result.last==13   && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime()  ){
+             print('Complete ');
+             print(result);
+             setTime(resultString);
+
+           }
+
+
+           else    if((result.first==35  && result.last!=13  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime() )){
+             print('Complete 2 ');
+             PrevDump  = result;
+             // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+
+           }
+
+           else      if((result.first!=35  && result.last==13  && resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=   context.read<CommandProvider>().getTime() )){
+             // print(PrevDump);
+             // print(resultString);
+
+             PrevDump  += result;
+             result=[];
+             print("FOUND SECOND PART -------------------------------_____=-");
+             print(PrevDump);
+             print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+             setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+
+           }
+
+
 
 
          });
@@ -570,7 +601,7 @@ futureCall() async {
 
   if(isCalledOnce){
     isCalledOnce = false;
-    await Future.delayed(Duration(seconds:6),(){
+    await Future.delayed(Duration(seconds:1),(){
 
     });
 
@@ -711,7 +742,7 @@ futureCall() async {
 
                                       print('going to map scaler screen ');
 
-                                      Future.delayed(Duration(seconds:1),() async {
+                                   //   Future.delayed(Duration(milliseconds:100),() async {
 
                                         Navigator.push(
                                             context,
@@ -724,7 +755,7 @@ futureCall() async {
                                             )).then((value) {
                                           context.read<CommandProvider>() .scllerMapper  .disableTimer = true;
                                         });
-                                      });
+                                   //   });
 
 
 

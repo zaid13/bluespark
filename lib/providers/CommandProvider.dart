@@ -16,7 +16,9 @@ class CommandProvider with ChangeNotifier {
   String timeRemaining = "0";
   bool cancelledRequest = false;
   bool MovingToNextScreen = false;
+  bool syncingDatra = false;
   int swipeToChangeIsEnable = 1;
+
 
 
 
@@ -251,6 +253,16 @@ class CommandProvider with ChangeNotifier {
     readOutput = newPOutput;
     notifyListeners();
   }
+
+
+  setSyncOn(){
+    scllerMapper. syncIsOn = true;
+    notifyListeners();
+  }
+  setSyncOff(){
+    scllerMapper. syncIsOn = false;
+    notifyListeners();
+  }
   //
   // restartListening() {
   //   timeRemaining = "31";
@@ -288,6 +300,8 @@ class ScallerMapper{
   bool UpdateSucessfully = false;
   bool MAP_ERROR_IS_OPEN = false;
   bool SCALLER_ERROR_IS_OPEN = false;
+
+  bool syncIsOn = false;
 
   String mapperSelected = "A";
   String scallerSelected = "3";

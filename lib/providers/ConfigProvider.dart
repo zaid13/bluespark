@@ -8,25 +8,82 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ConfigProvider with ChangeNotifier {
 
 
-  List<bool> packetsRecived= [];
+
   List<String> packets= [];
+  Map<String,bool > receivedPackets = {};
 
   double PercentageOFVerifiedPackets = 0.0;
 
 
 
   freshMap(){
-    packetsRecived =[];
+
     packets  = [];
     PercentageOFVerifiedPackets = 0.0;
+    receivedPackets = {};
     notifyListeners();
 
   }
 
 
+  allPacketFound(){
+    receivedPackets.forEach((key, value) {
+      receivedPackets[key] = true;
+    });
+  }
+  loadListWithCounter(value){
 
-  keyFound(String key){
 
+    String numberValue  = (value as String).trim().replaceFirst('<', '').replaceFirst('>', '');
+
+    String expectedNumber = '<'+(int.parse(numberValue)+1).toString()+'>';
+
+    if(int.parse(numberValue) ==255){
+      expectedNumber = '<'+(0).toString()+'>';
+    }
+
+
+    packets = [expectedNumber] ;
+
+    for (var i in packets){
+      receivedPackets.addAll({i:false});
+    }
+    print('the latest lis is  $receivedPackets');
+
+
+    return expectedNumber;
+  }
+  loadListWithResponses(value){
+
+
+    packets = [value] ;
+
+    for (var i in packets){
+      receivedPackets.addAll({i:false});
+    }
+    print('the latest lis is  $receivedPackets');
+
+
+    return value;
+  }
+
+  keyFound(String expectedNumber){
+    print('Record found $expectedNumber');
+
+
+
+    receivedPackets[expectedNumber] = true;
+
+
+  }
+
+   bool isKeyRecieved (String key){
+    if( receivedPackets[key] ==null){
+      print('the record for string $key    doesnt exitrs returning NULL');
+
+      return false;}
+
+    return  receivedPackets[key] as bool;
 
   }
 

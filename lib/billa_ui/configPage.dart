@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bluespark/billa_ui/ui_strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -92,7 +93,11 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   scanAndRespond(String intactString) async {
 
     print('adding it to daa controller');
-    NewDatacontroller.add(intactString);
+    if((intactString.contains('#') && intactString.contains('^') ) ||
+        (intactString.contains('%') )){
+      NewDatacontroller.add(intactString);
+    }
+
 
     // if(intactString.length>0)
     // context.read<ConfigProvider>().keyFound(intactString);
@@ -131,9 +136,9 @@ print(ints);
 
   checkEachString(resultString,List <int> resultIntList){
 
-    print('readOutput CONVERTED    ${resultString}');
-
-    print('resultString: $resultIntList  String');
+    // print('readOutput CONVERTED    ${resultString}');
+    //
+    // print('resultString: $resultIntList  String');
 
 
     print(resultString.contains('>'));
@@ -141,12 +146,12 @@ print(ints);
 
 
     if(resultIntList.last==13){
-      print('has last 13');
+      // print('has last 13');
       resultIntList.removeLast();
 
-      print('readOutput CONVERTED  13  ${resultString}');
-
-      print('resultString 13 : $resultIntList  String');
+      // print('readOutput CONVERTED  13  ${resultString}');
+      //
+      // print('resultString 13 : $resultIntList  String');
 
 
     }
@@ -155,18 +160,18 @@ print(ints);
     var copyResult = resultIntList;
 
     if(resultIntList.length==0) return ;
-
-    print(resultIntList.first);
-    print(resultIntList.last);
+    //
+    // print(resultIntList.first);
+    // print(resultIntList.last);
     if(resultIntList.first==37  && (resultIntList.last==94)     ){
-      print('Complete ');
-      print(resultIntList);
+      // print('Complete ');
+      // print(resultIntList);
       // print(resultString);
       scanAndRespond(String.fromCharCodes(resultIntList).split("\n")[0]);
     }
 
     else    if((resultIntList.first==37  && resultIntList.last!=94 )){
-      print('First Part ');
+      // print('First Part ');
       PrevDump  = resultIntList;
 
 
@@ -185,13 +190,13 @@ print(ints);
 
         PrevDump.removeRange(21-resultIntList.length, PrevDump.length);
         PrevDump  += resultIntList;
-        print('string is very long shortenfing it');
-        print(PrevDump.length);
-        print('PrevDump.length');
-        print('resultIntList.length');
-        print(resultIntList.length);
-        print('20-resultIntList.length');
-        print(20-resultIntList.length);
+        // print('string is very long shortenfing it');
+        // print(PrevDump.length);
+        // print('PrevDump.length');
+        // print('resultIntList.length');
+        // print(resultIntList.length);
+        // print('20-resultIntList.length');
+        // print(20-resultIntList.length);
 
 
       }else{
@@ -200,9 +205,9 @@ print(ints);
         PrevDump  += resultIntList;
       }
       resultIntList=[];
-      print("FOUND SECOND PART -------------------------------__  ___=-");
-      print(PrevDump);
-      print(PrevDump.length);
+      // print("FOUND SECOND PART -------------------------------__  ___=-");
+      // print(PrevDump);
+      // print(PrevDump.length);
 
       print(String.fromCharCodes(PrevDump).split('\n'));
       print(String.fromCharCodes(PrevDump).split("\n")[0]);
@@ -213,18 +218,72 @@ print(ints);
 
     //------------------------------
 
+    else if(resultIntList.first==60  && (resultIntList.last==62)     ){
+      // print('Complete ');
+      // print(resultIntList);
+      // print(resultString);
+      scanAndRespond(String.fromCharCodes(resultIntList).split("\n")[0]);
+    }
+
+    else    if((resultIntList.first==60  && resultIntList.last!=62 )){
+      // print('First Part ');
+      PrevDump  = resultIntList;
 
 
-    if(  copyResult.isNotEmpty && copyResult.first==35  && copyResult.last==94    ){
-      print('Complete #');
-      print(copyResult);
-      print(String.fromCharCodes(copyResult).split("\n"));
+
+    }
+
+    else      if(( PrevDump.length>0 && resultIntList.first!=60  && resultIntList.last==62 )){
+      // print(PrevDump);
+      // print(resultString);
+
+
+
+
+
+      if (PrevDump.length +resultIntList.length >20){
+
+        PrevDump.removeRange(21-resultIntList.length, PrevDump.length);
+        PrevDump  += resultIntList;
+        // print('string is very long shortenfing it');
+        // print(PrevDump.length);
+        // print('PrevDump.length');
+        // print('resultIntList.length');
+        // print(resultIntList.length);
+        // print('20-resultIntList.length');
+        // print(20-resultIntList.length);
+
+
+      }else{
+        print('string is perdect size');
+
+        PrevDump  += resultIntList;
+      }
+      resultIntList=[];
+      // print("FOUND SECOND PART -------------------------------__  ___=-");
+      // print(PrevDump);
+      // print(PrevDump.length);
+
+      print(String.fromCharCodes(PrevDump).split('\n'));
+      print(String.fromCharCodes(PrevDump).split("\n")[0]);
+      scanAndRespond(String.fromCharCodes(PrevDump).split("\n")[0]);
+      PrevDump = [];
+
+    }
+
+    //----------------
+
+
+    else if(  copyResult.isNotEmpty && copyResult.first==35  && copyResult.last==94    ){
+      // print('Complete #');
+      // print(copyResult);
+      // print(String.fromCharCodes(copyResult).split("\n"));
       scanAndRespond(String.fromCharCodes(copyResult).split("\n")[0]);
     }
 
 
     else    if((copyResult.isNotEmpty && copyResult.first==35  && copyResult.last!=94 )){
-      print('First Part #');
+      // print('First Part #');
       PrevDump  = copyResult;
 
 
@@ -236,8 +295,8 @@ print(ints);
 
       PrevDump  += copyResult;
       copyResult=[];
-      print("FOUND SECOND PART # -------------------------------_____=-");
-      print(PrevDump);
+      // print("FOUND SECOND PART # -------------------------------_____=-");
+      // print(PrevDump);
 
       PrevDump = [];
 
@@ -246,7 +305,7 @@ print(ints);
 
 
     else if(PrevDump.length>0 && PrevDump.length<20   && resultIntList.first!=37  &&   resultIntList.last!=94){
-      print('ADDING ++++++++++++');
+      // print('ADDING ++++++++++++');
 
       PrevDump.addAll(copyResult);
     }
@@ -278,8 +337,8 @@ print(ints);
 
 
 
-          print('results String :$masterList');
-          print('results String length  :${masterList.length}');
+          // print('results String :$masterList');
+          // print('results String length  :${masterList.length}');
 
           for (List<int> i in masterList)
           {
@@ -300,11 +359,11 @@ print(ints);
   }
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
-    print(widget.characteristic);
-    print(msg);
-    print('5');
+    // print(widget.characteristic);
+    // print(msg);
+    // print('5');
     await widget.writeWithoutResponse(widget.characteristic, (msg)).then((value){
-      print('vV');
+      // print('vV');
 
     });
     // setState(() {
@@ -389,7 +448,7 @@ print(ints);
 
           }
 
-          print(i);
+          // print(i);
         }
         if(counter>4 && counter<26){
           // print(i);
@@ -435,14 +494,14 @@ print(ints);
     }
 
   }
-  
-  
-  
+
+
+
   @override
   Widget build(BuildContext context) {
-    
-    
-  
+
+
+
     return SafeArea(
       child: Scaffold(    key: scaffoldKey,
         backgroundColor: blackColor,
@@ -630,7 +689,7 @@ print(ints);
 
 
     List masterPacketsList = ['%MP1'];
-    List responsePacketsList = ['%MPROG1^'];
+    List<String> responsePacketsList = ['%MPROG1^'];
 
     masterPacketsList.add('%AR$deviceType');
     responsePacketsList.add('#AR$deviceType^');
@@ -668,7 +727,8 @@ print(ints);
     responsePacketsList.add('#EPRMC'+'^');
 
     print('masterPacketsList');
-    print(masterPacketsList);
+    // print(masterPacketsList);
+
 
    await sendDataToChip(masterPacketsList,responsePacketsList);
 
@@ -689,7 +749,7 @@ print(ints);
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Text(
-            "Configure",
+            "Program Device",
             style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 30,
@@ -720,7 +780,7 @@ print(ints);
           }
           catch(c){
             print(c);
-            switchOffSendingButtonState('ERROR 1');
+            switchOffSendingButtonState(false);
           }
 
 
@@ -739,18 +799,59 @@ print(ints);
 
 
 
-  switchOffSendingButtonState(text){
+  switchOffSendingButtonState(text) async {
     setState(()  {
       _btnController.stop();
       hasError = false;
-      scaffoldKey.currentState?.showSnackBar(SnackBar(
-        content: Text(text),
-        duration: Duration(seconds: 2),
-      ));
+      // scaffoldKey.currentState?.showSnackBar(SnackBar(
+      //   content: Text(text),
+      //   duration: Duration(seconds: 2),
+      // ));
     });
+
+
+    if(text){
+      await   AwesomeDialog(
+        context: context,
+        dialogType: DialogType.SUCCES,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'success'.toUpperCase(),
+        desc: "Programming Successful",
+        // btnCancelOnPress: () {
+        //
+        // },
+        btnOkOnPress: () {
+          Navigator.pop(context,true);
+
+          // context.read<CommandProvider>().ERROR_CLOSED();
+
+        },
+      ).show().then((value) {});
+    }
+    else{
+      await   AwesomeDialog(
+        context: context,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'error'.toUpperCase(),
+        desc: "Programming Failure, Please Retry",
+        // btnCancelOnPress: () {
+        //
+        // },
+        btnOkOnPress: () {
+          Navigator.pop(context,true);
+
+          // context.read<CommandProvider>().ERROR_CLOSED();
+
+        },
+      ).show().then((value) {});
+
+    }
+
+
   }
 
-  sendDataToChip(List data,List results) async{
+  sendDataToChip(List data,List reponseList) async{
 
 
     Stream stream = NewDatacontroller.stream;
@@ -758,51 +859,116 @@ print(ints);
 
 
 
-    coommunicatewithDevice(data[0]);
+
+
+    gotResponse (data[0],reponseList[0],0);
+    String expectedNumber = reponseList[0];
+
+
     int totalPacketSent = 1;
 
+
    StreamSubscription subscribeStream=  stream.listen((value) {
+
+
       if(totalPacketSent<data.length) {
-        print('Expected value   : ${results[totalPacketSent - 1]}');
+
+
+        print('Expected value   : $expectedNumber');
         print('Value from device: $value');
       }
 
       if(data.length+1 == totalPacketSent){return;}
 
-      if(value.toString().trim() == (results[totalPacketSent-1]).toString().trim()  &&  totalPacketSent<=data.length) {
-
-        if(totalPacketSent<data.length) {
-          coommunicatewithDevice(data[totalPacketSent]);
-        }
-        context.read<ConfigProvider>().updatePercentageOFVerifiedPackets(totalPacketSent);
-        totalPacketSent++;
+      if(value.toString().trim() == (expectedNumber).toString().trim()  &&  totalPacketSent<=data.length) {
 
 
-        print('length of total packets ${data.length}');
-        print('Confirmations recieved  ${totalPacketSent}');
+
+
+          context.read<ConfigProvider>().keyFound(value);
+
+          if(totalPacketSent<data.length) {
+
+            String nextRes = context.read<ConfigProvider>().loadListWithResponses(reponseList[totalPacketSent]);
+            gotResponse(data[totalPacketSent], nextRes, 0);
+            expectedNumber = reponseList[totalPacketSent];
+
+          }
+          context.read<ConfigProvider>().updatePercentageOFVerifiedPackets(totalPacketSent);
+          totalPacketSent++;
+
+
+          print('length of total packets ${data.length}');
+          print('Confirmations recieved  ${totalPacketSent-1}');
 
         if(data.length+1 == totalPacketSent){
-
+          context.read<ConfigProvider>().allPacketFound();
           print('SUCCESS');
-          switchOffSendingButtonState('SUCCESS');
+          switchOffSendingButtonState(true);
 
         }
 
       }
     });
 
-   Future.delayed(Duration(seconds:17),(){
-     switchOffSendingButtonState('Time out');
-     subscribeStream.cancel();
 
-   });
 
 
 
   }
+  gotResponse(message, response,noOfTimes){
+    if(noOfTimes<3)
+    {
+      coommunicatewithDevice (message);
+      activateTimeOut(message,response,noOfTimes);
+
+    }
+
+    else{
+print('$noOfTimes is NOT less than 3 ');
+
+print('EERROR');
+switchOffSendingButtonState(false);
+      //todo error  stop everything
+
+    }
+
+  }
+
+  void activateTimeOut(message , response , noOfTimes) {
+
+    message   = message.toString().trim();
+
+print(message);
+print('%SNDC');
+print(message.toString().startsWith('%SNDC') );
+
+  new Future.delayed(!message.toString().startsWith('%SNDC') ?Duration(milliseconds:  600 ):Duration(seconds:  5 ), () {
+    // deleayed code here
+    //todo if current packet is not verified then send the packet again
+
+
+    if(context.read<ConfigProvider>().isKeyRecieved(response) as bool){
+      print('key is already found so exiting after waitng    $noOfTimes  $response'  );
+      return;
+
+    }else{
+      print('key is NOT found so exiting after waitng    $noOfTimes  $response'  );
+
+      gotResponse(message,response, noOfTimes  + 1 );
+
+    }
+
+  });
+
+}
+
+
 
 
 }
+
+
 getDataforNumber(Mastrerls_SIZE21,int number){
   List lst = [];
 
