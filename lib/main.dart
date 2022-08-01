@@ -1,5 +1,6 @@
 
 import 'package:bluespark/providers/CommandProvider.dart';
+import 'package:bluespark/providers/ConfigProvider.dart';
 import 'package:bluespark/providers/ConnectionProvider.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
@@ -55,6 +56,7 @@ Future<void> main() async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CommandProvider()),
+          ChangeNotifierProvider(create: (_) => ConfigProvider()),
 
           Provider.value(value: _scanner),
           Provider.value(value: _monitor),
@@ -98,82 +100,6 @@ Future<void> main() async {
 class HomeScreen extends StatelessWidget {
 
 
-  callApi() async {
-    print('jgjfjf');
-    var client = new http.Client();
-    var VehicleDesciption = '3';
-    try {
-      var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/1A3C.bsk'));
-
-      List<String> ls = (tt.body).split('\n');
-      int counter =0;
-      List Mastrerls_SIZE21= [];
-      NumberFormat formatter = new NumberFormat("00");
-
-      for (String i in ls) {
-        counter++;
-        if(counter==2){
-          print('000000000593485945894058943589048530');
-          VehicleDesciption = i.split(',')[0];
-
-   if( int.parse(VehicleDesciption)>16){
-     VehicleDesciption =   int.parse(VehicleDesciption).toRadixString(16).toString();
-   }
-    if( int.parse(VehicleDesciption)<10){
-      VehicleDesciption  =  (VehicleDesciption.padLeft(2,'0'));
-    }
-    else{
-      VehicleDesciption  = int.parse (VehicleDesciption).toRadixString(16).toString();
-
-
-    }
-
-          print(i);
-        }
-        if(counter>4 && counter<26){
-          // print(i);
-          var subStr = i.split(',');
-          var NewLsit = [];
-           for (var j in subStr ){
-             print(j.split(',')[0]);
-             if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))>16){
-               NewLsit.add(int.parse(j.replaceFirst('\r', '')).toRadixString(16));
-
-             }
-             else if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))<10){
-
-               NewLsit.add((formatter.format( int.parse(j.replaceFirst('\r', '')))).toString());
-
-             }
-             else{
-
-               NewLsit.add((int.parse(j.replaceFirst('\r', '')).toRadixString(16)).toString().padLeft(2,'0'));
-
-             }
-
-           }
-
-          Mastrerls_SIZE21.add(NewLsit);
-        }
-      }
-
-
-      print(Mastrerls_SIZE21);
-
-      for(int i= 0 ; i< 30 ; i++){
-        List result = getDataforNumber(Mastrerls_SIZE21,i);
-        print(result);
-      }
-
-
-
-
-    }
-    finally {
-    client.close();
-    }
-
-  }
   const HomeScreen({
     Key? key,
   }) : super(key: key);

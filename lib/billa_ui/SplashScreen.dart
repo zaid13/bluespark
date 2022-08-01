@@ -193,7 +193,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
           widget.viewModel.connect().then((value){
 
 
-            Future.delayed(Duration(seconds: 4), () async {
+            Future.delayed(Duration(seconds: 1), () async {
               print(widget.viewModel.connectionStatus );
               print('widget.viewModel.connectionStatus' );
 

@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bluespark/billa_ui/ui_strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -11,9 +12,12 @@ import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+
 
 import '../main.dart';
-import '../providers/CommandProvider.dart';
+// import '../providers/CommandProvider.dart';
+import '../providers/ConfigProvider.dart';
 import '../src/ui/device_detail/device_interaction_tab.dart';
 import '../util/config.dart';
 import '../util/functions.dart';
@@ -74,7 +78,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
 
   var onTapRecognizer;
 
-  TextEditingController textEditingController = TextEditingController();
+  TextEditingController textEditingController = TextEditingController( );
 // ..text = "123456";
 
   late StreamController<ErrorAnimationType> errorController;
@@ -83,45 +87,20 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   String currentText = "";
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
+  StreamController<String> NewDatacontroller = StreamController<String>();
+
 
   scanAndRespond(String intactString) async {
 
-    print("intactString");
-    print(intactString);
-    print("#ERR_01#");
-
-
-    if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("#", '')   ){
-      print("intactString        1111");
-
-      context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("#", ''));
-      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
-
+    print('adding it to daa controller');
+    if((intactString.contains('#') && intactString.contains('^') ) ||
+        (intactString.contains('%') )){
+      NewDatacontroller.add(intactString);
     }
-    else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("#", '')){
-      print("intactString        22222");
 
 
-
-      context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("#", ''));
-      context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
-
-    }
-    else if((intactString.startsWith( "#ERR_01")  && !context.read<CommandProvider>().scllerMapper.MAP_ERROR_IS_OPEN )){
-      print("intactString        33333");
-
-      context.read<CommandProvider>().isMapperError();
-      print("777777");
-
-    }
-    else if((intactString.startsWith( "#ERR_02")  && !context.read<CommandProvider>().scllerMapper.SCALLER_ERROR_IS_OPEN  )  ){  //&& context.read<CommandProvider>().scllerMapper.ERROR==0
-      print("8888888``");
-
-
-      context.read<CommandProvider>().isScallerError();
-
-
-    }
+    // if(intactString.length>0)
+    // context.read<ConfigProvider>().keyFound(intactString);
 
 
   }
@@ -155,6 +134,184 @@ print(ints);
     return ints+[13];
   }
 
+  checkEachString(resultString,List <int> resultIntList){
+
+    // print('readOutput CONVERTED    ${resultString}');
+    //
+    // print('resultString: $resultIntList  String');
+
+
+    print(resultString.contains('>'));
+
+
+
+    if(resultIntList.last==13){
+      // print('has last 13');
+      resultIntList.removeLast();
+
+      // print('readOutput CONVERTED  13  ${resultString}');
+      //
+      // print('resultString 13 : $resultIntList  String');
+
+
+    }
+
+
+    var copyResult = resultIntList;
+
+    if(resultIntList.length==0) return ;
+    //
+    // print(resultIntList.first);
+    // print(resultIntList.last);
+    if(resultIntList.first==37  && (resultIntList.last==94)     ){
+      // print('Complete ');
+      // print(resultIntList);
+      // print(resultString);
+      scanAndRespond(String.fromCharCodes(resultIntList).split("\n")[0]);
+    }
+
+    else    if((resultIntList.first==37  && resultIntList.last!=94 )){
+      // print('First Part ');
+      PrevDump  = resultIntList;
+
+
+
+    }
+
+    else      if(( PrevDump.length>0 && resultIntList.first!=37  && resultIntList.last==94 )){
+      // print(PrevDump);
+      // print(resultString);
+
+
+
+
+
+      if (PrevDump.length +resultIntList.length >20){
+
+        PrevDump.removeRange(21-resultIntList.length, PrevDump.length);
+        PrevDump  += resultIntList;
+        // print('string is very long shortenfing it');
+        // print(PrevDump.length);
+        // print('PrevDump.length');
+        // print('resultIntList.length');
+        // print(resultIntList.length);
+        // print('20-resultIntList.length');
+        // print(20-resultIntList.length);
+
+
+      }else{
+        print('string is perdect size');
+
+        PrevDump  += resultIntList;
+      }
+      resultIntList=[];
+      // print("FOUND SECOND PART -------------------------------__  ___=-");
+      // print(PrevDump);
+      // print(PrevDump.length);
+
+      print(String.fromCharCodes(PrevDump).split('\n'));
+      print(String.fromCharCodes(PrevDump).split("\n")[0]);
+      scanAndRespond(String.fromCharCodes(PrevDump).split("\n")[0]);
+      PrevDump = [];
+
+    }
+
+    //------------------------------
+
+    else if(resultIntList.first==60  && (resultIntList.last==62)     ){
+      // print('Complete ');
+      // print(resultIntList);
+      // print(resultString);
+      scanAndRespond(String.fromCharCodes(resultIntList).split("\n")[0]);
+    }
+
+    else    if((resultIntList.first==60  && resultIntList.last!=62 )){
+      // print('First Part ');
+      PrevDump  = resultIntList;
+
+
+
+    }
+
+    else      if(( PrevDump.length>0 && resultIntList.first!=60  && resultIntList.last==62 )){
+      // print(PrevDump);
+      // print(resultString);
+
+
+
+
+
+      if (PrevDump.length +resultIntList.length >20){
+
+        PrevDump.removeRange(21-resultIntList.length, PrevDump.length);
+        PrevDump  += resultIntList;
+        // print('string is very long shortenfing it');
+        // print(PrevDump.length);
+        // print('PrevDump.length');
+        // print('resultIntList.length');
+        // print(resultIntList.length);
+        // print('20-resultIntList.length');
+        // print(20-resultIntList.length);
+
+
+      }else{
+        print('string is perdect size');
+
+        PrevDump  += resultIntList;
+      }
+      resultIntList=[];
+      // print("FOUND SECOND PART -------------------------------__  ___=-");
+      // print(PrevDump);
+      // print(PrevDump.length);
+
+      print(String.fromCharCodes(PrevDump).split('\n'));
+      print(String.fromCharCodes(PrevDump).split("\n")[0]);
+      scanAndRespond(String.fromCharCodes(PrevDump).split("\n")[0]);
+      PrevDump = [];
+
+    }
+
+    //----------------
+
+
+    else if(  copyResult.isNotEmpty && copyResult.first==35  && copyResult.last==94    ){
+      // print('Complete #');
+      // print(copyResult);
+      // print(String.fromCharCodes(copyResult).split("\n"));
+      scanAndRespond(String.fromCharCodes(copyResult).split("\n")[0]);
+    }
+
+
+    else    if((copyResult.isNotEmpty && copyResult.first==35  && copyResult.last!=94 )){
+      // print('First Part #');
+      PrevDump  = copyResult;
+
+
+
+    }
+
+    else      if((PrevDump.length>0 && copyResult.isNotEmpty && copyResult.first!=35  && copyResult.last==94  )){
+
+
+      PrevDump  += copyResult;
+      copyResult=[];
+      // print("FOUND SECOND PART # -------------------------------_____=-");
+      // print(PrevDump);
+
+      PrevDump = [];
+
+
+    }
+
+
+    else if(PrevDump.length>0 && PrevDump.length<20   && resultIntList.first!=37  &&   resultIntList.last!=94){
+      // print('ADDING ++++++++++++');
+
+      PrevDump.addAll(copyResult);
+    }
+
+  }
+
   Future<void> subscribeCharacteristic() async {
 
     subscribeStream =
@@ -164,48 +321,35 @@ print(ints);
 
 
           // setState(() {
-          context.read<CommandProvider>().setReadOutput( result.toString());
-          String resultString = String.fromCharCodes(result).split("\n")[0];
-          // print('readOutput CONVERTED    ${resultString}');
+          // context.read<CommandProvider>().setReadOutput( result.toString());
+          List<List<int>> masterList = [];
+          List<int> subList = [];
 
-          print('resultString');
-          print(resultString);
-          print('result');
-          print(result);
-          print(result.first);
-          print(result.last);
-          if(result.first==37  && result.last==94    ){
-            print('Complete ');
+          for (int i in result){
+            subList.add(i);
+            if(i==13){
+              masterList.add(subList);
+              subList = [];
+            }
+          }
+          if(subList.length>0){              masterList.add(subList);}
+
+
+
+
+          // print('results String :$masterList');
+          // print('results String length  :${masterList.length}');
+
+          for (List<int> i in masterList)
+          {
+            String resultStrings = String.fromCharCodes(i);
             print(result);
-            // scanAndRespond(resultString);
+            print(i);
+            print(resultStrings);
+            print("LKKKL");
 
-
-            // setTime(resultString);
+            checkEachString(resultStrings, i);
           }
-
-
-          else    if((result.first==37  && result.last!=94 )){
-            print('Complete 2 ');
-            PrevDump  = result;
-            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-
-
-          }
-
-          else      if((result.first!=37  && result.last==94 )){
-            // print(PrevDump);
-            // print(resultString);
-
-            PrevDump  += result;
-            result=[];
-            print("FOUND SECOND PART -------------------------------_____=-");
-            print(PrevDump);
-            print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-
-
-          }
-
-
 
 
         });
@@ -215,11 +359,11 @@ print(ints);
   }
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
-    print(widget.characteristic);
-    print(msg);
-    print('5');
+    // print(widget.characteristic);
+    // print(msg);
+    // print('5');
     await widget.writeWithoutResponse(widget.characteristic, (msg)).then((value){
-      print('vV');
+      // print('vV');
 
     });
     // setState(() {
@@ -236,45 +380,6 @@ print(ints);
 
   }
 
-
-  InitsetScallerMapper(val) async {
-
-    try {
-
-
-      coommunicatewithDevice(GetMapperCode).then((d){
-        print(d);
-        sleep(Duration(milliseconds:400));
-        coommunicatewithDevice(GetScallerCode).then((d){
-          sleep(Duration(milliseconds:400));
-          print('Yyyyyyyyy');
-
-
-
-
-
-
-
-
-        });
-
-      });
-
-
-
-
-
-    } catch (e) {
-      print(e);
-
-
-    }
-    // setState(() {
-    //   _btnController.stop();
-    //
-    // });
-
-  }
   @override
   void dispose() {
     errorController.close();
@@ -299,7 +404,6 @@ print(ints);
     subscribeCharacteristic();
 
 
-    InitsetScallerMapper('124');
 
     print(widget.viewModel.connectionStatus);
 
@@ -307,19 +411,7 @@ print(ints);
       restartApp();
 
     }
-    // MapperfixedExtentScrollController =
-    // new FixedExtentScrollController(initialItem: mapsArray.keys.toList().indexOf( context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected));
-    // ScallerfixedExtentScrollController =
-    // new FixedExtentScrollController(initialItem: int.parse( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected));
 
-
-    Future.delayed(Duration(seconds:5),(){
-      context.read<CommandProvider>(). setSwipeToChangeIsDisable();
-
-      Future.delayed(Duration(seconds:5),(){
-        context.read<CommandProvider>(). disable_all_messages();
-      });
-    });
   }
 
 
@@ -329,7 +421,9 @@ print(ints);
     var VehicleDesciption = '3';
     try {
       //  1A3C
+      print('getting url -$code-');
       var tt = await client.get(Uri.http('bluesparkautomotive.com','mapfiles/$code.bsk'));
+      print('url got ');
 
       List<String> ls = (tt.body).split('\n');
       int counter =0;
@@ -339,7 +433,7 @@ print(ints);
       for (String i in ls) {
         counter++;
         if(counter==2){
-          print('000000000593485945894058943589048530');
+
           VehicleDesciption = i.split(',')[0];
 
           if( int.parse(VehicleDesciption)>16){
@@ -354,7 +448,7 @@ print(ints);
 
           }
 
-          print(i);
+          // print(i);
         }
         if(counter>4 && counter<26){
           // print(i);
@@ -363,17 +457,17 @@ print(ints);
           for (var j in subStr ){
             print(j.split(',')[0]);
             if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))>16){
-              NewLsit.add(int.parse(j.replaceFirst('\r', '')).toRadixString(16));
+              NewLsit.add(int.parse(j.replaceFirst('\r', '')).toRadixString(16).toUpperCase());
 
             }
             else if(int.parse(j.replaceFirst('\r', '').replaceFirst('\'', ''))<10){
 
-              NewLsit.add((formatter.format( int.parse(j.replaceFirst('\r', '')))).toString());
+              NewLsit.add((formatter.format( int.parse(j.replaceFirst('\r', '')))).toString().toUpperCase());
 
             }
             else{
 
-              NewLsit.add((int.parse(j.replaceFirst('\r', '')).toRadixString(16)).toString().padLeft(2,'0'));
+              NewLsit.add((int.parse(j.replaceFirst('\r', '')).toRadixString(16).toUpperCase()).toString().padLeft(2,'0'));
 
             }
 
@@ -400,8 +494,14 @@ print(ints);
     }
 
   }
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
+
     return SafeArea(
       child: Scaffold(    key: scaffoldKey,
         backgroundColor: blackColor,
@@ -549,6 +649,20 @@ print(ints);
                           ),
 
                         ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: new LinearPercentIndicator(
+                          width: MediaQuery.of(context).size.width - 50,
+                          animation: false,
+                          lineHeight: 20.0,
+                          animationDuration: 2500,
+
+                          percent: context.watch<ConfigProvider>().getPercentageOFVerifiedPackets(),
+                          center: Text("${(context.watch<ConfigProvider>().getPercentageOFVerifiedPackets()*100).toStringAsFixed(1)} %",style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold)),
+                          linearStrokeCap: LinearStrokeCap.roundAll,
+                          progressColor: Colors.green,
+                        ),
                       )
                     ],
                   ),
@@ -562,6 +676,66 @@ print(ints);
       ),
     );
   }
+  Future<bool> doConfiguration() async {
+    var httpRes = await callApi(currentText);
+    bool success = true;
+
+    List result = httpRes['list'];
+    String deviceType = httpRes['type'].split(',')[0];
+    context.read<ConfigProvider>().freshMap();
+
+
+    //
+
+
+    List masterPacketsList = ['%MP1'];
+    List<String> responsePacketsList = ['%MPROG1^'];
+
+    masterPacketsList.add('%AR$deviceType');
+    responsePacketsList.add('#AR$deviceType^');
+
+
+
+  for (int i = 0 ; i< 30 ;i++){
+
+  List raw_packet = getDataforNumber(result,i);
+  // print("Master Packet");
+  final myInteger = i;
+  var hexString = myInteger.toRadixString(16);
+
+  if(i<=16){
+     hexString = hexString.padLeft(2, '0');
+  }
+  // print('hexString');
+  // print(hexString);
+  // print('hexString');
+
+
+  var MasterPcket ='%P'+hexString.toUpperCase()+raw_packet.join('');
+
+  masterPacketsList.add(MasterPcket);
+  responsePacketsList.add(MasterPcket+'^');
+
+  // if(!success) break;
+
+
+  }
+
+
+
+    masterPacketsList.add('%SNDC');
+    responsePacketsList.add('#EPRMC'+'^');
+
+    print('masterPacketsList');
+    // print(masterPacketsList);
+
+
+   await sendDataToChip(masterPacketsList,responsePacketsList);
+
+
+    return success;
+
+}
 
   doneButton(){
 
@@ -575,7 +749,7 @@ print(ints);
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Text(
-            "Configure",
+            "Program Device",
             style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 30,
@@ -585,7 +759,7 @@ print(ints);
         ),
       ),
       controller: _btnController,
-      onPressed: (){
+      onPressed: () async {
         setState(() {_btnController.start();});
 
 
@@ -598,41 +772,19 @@ print(ints);
             hasError = true;
           });
         } else {
-          setState(() async {
 
-            var httpRes =  await callApi(currentText);
+          print('configuring');
+          try{
+            bool isError =       await doConfiguration();
 
-            List result =httpRes['list'];
-            String deviceType = httpRes['type'].split(',')[0];
-
-
-            //
-            coommunicatewithDevice('%MP1');
-            coommunicatewithDevice('%AR$deviceType');
-
-            for (int i = 0 ; i< 30 ;i++){
-              await Future.delayed(Duration(milliseconds: 450)).then((value) {
-                List raw_packet = getDataforNumber(result,i);
-                print("Master Packet");
-                var MasterPcket ='%P'+raw_packet.join('')+deviceType;
+          }
+          catch(c){
+            print(c);
+            switchOffSendingButtonState(false);
+          }
 
 
 
-                print(MasterPcket);
-                coommunicatewithDevice(MasterPcket);
-
-
-              });
-
-            }
-            coommunicatewithDevice('%SNDC');
-            _btnController.stop();
-            hasError = false;
-            scaffoldKey.currentState?.showSnackBar(SnackBar(
-              content: Text("Aye!!"),
-              duration: Duration(seconds: 2),
-            ));
-          });
         }
 
 
@@ -646,13 +798,184 @@ print(ints);
   }
 
 
+
+  switchOffSendingButtonState(text) async {
+    setState(()  {
+      _btnController.stop();
+      hasError = false;
+      // scaffoldKey.currentState?.showSnackBar(SnackBar(
+      //   content: Text(text),
+      //   duration: Duration(seconds: 2),
+      // ));
+    });
+
+
+    if(text){
+      await   AwesomeDialog(
+        context: context,
+        dialogType: DialogType.SUCCES,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'success'.toUpperCase(),
+        desc: "Programming Successful",
+        // btnCancelOnPress: () {
+        //
+        // },
+        btnOkOnPress: () {
+          Navigator.pop(context,true);
+
+          // context.read<CommandProvider>().ERROR_CLOSED();
+
+        },
+      ).show().then((value) {});
+    }
+    else{
+      await   AwesomeDialog(
+        context: context,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'error'.toUpperCase(),
+        desc: "Programming Failure, Please Retry",
+        // btnCancelOnPress: () {
+        //
+        // },
+        btnOkOnPress: () {
+          Navigator.pop(context,true);
+
+          // context.read<CommandProvider>().ERROR_CLOSED();
+
+        },
+      ).show().then((value) {});
+
+    }
+
+
+  }
+
+  sendDataToChip(List data,List reponseList) async{
+
+
+    Stream stream = NewDatacontroller.stream;
+
+
+
+
+
+
+    gotResponse (data[0],reponseList[0],0);
+    String expectedNumber = reponseList[0];
+
+
+    int totalPacketSent = 1;
+
+
+   StreamSubscription subscribeStream=  stream.listen((value) {
+
+
+      if(totalPacketSent<data.length) {
+
+
+        print('Expected value   : $expectedNumber');
+        print('Value from device: $value');
+      }
+
+      if(data.length+1 == totalPacketSent){return;}
+
+      if(value.toString().trim() == (expectedNumber).toString().trim()  &&  totalPacketSent<=data.length) {
+
+
+
+
+          context.read<ConfigProvider>().keyFound(value);
+
+          if(totalPacketSent<data.length) {
+
+            String nextRes = context.read<ConfigProvider>().loadListWithResponses(reponseList[totalPacketSent]);
+            gotResponse(data[totalPacketSent], nextRes, 0);
+            expectedNumber = reponseList[totalPacketSent];
+
+          }
+          context.read<ConfigProvider>().updatePercentageOFVerifiedPackets(totalPacketSent);
+          totalPacketSent++;
+
+
+          print('length of total packets ${data.length}');
+          print('Confirmations recieved  ${totalPacketSent-1}');
+
+        if(data.length+1 == totalPacketSent){
+          context.read<ConfigProvider>().allPacketFound();
+          print('SUCCESS');
+          switchOffSendingButtonState(true);
+
+        }
+
+      }
+    });
+
+
+
+
+
+  }
+  gotResponse(message, response,noOfTimes){
+    if(noOfTimes<3)
+    {
+      coommunicatewithDevice (message);
+      activateTimeOut(message,response,noOfTimes);
+
+    }
+
+    else{
+print('$noOfTimes is NOT less than 3 ');
+
+print('EERROR');
+switchOffSendingButtonState(false);
+      //todo error  stop everything
+
+    }
+
+  }
+
+  void activateTimeOut(message , response , noOfTimes) {
+
+    message   = message.toString().trim();
+
+print(message);
+print('%SNDC');
+print(message.toString().startsWith('%SNDC') );
+
+  new Future.delayed(!message.toString().startsWith('%SNDC') ?Duration(milliseconds:  600 ):Duration(seconds:  5 ), () {
+    // deleayed code here
+    //todo if current packet is not verified then send the packet again
+
+
+    if(context.read<ConfigProvider>().isKeyRecieved(response) as bool){
+      print('key is already found so exiting after waitng    $noOfTimes  $response'  );
+      return;
+
+    }else{
+      print('key is NOT found so exiting after waitng    $noOfTimes  $response'  );
+
+      gotResponse(message,response, noOfTimes  + 1 );
+
+    }
+
+  });
+
 }
+
+
+
+
+}
+
+
 getDataforNumber(Mastrerls_SIZE21,int number){
   List lst = [];
 
   for (int i = 7*(number%3) ; i<(7*(number%3))+7; i++ ){
     // print((number/3).toInt());
-    // print(i);
+    print(i);
+    print(Mastrerls_SIZE21[i][(number/3).toInt()]);
     lst.add(Mastrerls_SIZE21[i][(number/3).toInt()]);
   }
   return  lst;

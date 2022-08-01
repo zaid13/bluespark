@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:flutter/gestures.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 
@@ -164,6 +165,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
     super.initState();
 print('init is caling');
 
+    // context.read<CommandProvider>().  setSyncOn();
+
     subscribeCharacteristic();
 
 
@@ -217,81 +220,7 @@ print('init is caling');
 
 
 
-  readtime() async {
-    // print('2');
-    // subscribeCharacteristic();
-    //
-    // // while(int.parse(maperResponse)>0){
-    // await coommunicatewithDevice('201');
-    // // sleep(Duration(seconds:1));
-    // // print("readtime whilw");
-    //
-    // // }
-  }
 
-  //
-  // Future<void> subscribeCharacteristic() async {
-  //   subscribeStream =
-  //       widget.subscribeToCharacteristic(widget.characteristic).listen((event) {
-  //         setState(() {
-  //           subscribeOutput = event.toString();
-  //         });
-  //       });
-  //   setState(() {
-  //     subscribeOutput = 'Notification set';
-  //   });
-  // }
-
-  // Future<void> readCharacteristic() async {
-  //
-  //   final result = await widget.readCharacteristic(widget.characteristic);
-  //   print("read ${result}");
-  //
-  //
-  //   setState(() {
-  //     readOutput  = result.toString();
-  //     String resultString = String.fromCharCodes(result);
-  //     print(resultString);
-  //
-  //     if(resultString.startsWith("#MAP_")    ){
-  //
-  //         maperResponse = resultString.replaceAll("#MAP_", "").replaceAll("#", "");
-  //         setState(() {
-  //           // showSuccessMessage = true;
-  //         });
-  //
-  //     }
-  //     else   if(resultString.startsWith("#SCA_")    )
-  //
-  //     {
-  //       scallerResponse = resultString.replaceAll("#SCA_", "").replaceAll("#", "").split("\n")[0];
-  //
-  //       // setState(() {
-  //       //   showSuccessMessage = true;
-  //       // });
-  //       // Future.delayed(Duration(seconds: 2), (){
-  //       //   setState(() {
-  //       //     showSuccessMessage = false;
-  //       //   });
-  //
-  //       // });
-  //     }
-  //     else{
-  //       // AwesomeDialog(
-  //       //   context: context,
-  //       //   dialogType: DialogType.ERROR,
-  //       //   animType: AnimType.BOTTOMSLIDE,
-  //       //   title: 'Load Too High',
-  //       //   desc: resultString+" Reduce Load to change  "+resultString.split(" ").last.replaceAll("^", "")??"",
-  //       //   btnCancelOnPress: () {},
-  //       //   btnOkOnPress: () {},
-  //       // )..show();
-  //     }
-  //
-  //
-  //
-  //   });
-  // }
 
   List<int> _parseInput(msg) {
 
@@ -318,12 +247,7 @@ print('init is caling');
     }
     return intList+[13];
   }
-  // Future<void> writeCharacteristicWithResponse(msg) async {
-  //   await widget.writeWithResponse(widget.characteristic, _parseInput(msg));
-  //   setState(() {
-  //     writeOutput = 'Ok';
-  //   });
-  // }
+
 
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
@@ -355,9 +279,9 @@ return "okay";
 
       coommunicatewithDevice(GetMapperCode).then((d){
         print(d);
-        sleep(Duration(seconds:1));
+        sleep(Duration(milliseconds:500));
         coommunicatewithDevice(GetScallerCode).then((d){
-          sleep(Duration(seconds:2));
+          sleep(Duration(seconds:1));
           print('Yyyyyyyyy');
 
 
@@ -366,10 +290,25 @@ return "okay";
           context.read<CommandProvider>().setMapper( mapperList[int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected)]);
 
 
-          if(widget.isScaler){
-            context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
+          Future.delayed(Duration(milliseconds:400),(){
 
-          }
+            if(widget.isScaler){
+              context.read<CommandProvider>().setScaller( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected);
+
+            }
+
+            if(widget.isScaler){
+              print('animate the SCALLER to ${int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) }');
+
+
+              ScallerfixedExtentScrollController.animateToItem(
+                int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
+                duration: Duration(milliseconds: 100),
+                curve: Curves.fastOutSlowIn,);
+
+
+            }
+          });
 
 
 
@@ -378,15 +317,7 @@ return "okay";
             duration: Duration(milliseconds: 100),
             curve: Curves.fastOutSlowIn,);
 
-          if(widget.isScaler){
 
-            ScallerfixedExtentScrollController.animateToItem(
-              int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected) ,
-              duration: Duration(milliseconds: 100),
-              curve: Curves.fastOutSlowIn,);
-
-
-          }
 
 
 
@@ -459,7 +390,7 @@ setState(() {
 
 print("intactString");
 print(intactString);
-print("#ERR_01#");
+context.read<CommandProvider>().  setSyncOff();
 
 
     if(intactString.startsWith("#SCA_") && context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected!=intactString.replaceAll("#SCA_",'').replaceAll("^", '')   && widget.isScaler){
@@ -467,15 +398,19 @@ print("#ERR_01#");
 
       context.read<CommandProvider>().set_RESPONSE_Scaller(intactString.replaceAll("#SCA_",'').replaceAll("^", ''));
       context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
+      context.read<CommandProvider>().  setSyncOff();
+
 
     }
     else if(intactString.startsWith("#MAP_")  && context.read<CommandProvider>().scllerMapper.RESPONSE_mapperSelected!=intactString.replaceAll("#MAP_",'').replaceAll("^", '')){
-      print("intactString        22222");
+
 
 
 
       context.read<CommandProvider>().set_RESPONSE_Mapper(intactString.replaceAll("#MAP_",'').replaceAll("^", ''));
       context.read<CommandProvider>().ScallerMapperUpdateSucessfully();
+      context.read<CommandProvider>().  setSyncOff();
+
 
     }
     else if((intactString.startsWith( "#ERR_01")  && !context.read<CommandProvider>().scllerMapper.MAP_ERROR_IS_OPEN )){
@@ -551,7 +486,7 @@ context.read<CommandProvider>().isScallerError();
               // context.read<CommandProvider>().   stopSendingRequests();
 
             }
-            else    if(result.first==35  && result.last==10    ){
+            else    if(result.first==35  && result.last==13    ){
 
               scanAndRespond(resultString);
 
@@ -560,7 +495,7 @@ context.read<CommandProvider>().isScallerError();
             }
 
 
-            else    if((result.first==35  && result.last!=10 )){
+            else    if((result.first==35  && result.last!=13 )){
 
               PrevDump  = result;
               // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
@@ -568,22 +503,22 @@ context.read<CommandProvider>().isScallerError();
 
             }
 
-            else      if((result.first!=35  && result.last==10)  || (result.first==35 && result.length==3) ){
+            else      if((result.first!=35  && result.last==13)  || (result.first==35 && result.length==3) ){
               // print(PrevDump);
               // print(resultString);
 
               PrevDump  += result;
-              // print("FOUND SECOND PART -------------------------------_____=-");
+              print("FOUND SECOND PART -------------------------------_____=-");
               print(PrevDump);
 
 
 
 
-              if((PrevDump.first==35  && PrevDump.last!=10 )){
+              if((PrevDump.first==35  && PrevDump.last==13 )){
                  resultString = String.fromCharCodes(PrevDump).split("\n")[0];
                  scanAndRespond(resultString);
                  ;
-                // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+                print("FOUND both parts -------------------------------_____=-$result.last   $resultString"  );
 
 
               }
@@ -685,7 +620,7 @@ context.read<CommandProvider>().isScallerError();
                       title: Container(
                         alignment: Alignment.centerRight,
                         child: new Text(
-                          "Configuration",
+                          "Reprogramming",
                           style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 20,
@@ -887,141 +822,139 @@ context.read<CommandProvider>().isScallerError();
         ],),
 
         body: Container(
-            child: ListView(
+            child: ModalProgressHUD(
+              inAsyncCall:  false,//    context.watch<CommandProvider>().scllerMapper.syncIsOn,
+
+              child: ListView(
           children: [
 
 
 
 
-            Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
+              Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
-            // Center(
-            //   child: Text(
-            //     "Status: ${widget.viewModel.connectionStatus}",
-            //     style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color: DeviceConnectionState.connected==widget.viewModel.connectionStatus?Colors.green:Colors.red,fontWeight:FontWeight.bold),),
-            // ),
-            // showSuccessMessage todo
 
-            context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius:
-                                new BorderRadius.all(Radius.circular(50.0))),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 15,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 50, right: 20, top: 5, bottom: 5),
-                              child: Text(
-                                'Change Confirmed',
-                                style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 22,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
+              context.watch<CommandProvider>().scllerMapper.UpdateSucessfully?    Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                      Container(
+                          decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius:
+                                  new BorderRadius.all(Radius.circular(50.0))),
                           child: Row(
-                        children: [
-                          Stack(
                             children: [
                               Container(
-                                color: blackColor,
-                                height: 60,
-                                width: 50,
+                                width: 15,
                               ),
-                              Icon(
-                                Icons.check_circle,
-                                color: greenColor,
-                                size: 60,
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 50, right: 20, top: 5, bottom: 5),
+                                child: Text(
+                                  'Change Confirmed',
+                                  style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 22,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ],
                           ),
-                        ],
-                      ))
-                    ],
-                  ),
-
-                ],
-              ),
-            ):Container(),
-
-
-
-            context.watch<CommandProvider>().swipeToChangeIsEnable==0?Container():  Padding(
-              padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
-              child: Container(
-                alignment:Alignment.center,
-                width: MediaQuery.of(context).size.width*0.9,
-                decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: new BorderRadius.all(Radius.circular(50.0))),
-                child: Row(
-                  mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable==1?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
-                  children: [
-                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?    Text(
-                      "Swipe to change",
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ):Text(
-                      'Click "Done" to update settings',
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    context.watch<CommandProvider>().swipeToChangeIsEnable==1?     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                new BorderRadius.all(Radius.circular(10.0))),
-                        child: Image.asset(
-                          'images/img.png',
-                          height: 40,
                         ),
-                      ),
-                    ):Container( height: 40,)
+                        Positioned(
+                            child: Row(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  color: blackColor,
+                                  height: 60,
+                                  width: 50,
+                                ),
+                                Icon(
+                                  Icons.check_circle,
+                                  color: greenColor,
+                                  size: 60,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ))
+                      ],
+                    ),
+
                   ],
                 ),
+              ):Container(),
+
+
+
+              context.watch<CommandProvider>().swipeToChangeIsEnable==0?Container():  Padding(
+                padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
+                child: Container(
+                  alignment:Alignment.center,
+                  width: MediaQuery.of(context).size.width*0.9,
+                  decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius: new BorderRadius.all(Radius.circular(50.0))),
+                  child: Row(
+                    mainAxisAlignment:      context.watch<CommandProvider>().swipeToChangeIsEnable==1?  MainAxisAlignment.spaceAround: MainAxisAlignment.center,
+                    children: [
+                      context.watch<CommandProvider>().swipeToChangeIsEnable==1?    Text(
+                        "Swipe to change",
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ):Text(
+                        'Click "Done" to update settings',
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      context.watch<CommandProvider>().swipeToChangeIsEnable==1?     Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  new BorderRadius.all(Radius.circular(10.0))),
+                          child: Image.asset(
+                            'images/img.png',
+                            height: 40,
+                          ),
+                        ),
+                      ):Container( height: 40,)
+                    ],
+                  ),
+                ),
               ),
-            ),
 
 
 
-             Column(
-               mainAxisAlignment: MainAxisAlignment.spaceAround,
-               children: [
-                 mapperWidget(),
-                widget.isScaler?   ScallerWidget():Container(),
-                 Container(height: 50,),
-                 doneButton()
+               Column(
+                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                 children: [
+                   mapperWidget(),
+                  widget.isScaler?   ScallerWidget():Container(),
+                   Container(height: 50,),
+                   doneButton()
 
-               ],
-             ),
+                 ],
+               ),
 
           ],
-        )),
+        ),
+            )),
       ),
     );
   }
