@@ -1,7 +1,10 @@
 
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/ConfigProvider.dart';
+
+
 import 'package:bluespark/providers/ConnectionProvider.dart';
+import 'package:bluespark/providers/SendProvider.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
 import 'package:bluespark/src/ble/ble_scanner.dart';
@@ -57,6 +60,7 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => CommandProvider()),
           ChangeNotifierProvider(create: (_) => ConfigProvider()),
+          ChangeNotifierProvider(create: (_) => SendProvider()),
 
           Provider.value(value: _scanner),
           Provider.value(value: _monitor),
@@ -97,6 +101,9 @@ Future<void> main() async {
 
 }
 
+
+
+
 class HomeScreen extends StatelessWidget {
 
 
@@ -123,14 +130,14 @@ class HomeScreen extends StatelessWidget {
         },
       );
 }
-getDataforNumber(Mastrerls_SIZE21,int number){
-  List lst = [];
-
-  for (int i = 7*(number%3) ; i<(7*(number%3))+7; i++ ){
-    // print((number/3).toInt());
-    // print(i);
-    lst.add(Mastrerls_SIZE21[i][(number/3).toInt()]);
-  }
-return  lst;
-
-}
+// getDataforNumber(Mastrerls_SIZE21,int number){
+//   List lst = [];
+//
+//   for (int i = 7*(number%3) ; i<(7*(number%3))+7; i++ ){
+//     // print((number/3).toInt());
+//     // print(i);
+//     lst.add(Mastrerls_SIZE21[i][(number/3).toInt()]);
+//   }
+// return  lst;
+//
+// }

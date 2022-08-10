@@ -15,6 +15,9 @@ import 'package:provider/src/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dart:io';
 
+import '../main.dart';
+
+import '../providers/SendProvider.dart';
 import 'ScallerMapperScreen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -143,6 +146,8 @@ class _Welcome1State extends State<Welcome1> {
      //  await autoCallTimer();
      // });
      subscribeCharacteristic();
+     context.read<SendProvider>().initalizeSendProvider( widget.subscribeToCharacteristic(widget.characteristic));
+
 
      Future.delayed(Duration(seconds:1),() async {
 
