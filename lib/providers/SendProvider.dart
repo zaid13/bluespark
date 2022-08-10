@@ -19,7 +19,7 @@ class SendProvider with ChangeNotifier {
   }
 
   listenToDevice(){
-    deviceAvailable.
+    deviceAvailable;//
   }
   sendData(String data ){
 
