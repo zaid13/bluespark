@@ -1,19 +1,16 @@
 import 'dart:async';
 
-import 'package:bluespark/billa_ui/WelcomeScreen.dart';
+import 'package:bluespark/screens/WelcomeScreen.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
 import 'package:bluespark/src/ble/ble_scanner.dart';
-import 'package:bluespark/src/ui/device_detail/device_detail_screen.dart';
 import 'package:bluespark/src/ui/device_detail/device_interaction_tab.dart';
 import 'package:bluespark/src/ui/device_list.dart';
 // import 'package:bluespark/variables/config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 
-import 'ScallerMapperScreen.dart';
 
 
 
@@ -121,8 +118,9 @@ class _SpalshScreenState extends State<SpalshScreen> {
   String deviceId = "";
   @override
   void dispose() {
-    if(deviceId!="")
-    widget.disconnect(deviceId);
+    if(deviceId!="") {
+      widget.disconnect(deviceId);
+    }
   }
   @override
   void initState() {
@@ -171,7 +169,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
   @override
   Widget build(BuildContext context) {
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
 
 
 
@@ -193,7 +191,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
           widget.viewModel.connect().then((value){
 
 
-            Future.delayed(Duration(seconds: 1), () async {
+            Future.delayed(const Duration(seconds: 1), () async {
               print(widget.viewModel.connectionStatus );
               print('widget.viewModel.connectionStatus' );
 
@@ -272,7 +270,7 @@ if(push) {
                 Container(
                   height: 10,
                 ),
-                Text(
+                const Text(
                   "Loading...",
                   style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color:Colors.white,fontWeight:FontWeight.bold),),
 

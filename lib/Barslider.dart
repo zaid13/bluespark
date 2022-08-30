@@ -36,8 +36,8 @@ class CustomSliderThumbCircle extends SliderComponentShape {
       ..color = Colors.white //Thumb Background Color
       ..style = PaintingStyle.fill;
 
-    TextSpan span = new TextSpan(
-      style: new TextStyle(
+    TextSpan span = TextSpan(
+      style: TextStyle(
         fontSize: thumbRadius * .8,
         fontWeight: FontWeight.w700,
         color: sliderTheme.thumbColor, //Text Color of Value on Thumb
@@ -45,7 +45,7 @@ class CustomSliderThumbCircle extends SliderComponentShape {
       text: getValue(value),
     );
 
-    TextPainter tp = new TextPainter(
+    TextPainter tp = TextPainter(
         text: span,
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr);

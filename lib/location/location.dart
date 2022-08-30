@@ -1,5 +1,4 @@
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 
@@ -13,7 +12,7 @@ Future<void> getLocation() async {
   try {
     final LocationData _locationResult = await location.getLocation();
 
-  } on PlatformException catch (err) {
+  } on PlatformException {
 
   }
 }

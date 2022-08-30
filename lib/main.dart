@@ -3,7 +3,6 @@ import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/ConfigProvider.dart';
 
 
-import 'package:bluespark/providers/ConnectionProvider.dart';
 import 'package:bluespark/providers/SendProvider.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
@@ -13,26 +12,18 @@ import 'package:bluespark/src/ui/ble_status_screen.dart';
 import 'package:bluespark/src/ui/device_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
-import 'billa_ui/SplashScreen.dart';
-import 'billa_ui/ScallerMapperScreen.dart';
-import 'billa_ui/WelcomeScreen.dart';
-import 'billa_ui/testFile.dart';
+import 'screens/SplashScreen.dart';
 import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
-import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 const _themeColor = Colors.lightGreen;
 
 
 Future<void> main() async {
-
-
 
   WidgetsFlutterBinding.ensureInitialized();
   Wakelock.toggle(enable:true);
@@ -61,6 +52,7 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => CommandProvider()),
           ChangeNotifierProvider(create: (_) => ConfigProvider()),
           ChangeNotifierProvider(create: (_) => SendProvider()),
+
 
           Provider.value(value: _scanner),
           Provider.value(value: _monitor),
@@ -121,8 +113,8 @@ class HomeScreen extends StatelessWidget {
 
 
 
-            return       SpalshScreenStateManager();
-            return      DeviceListScreen1(); //SpalshScreenStateManager();
+            return       const SpalshScreenStateManager();
+            return      const DeviceListScreen1(); //SpalshScreenStateManager();
 
           } else {
             return BleStatusScreen(status: status ?? BleStatus.unknown);
