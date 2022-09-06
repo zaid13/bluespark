@@ -1,7 +1,7 @@
 
 
 
-Map<String,String> mapsArray = {
+Map<String,String> mapsArray = {        '0':'230',
                                         "0":"%MAP_0\n",
                                         "A":"%MAP_1\n",
                                         "B":"%MAP_2\n",
