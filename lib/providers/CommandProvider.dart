@@ -3,6 +3,8 @@ import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../util/functions.dart';
+
 class CommandProvider with ChangeNotifier {
 
   String time = "25";
@@ -18,7 +20,25 @@ class CommandProvider with ChangeNotifier {
   bool syncingDatra = false;
   int swipeToChangeIsEnable = 1;
 
+  bool timeIsZeroReported = false;
+
   ScallerMapper scllerMapper = ScallerMapper();
+
+  var ScallerMapperContex = null;
+  setScallerMapperContext(context){
+    ScallerMapperContex = context;
+
+
+  }
+
+
+  nullScallerMapperContext(){
+    ScallerMapperContex = null;
+  }
+
+
+
+
 
   getData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -208,16 +228,38 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool setTime(String newTime) {
+  bool setTime(String newTime , ) {
     print('logs from setTime function');
     print(newTime + '  -' + timeRemaining+'-');
-    if (isNumeric(newTime) &&  timeRemaining != newTime ) {
+    print(isNumeric(newTime));
+    print(timeRemaining =='0');
+
+    if ((isNumeric(newTime) &&  timeRemaining != newTime) || (isNumeric(newTime) &&  timeRemaining =='0')  ) {
 
       print("new TIME:$newTime---");
 
       timeRemaining = newTime;
       notifyListeners();
+
+      print(getIntTime());
+
+      print(timeIsZeroReported);
+
+      if(timeIsZeroReported  && getIntTime() >0){
+      print("APP SHOULD RESTART ");
+        timeIsZeroReported = false;
+
+        if(ScallerMapperContex !=null){
+          Navigator.pop(ScallerMapperContex);
+
+        }
+
+     //  restartApp();
+
+      }
+
       if (getIntTime() == 0) {
+        timeIsZeroReported = true;
         print("tiem is zero ");
         return true;
       }

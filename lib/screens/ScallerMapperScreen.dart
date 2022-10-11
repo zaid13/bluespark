@@ -20,6 +20,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 import 'configPage.dart';
 
@@ -266,25 +267,30 @@ class _Slider1State extends State<ScallerMapperScreen> {
               print(
                   'animate the SCALLER to ${int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected)}');
 
-              ScallerfixedExtentScrollController.animateToItem(
+
+              MapperfixedExtentScrollController.animateToItem(
                 int.parse(context
                     .read<CommandProvider>()
                     .scllerMapper
-                    .RESPONSE_scallerSelected),
+                    .RESPONSE_mapperSelected),
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.fastOutSlowIn,
-              );
+              ).then((value) {
+                ScallerfixedExtentScrollController.animateToItem(
+                  int.parse(context
+                      .read<CommandProvider>()
+                      .scllerMapper
+                      .RESPONSE_scallerSelected),
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.fastOutSlowIn,
+                );
+              });
+
+
             }
           });
 
-          MapperfixedExtentScrollController.animateToItem(
-            int.parse(context
-                .read<CommandProvider>()
-                .scllerMapper
-                .RESPONSE_mapperSelected),
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.fastOutSlowIn,
-          );
+
         });
       });
     } catch (e) {
@@ -457,6 +463,12 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    context.read<CommandProvider>().setScallerMapperContext(context)   ;
+
+
+
     print(widget.viewModel.connectionStatus);
     if (DeviceConnectionState.disconnected ==
         widget.viewModel.connectionStatus) {
@@ -944,7 +956,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
                 quarterTurns: 3,
                 child: ListWheelScrollView(
                   onSelectedItemChanged: (x) {
-                    Haptic.onSelection();
+
+                    HapticFeedback.selectionClick();
 
                     context.read<CommandProvider>().setMapper(mapperList[x]);
                   },
@@ -1067,7 +1080,11 @@ class _Slider1State extends State<ScallerMapperScreen> {
                   itemExtent: 50,
 
                   onSelectedItemChanged: (x) {
-                    Haptic.onSelection();
+                    print('555');
+
+                    HapticFeedback.selectionClick();
+
+
                     context.read<CommandProvider>().setScaller(scallerList[x]);
                   },
                   controller: ScallerfixedExtentScrollController,

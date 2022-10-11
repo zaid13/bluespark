@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import '../src/utils.dart';
+import '../util/config.dart';
 import '../util/functions.dart';
 import 'CommandProvider.dart';
 
@@ -17,7 +18,11 @@ class SendProvider with ChangeNotifier {
 
   List<int> PrevDump = [];
 
+
   bool deviceAvailable = false;
+
+
+
 
   initalizeSendProvider(Stream<List<int>> sS,Function  ValwriteCharacteristicWithoutResponse , QualifiedCharacteristic valcharacteristic ) {
     subscribeStream = sS;
@@ -38,14 +43,21 @@ class SendProvider with ChangeNotifier {
 
   sendData(String data) async {
     print('SENDING DATA:$data FROM SEND PROVIDER');
+
+    int time = DateTime.now().millisecond;
+
+
     if(deviceAvailable) {
+    print("MS TOOK: ${DateTime.now().millisecond-time}");
       writeCharacteristicWithoutResponse(characteristic, ASCII_TO_INT(data));
     }
     else{
       deviceAvailable = false;
-      notifyListeners();
-  await    Future.delayed(const Duration(milliseconds: 500),(){
-        writeCharacteristicWithoutResponse(characteristic, ASCII_TO_INT(data));
+      // notifyListeners();
+  await    Future.delayed(const Duration(milliseconds: 600),(){
+    print("MS TOOK: ${DateTime.now().millisecond-time}");
+
+    writeCharacteristicWithoutResponse(characteristic, ASCII_TO_INT(data));
       });
 
     }
@@ -153,8 +165,8 @@ class SendProvider with ChangeNotifier {
       result = [];
       print("FOUND SECOND PART -------------------------------_____=-");
       print(PrevDump);
-      print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-      setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0],
+      print(String.fromCharCodes(PrevDump).split("\n")[0]);
+      setTime(String.fromCharCodes(PrevDump).split("\n")[0],
           commandProvider, moveTOScallerMapperManager);
     }
   }
@@ -165,11 +177,12 @@ class SendProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setTime(resultString, commandProvider, Function moveTOScallerMapperManager) async {
+  setTime(String resultString, commandProvider, Function moveTOScallerMapperManager  ,  ) async {
     print('setTime');
     print(resultString);
+    resultString = resultString.trim();
 
-    if (resultString.startsWith('#DEV_')) {
+    if (resultString.startsWith('#DEV_') && resultString.endsWith('^') ) {
       print('WE JUST GOT DEV RES:$resultString');
       if (100 <
           int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
@@ -183,7 +196,7 @@ class SendProvider with ChangeNotifier {
     }
 
     if (commandProvider
-        .setTime(resultString.replaceAll("#WUT_", "").replaceAll("^", ""))) {
+        .setTime(resultString.replaceAll("#WUT_", "").replaceAll("^", ""), )) {
       print(
           'time is up moving to scaller mapper scaller is ${commandProvider.scllerMapper.isScallerSet} ');
 
@@ -196,8 +209,20 @@ class SendProvider with ChangeNotifier {
 
       if (commandProvider.scllerMapper.isScallerSet &&
           commandProvider.scllerMapper.disableTimer) {
-        moveTOScallerMapperManager();
+
+
+      await  moveTOScallerMapperManager();
+
+
       }
+
+      if(!commandProvider.scllerMapper.isScallerSet){
+        await sendData(GetDviceType);
+        await sendData(endTimerMSG);
+
+      }
+
+
     }
   }
 

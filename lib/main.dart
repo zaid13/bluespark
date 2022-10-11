@@ -4,6 +4,7 @@ import 'package:bluespark/providers/ConfigProvider.dart';
 
 
 import 'package:bluespark/providers/SendProvider.dart';
+import 'package:bluespark/screens/TestingScreen.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
 import 'package:bluespark/src/ble/ble_scanner.dart';
@@ -12,6 +13,7 @@ import 'package:bluespark/src/ui/ble_status_screen.dart';
 import 'package:bluespark/src/ui/device_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:location/location.dart';
 
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
@@ -19,7 +21,7 @@ import 'package:wakelock/wakelock.dart';
 import 'screens/SplashScreen.dart';
 import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
-
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 const _themeColor = Colors.lightGreen;
 
 
@@ -27,8 +29,29 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   Wakelock.toggle(enable:true);
-  await   getLocation().then((value) {
 
+
+
+
+
+  await   getLocation().then((value) async {
+
+    final LocationData _locationResult = await location.getLocation();
+
+    runApp(Phoenix(child: MyApp()));
+
+  });
+
+}
+
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+
+
+  @override
+  Widget build(BuildContext context) {
 
     final _bleLogger = BleLogger();
     final _ble = FlutterReactiveBle();
@@ -46,54 +69,49 @@ Future<void> main() async {
       subscribeToCharacteristic: _ble.subscribeToCharacteristic,
       logMessage: _bleLogger.addToLog,
     );
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => CommandProvider()),
-          ChangeNotifierProvider(create: (_) => ConfigProvider()),
-          ChangeNotifierProvider(create: (_) => SendProvider()),
+
+    return  MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CommandProvider()),
+        ChangeNotifierProvider(create: (_) => ConfigProvider()),
+        ChangeNotifierProvider(create: (_) => SendProvider()),
 
 
-          Provider.value(value: _scanner),
-          Provider.value(value: _monitor),
-          
-          Provider.value(value: _connector),
-          Provider.value(value: _serviceDiscoverer),
-          Provider.value(value: _bleLogger),
-          StreamProvider<BleScannerState?>(
-            create: (_) => _scanner.state,
-            initialData: const BleScannerState(
-              discoveredDevices: [],
-              scanIsInProgress: false,
-            ),
+        Provider.value(value: _scanner),
+        Provider.value(value: _monitor),
+
+        Provider.value(value: _connector),
+        Provider.value(value: _serviceDiscoverer),
+        Provider.value(value: _bleLogger),
+        StreamProvider<BleScannerState?>(
+          create: (_) => _scanner.state,
+          initialData: const BleScannerState(
+            discoveredDevices: [],
+            scanIsInProgress: false,
           ),
-          StreamProvider<BleStatus?>(
-            create: (_) => _monitor.state,
-            initialData: BleStatus.unknown,
-          ),
-          StreamProvider<ConnectionStateUpdate>(
-            create: (_) => _connector.state,
-            initialData: const ConnectionStateUpdate(
-              deviceId: 'Unknown device',
-              connectionState: DeviceConnectionState.disconnected,
-              failure: null,
-            ),
-          ),
-        ],
-        child: MaterialApp(
-          title: 'Flutter Reactive BLE example',
-          color: _themeColor,
-          theme: ThemeData(primarySwatch: _themeColor),
-          home: const HomeScreen(),
         ),
+        StreamProvider<BleStatus?>(
+          create: (_) => _monitor.state,
+          initialData: BleStatus.unknown,
+        ),
+        StreamProvider<ConnectionStateUpdate>(
+          create: (_) => _connector.state,
+          initialData: const ConnectionStateUpdate(
+            deviceId: 'Unknown device',
+            connectionState: DeviceConnectionState.disconnected,
+            failure: null,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Reactive BLE example',
+        color: _themeColor,
+        theme: ThemeData(primarySwatch: _themeColor),
+        home: const HomeScreen(),
       ),
     );
-
-  });
-
+  }
 }
-
-
 
 
 class HomeScreen extends StatelessWidget {
@@ -106,6 +124,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<BleStatus?>(
         builder: (_, status, __) {
+
 
 
 

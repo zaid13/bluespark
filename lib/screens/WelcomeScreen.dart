@@ -116,7 +116,7 @@ class Welcome1 extends StatefulWidget {
 }
 
 class _Welcome1State extends State<Welcome1> {
-  // String readOutput="";
+  // String readOutput="";just give me 2
   String writeOutput = "";
   String subscribeOutput = "";
   // String timeRemaining = "31";
@@ -141,7 +141,6 @@ class _Welcome1State extends State<Welcome1> {
     // subscribeCharacteristic();
 
 
-
     context.read<SendProvider>().initalizeSendProvider(
         widget.subscribeToCharacteristic(widget.characteristic) , widget.writeWithoutResponse, widget.characteristic);
     // subscribeCharacteristic();
@@ -149,6 +148,11 @@ class _Welcome1State extends State<Welcome1> {
     CommandProvider commandProvider =  context.read<CommandProvider>();
 
     context.read<SendProvider>().listenTOWelcomeScreen(commandProvider,(){
+      context
+          .read<CommandProvider>()
+          .scllerMapper
+          .disableTimer = false;
+
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -156,10 +160,33 @@ class _Welcome1State extends State<Welcome1> {
                 characteristic: widget.characteristic,
                 isScaler:
                 context.read<CommandProvider>().scllerMapper.isScaller),
-          )).then((value) {});
+          )).then((value) {
+
+
+        context
+            .read<CommandProvider>()
+            .scllerMapper
+            .disableTimer = true;
+
+
+        context
+            .read<CommandProvider>()
+            . nullScallerMapperContext();
+
+      });
     } );
 
-    context.read<SendProvider>().sendData(GetDviceType);
+
+
+
+
+
+ Future.delayed(Duration(seconds: 1),() async {
+  await  context.read<SendProvider>().sendData(GetDviceType);
+
+  context.read<SendProvider>().sendData(GetWaitTime);
+
+ });
 
 
 
@@ -188,125 +215,137 @@ class _Welcome1State extends State<Welcome1> {
     print("write $result");
   }
 
-  setTime(resultString) async {
-    print('setTime');
-    print(resultString);
+  // setTime(resultString) async {
+  //   print('setTime');
+  //   print(resultString);
+  //
+  //   if (resultString.startsWith('#DEV_')) {
+  //     print('WE JUST GOT DEV RES:$resultString');
+  //     if (100 <
+  //         int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
+  //       context.read<CommandProvider>().isScaller();
+  //       context.read<CommandProvider>().isScallerSet();
+  //     } else if (100 >=
+  //         int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
+  //       context.read<CommandProvider>().isNotScaller();
+  //       context.read<CommandProvider>().isScallerSet();
+  //     }
+  //   }
+  //
+  //   if (context
+  //       .read<CommandProvider>()
+  //       .setTime(resultString.replaceAll("#WUT_", "").replaceAll("^", "") )) {
+  //     print(
+  //         'time is up moving to scaller mapper scaller is ${context.read<CommandProvider>().scllerMapper.isScallerSet} ');
+  //
+  //     //move to next screen
+  //
+  //     print(context.read<CommandProvider>().scllerMapper.isScallerSet );
+  //     print(context.read<CommandProvider>().scllerMapper.disableTimer );
+  //
+  //     if (context.read<CommandProvider>().scllerMapper.isScallerSet &&
+  //         context.read<CommandProvider>().scllerMapper.disableTimer) {
+  //       Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => ScallerMapperManager(
+  //                 characteristic: widget.characteristic,
+  //                 isScaler:
+  //                     context.read<CommandProvider>().scllerMapper.isScaller),
+  //           )).then((value) {});
+  //     }
+  //
+  //     if(!context.read<CommandProvider>().scllerMapper.isScallerSet){
+  //
+  //         await  context.read<SendProvider>().sendData(GetDviceType);
+  //         await  context.read<SendProvider>().sendData(endTimerMSG);
+  //
+  //
+  //
+  //     }
+  //   }
+  // }
 
-    if (resultString.startsWith('#DEV_')) {
-      print('WE JUST GOT DEV RES:$resultString');
-      if (100 <
-          int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
-        context.read<CommandProvider>().isScaller();
-        context.read<CommandProvider>().isScallerSet();
-      } else if (100 >=
-          int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
-        context.read<CommandProvider>().isNotScaller();
-        context.read<CommandProvider>().isScallerSet();
-      }
-    }
-
-    if (context
-        .read<CommandProvider>()
-        .setTime(resultString.replaceAll("#WUT_", "").replaceAll("^", ""))) {
-      print(
-          'time is up moving to scaller mapper scaller is ${context.read<CommandProvider>().scllerMapper.isScallerSet} ');
-
-      //move to next screen
-
-      if (context.read<CommandProvider>().scllerMapper.isScallerSet &&
-          context.read<CommandProvider>().scllerMapper.disableTimer) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ScallerMapperManager(
-                  characteristic: widget.characteristic,
-                  isScaler:
-                      context.read<CommandProvider>().scllerMapper.isScaller),
-            )).then((value) {});
-      }
-    }
-  }
-
-  Future<void> subscribeCharacteristic() async {
-    context.read<CommandProvider>().getData();
-
-    subscribeStream = widget
-        .subscribeToCharacteristic(widget.characteristic)
-        .listen((result) {
-      // print('readOutput   ${result}');
-
-      // setState(() {
-      context.read<CommandProvider>().setReadOutput(result.toString());
-      String resultString = String.fromCharCodes(result).split("\n")[0];
-      // print('readOutput CONVERTED    ${resultString}');
-
-      print('resultString');
-      print(resultString);
-      print('result');
-      print(result);
-      print(result.first);
-      print(result.last);
-
-      if (result.first == 35 &&
-          result.last == 10 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime()) {
-        print('Complete ');
-        print(result);
-        setTime(resultString);
-      } else if ((result.first == 35 &&
-          result.last != 10 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime())) {
-        print('Complete 2 ');
-        PrevDump = result;
-        // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-
-      } else if ((result.first != 35 &&
-          result.last == 10 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime())) {
-        // print(PrevDump);
-        // print(resultString);
-
-        PrevDump += result;
-        result = [];
-        print("FOUND SECOND PART -------------------------------_____=-");
-        print(PrevDump);
-        print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-        setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-      } else if (result.first == 35 &&
-          result.last == 13 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime()) {
-        print('Complete ');
-        print(result);
-        setTime(resultString);
-      } else if ((result.first == 35 &&
-          result.last != 13 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime())) {
-        print('Complete 2 ');
-        PrevDump = result;
-        // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-
-      } else if ((result.first != 35 &&
-          result.last == 13 &&
-          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-              context.read<CommandProvider>().getTime())) {
-        // print(PrevDump);
-        // print(resultString);
-
-        PrevDump += result;
-        result = [];
-        print("FOUND SECOND PART -------------------------------_____=-");
-        print(PrevDump);
-        print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-        setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-      }
-    });
-
-  }
+  // Future<void> subscribeCharacteristic() async {
+  //   context.read<CommandProvider>().getData();
+  //
+  //   subscribeStream = widget
+  //       .subscribeToCharacteristic(widget.characteristic)
+  //       .listen((result) {
+  //     // print('readOutput   ${result}');
+  //
+  //     // setState(() {
+  //     context.read<CommandProvider>().setReadOutput(result.toString());
+  //     String resultString = String.fromCharCodes(result).split("\n")[0];
+  //     // print('readOutput CONVERTED    ${resultString}');
+  //
+  //     print('resultString');
+  //     print(resultString);
+  //     print('result');
+  //     print(result);
+  //     print(result.first);
+  //     print(result.last);
+  //
+  //     if (result.first == 35 &&
+  //         result.last == 10 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime()) {
+  //       print('Complete ');
+  //       print(result);
+  //       setTime(resultString);
+  //     } else if ((result.first == 35 &&
+  //         result.last != 10 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime())) {
+  //       print('Complete 2 ');
+  //       PrevDump = result;
+  //       // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+  //
+  //     } else if ((result.first != 35 &&
+  //         result.last == 10 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime())) {
+  //       // print(PrevDump);
+  //       // print(resultString);
+  //
+  //       PrevDump += result;
+  //       result = [];
+  //       print("FOUND SECOND PART -------------------------------_____=-");
+  //       print(PrevDump);
+  //       print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //       setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //     } else if (result.first == 35 &&
+  //         result.last == 13 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime()) {
+  //       print('Complete ');
+  //       print(result);
+  //       setTime(resultString);
+  //     } else if ((result.first == 35 &&
+  //         result.last != 13 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime())) {
+  //       print('Complete 2 ');
+  //       PrevDump = result;
+  //       // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+  //
+  //     } else if ((result.first != 35 &&
+  //         result.last == 13 &&
+  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+  //             context.read<CommandProvider>().getTime())) {
+  //       // print(PrevDump);
+  //       // print(resultString);
+  //
+  //       PrevDump += result;
+  //       result = [];
+  //       print("FOUND SECOND PART -------------------------------_____=-");
+  //       print(PrevDump);
+  //       print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //       setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+  //     }
+  //   });
+  //
+  // }
 
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
@@ -525,6 +564,11 @@ class _Welcome1State extends State<Welcome1> {
                                               .read<CommandProvider>()
                                               .scllerMapper
                                               .disableTimer = true;
+
+                                          context
+                                              .read<CommandProvider>()
+                                              . nullScallerMapperContext();
+
                                         });
                                         //   });
 

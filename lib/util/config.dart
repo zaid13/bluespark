@@ -26,7 +26,6 @@ List<String> scalerArray =  [
 String RequiredServiceId = "0000ffe0-0000-1000-8000-00805f9b34fb";
 String RequiredCharacteristicId = "0000ffe1-0000-1000-8000-00805f9b34fb";
 
-String endTimerMSG = "%SKIP\n";
 
 Map<String,String> scallerMapperErrorTable = {
   "#ERR_01#":"Reduce Load to change Map",
@@ -38,6 +37,8 @@ Map<String,String> scallerMapperErrorTable = {
 String GetScallerCode = "%DIP_?\n";
 String GetMapperCode = "%JUM_?\n";
 String GetDviceType = "%DEV_?";
+String GetWaitTime = "%WUT_?";
+String endTimerMSG = "%SKIP\n";
 
 
 void log(String text) => print("[FlutterReactiveBLEApp] $text");
