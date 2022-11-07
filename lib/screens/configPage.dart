@@ -505,7 +505,22 @@ print(ints);
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                      onTap:(){
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.clear,color: Colors.white,size: 35,))
+                ],
+              ),
+            ),
+
             Container(height:MediaQuery.of(context).size.height*0.05),
+
             Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
             Expanded(
