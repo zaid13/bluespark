@@ -104,6 +104,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Reactive BLE example',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),

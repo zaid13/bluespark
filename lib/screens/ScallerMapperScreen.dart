@@ -1198,11 +1198,11 @@ Widget _buildAboutDialog(BuildContext context, String heading, widget) {
       ),
     ),
     actions: <Widget>[
-      FlatButton(
-        onPressed: () {
+      GestureDetector(
+        onTap: () {
           Navigator.of(context).pop();
         },
-        textColor: Theme.of(context).primaryColor,
+   //     textColor: Theme.of(context).primaryColor,
         child: const Text('Okay, got it!'),
       ),
     ],

@@ -652,9 +652,9 @@ print(ints);
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          FlatButton(
+                          GestureDetector(
                             child: const Text("Clear",style: TextStyle(color:Colors.white),),
-                            onPressed: () {
+                            onTap: () {
                               textEditingController.clear();
                             },
                           ),
