@@ -1,10 +1,8 @@
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:bluespark/billa_ui/ui_strings.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bluespark/screens/ui_strings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -15,17 +13,15 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 
-import '../main.dart';
 // import '../providers/CommandProvider.dart';
 import '../providers/ConfigProvider.dart';
+import '../providers/SendProvider.dart';
 import '../src/ui/device_detail/device_interaction_tab.dart';
-import '../util/config.dart';
 import '../util/functions.dart';
-import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 class ConfigurationPage extends StatefulWidget {
-   ConfigurationPage(
+   const ConfigurationPage(
 
    {
      required this.characteristic,
@@ -159,7 +155,7 @@ print(ints);
 
     var copyResult = resultIntList;
 
-    if(resultIntList.length==0) return ;
+    if(resultIntList.isEmpty) return ;
     //
     // print(resultIntList.first);
     // print(resultIntList.last);
@@ -178,7 +174,7 @@ print(ints);
 
     }
 
-    else      if(( PrevDump.length>0 && resultIntList.first!=37  && resultIntList.last==94 )){
+    else      if(( PrevDump.isNotEmpty && resultIntList.first!=37  && resultIntList.last==94 )){
       // print(PrevDump);
       // print(resultString);
 
@@ -233,7 +229,7 @@ print(ints);
 
     }
 
-    else      if(( PrevDump.length>0 && resultIntList.first!=60  && resultIntList.last==62 )){
+    else      if(( PrevDump.isNotEmpty && resultIntList.first!=60  && resultIntList.last==62 )){
       // print(PrevDump);
       // print(resultString);
 
@@ -290,7 +286,7 @@ print(ints);
 
     }
 
-    else      if((PrevDump.length>0 && copyResult.isNotEmpty && copyResult.first!=35  && copyResult.last==94  )){
+    else      if((PrevDump.isNotEmpty && copyResult.isNotEmpty && copyResult.first!=35  && copyResult.last==94  )){
 
 
       PrevDump  += copyResult;
@@ -304,7 +300,7 @@ print(ints);
     }
 
 
-    else if(PrevDump.length>0 && PrevDump.length<20   && resultIntList.first!=37  &&   resultIntList.last!=94){
+    else if(PrevDump.isNotEmpty && PrevDump.length<20   && resultIntList.first!=37  &&   resultIntList.last!=94){
       // print('ADDING ++++++++++++');
 
       PrevDump.addAll(copyResult);
@@ -332,7 +328,7 @@ print(ints);
               subList = [];
             }
           }
-          if(subList.length>0){              masterList.add(subList);}
+          if(subList.isNotEmpty){              masterList.add(subList);}
 
 
 
@@ -371,14 +367,14 @@ print(ints);
     // });
   }
 
-  coommunicatewithDevice(msg) async {
-
-
-    await writeCharacteristicWithoutResponse(ASCII_TO_INT(msg));
-    return "okay";
-
-
-  }
+  // coommunicatewithDevice(msg) async {
+  //
+  //
+  //   await writeCharacteristicWithoutResponse(ASCII_TO_INT(msg));
+  //   return "okay";
+  //
+  //
+  // }
 
   @override
   void dispose() {
@@ -417,7 +413,7 @@ print(ints);
 
   callApi(code) async {
     print('jgjfjf');
-    var client = new http.Client();
+    var client = http.Client();
     var VehicleDesciption = '3';
     try {
       //  1A3C
@@ -427,8 +423,8 @@ print(ints);
 
       List<String> ls = (tt.body).split('\n');
       int counter =0;
-      List Mastrerls_SIZE21= [];
-      NumberFormat formatter = new NumberFormat("00");
+      List MastrerlsSIZE21= [];
+      NumberFormat formatter = NumberFormat("00");
 
       for (String i in ls) {
         counter++;
@@ -473,7 +469,7 @@ print(ints);
 
           }
 
-          Mastrerls_SIZE21.add(NewLsit);
+          MastrerlsSIZE21.add(NewLsit);
         }
       }
 
@@ -485,7 +481,7 @@ print(ints);
       //   print(result);
       // }
 
-      return {"list":Mastrerls_SIZE21,"type":VehicleDesciption};
+      return {"list":MastrerlsSIZE21,"type":VehicleDesciption};
 
 
     }
@@ -509,22 +505,37 @@ print(ints);
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                      onTap:(){
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.clear,color: Colors.white,size: 35,))
+                ],
+              ),
+            ),
+
             Container(height:MediaQuery.of(context).size.height*0.05),
+
             Center(child: Image.asset('images/main_screen/logo.png',width: MediaQuery.of(context).size.width*0.7,)),
 
             Expanded(
               child: GestureDetector(
                 onTap: () {},
-                child: Container(
+                child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: ListView(
                     children: <Widget>[
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
 
-                      SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      const SizedBox(height: 8),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           'Enter your 4 digit code for configuration',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22,color:Colors.white),
@@ -535,7 +546,7 @@ print(ints);
                         padding:
                         const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8),
                         child: RichText(
-                          text: TextSpan(
+                          text: const TextSpan(
                               text: " ",
                               children: [
                                 TextSpan(
@@ -549,7 +560,7 @@ print(ints);
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Form(
@@ -583,8 +594,8 @@ print(ints);
                                 hasError ? Colors.orange : Colors.white,
                               ),
                               cursorColor: Colors.black,
-                              animationDuration: Duration(milliseconds: 300),
-                              textStyle: TextStyle(fontSize: 20, height: 1.6),
+                              animationDuration: const Duration(milliseconds: 300),
+                              textStyle: const TextStyle(fontSize: 20, height: 1.6),
                               backgroundColor:blackColor,
                               enableActiveFill: true,
                               errorAnimationController: errorController,
@@ -592,7 +603,7 @@ print(ints);
                               // keyboardType: TextInputType.number,
                               boxShadows: [
                                 BoxShadow(
-                                  offset: Offset(0, 1),
+                                  offset: const Offset(0, 1),
                                   color: blackColor,
                                   blurRadius: 10,
                                 )
@@ -621,29 +632,29 @@ print(ints);
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Text(
                           hasError ? "*Please fill up all the cells properly" : "",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.red,
                               fontSize: 12,
                               fontWeight: FontWeight.w400),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         height: 14,
                       ),
                       doneButton(),
-                      SizedBox(
+                      const SizedBox(
                         height: 16,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          FlatButton(
-                            child: Text("Clear",style: TextStyle(color:Colors.white),),
-                            onPressed: () {
+                          GestureDetector(
+                            child: const Text("Clear",style: TextStyle(color:Colors.white),),
+                            onTap: () {
                               textEditingController.clear();
                             },
                           ),
@@ -651,15 +662,15 @@ print(ints);
                         ],
                       ),
                       Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: new LinearPercentIndicator(
+                        padding: const EdgeInsets.all(15.0),
+                        child: LinearPercentIndicator(
                           width: MediaQuery.of(context).size.width - 50,
                           animation: false,
                           lineHeight: 20.0,
                           animationDuration: 2500,
 
                           percent: context.watch<ConfigProvider>().getPercentageOFVerifiedPackets(),
-                          center: Text("${(context.watch<ConfigProvider>().getPercentageOFVerifiedPackets()*100).toStringAsFixed(1)} %",style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold)),
+                          center: Text("${(context.watch<ConfigProvider>().getPercentageOFVerifiedPackets()*100).toStringAsFixed(1)} %",style: const TextStyle(color:Colors.white,fontWeight: FontWeight.bold)),
                           linearStrokeCap: LinearStrokeCap.roundAll,
                           progressColor: Colors.green,
                         ),
@@ -698,7 +709,7 @@ print(ints);
 
   for (int i = 0 ; i< 30 ;i++){
 
-  List raw_packet = getDataforNumber(result,i);
+  List rawPacket = getDataforNumber(result,i);
   // print("Master Packet");
   final myInteger = i;
   var hexString = myInteger.toRadixString(16);
@@ -711,7 +722,7 @@ print(ints);
   // print('hexString');
 
 
-  var MasterPcket ='%P'+hexString.toUpperCase()+raw_packet.join('');
+  var MasterPcket ='%P'+hexString.toUpperCase()+rawPacket.join('');
 
   masterPacketsList.add(MasterPcket);
   responsePacketsList.add(MasterPcket+'^');
@@ -724,7 +735,7 @@ print(ints);
 
 
     masterPacketsList.add('%SNDC');
-    responsePacketsList.add('#EPRMC'+'^');
+    responsePacketsList.add('#EPRMC''^');
 
     print('masterPacketsList');
     // print(masterPacketsList);
@@ -742,10 +753,10 @@ print(ints);
     return  RoundedLoadingButton(
       color: greenColor,
       child:Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
 
             borderRadius:
-            new BorderRadius.all(Radius.circular(10.0))),
+            BorderRadius.all(Radius.circular(10.0))),
         child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
           child: Text(
@@ -919,7 +930,7 @@ print(ints);
   gotResponse(message, response,noOfTimes){
     if(noOfTimes<3)
     {
-      coommunicatewithDevice (message);
+      context.read<SendProvider>().sendData (message);
       activateTimeOut(message,response,noOfTimes);
 
     }
@@ -943,12 +954,12 @@ print(message);
 print('%SNDC');
 print(message.toString().startsWith('%SNDC') );
 
-  new Future.delayed(!message.toString().startsWith('%SNDC') ?Duration(milliseconds:  600 ):Duration(seconds:  5 ), () {
+  Future.delayed(!message.toString().startsWith('%SNDC') ?const Duration(milliseconds:  600 ):const Duration(seconds:  5 ), () {
     // deleayed code here
     //todo if current packet is not verified then send the packet again
 
 
-    if(context.read<ConfigProvider>().isKeyRecieved(response) as bool){
+    if(context.read<ConfigProvider>().isKeyRecieved(response)){
       print('key is already found so exiting after waitng    $noOfTimes  $response'  );
       return;
 
@@ -969,14 +980,14 @@ print(message.toString().startsWith('%SNDC') );
 }
 
 
-getDataforNumber(Mastrerls_SIZE21,int number){
+getDataforNumber(MastrerlsSIZE21,int number){
   List lst = [];
 
   for (int i = 7*(number%3) ; i<(7*(number%3))+7; i++ ){
     // print((number/3).toInt());
     print(i);
-    print(Mastrerls_SIZE21[i][(number/3).toInt()]);
-    lst.add(Mastrerls_SIZE21[i][(number/3).toInt()]);
+    print(MastrerlsSIZE21[i][number~/3]);
+    lst.add(MastrerlsSIZE21[i][number~/3]);
   }
   return  lst;
 

@@ -1,4 +1,4 @@
-package com.example.bluespark
+package com.bracket.bluespark
 
 import io.flutter.embedding.android.FlutterActivity
 

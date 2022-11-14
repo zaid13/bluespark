@@ -1,8 +1,9 @@
-import 'dart:io';
 
 import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../util/functions.dart';
 
 class CommandProvider with ChangeNotifier {
 
@@ -19,17 +20,30 @@ class CommandProvider with ChangeNotifier {
   bool syncingDatra = false;
   int swipeToChangeIsEnable = 1;
 
-
-
-
-
+  bool timeIsZeroReported = false;
 
   ScallerMapper scllerMapper = ScallerMapper();
+
+  var ScallerMapperContex = null;
+  setScallerMapperContext(context){
+    ScallerMapperContex = context;
+
+
+  }
+
+
+  nullScallerMapperContext(){
+    ScallerMapperContex = null;
+  }
+
+
+
+
 
   getData() async {
     final prefs = await SharedPreferences.getInstance();
 
-    var data = await prefs.getBool('isFirstTime');
+    var data = prefs.getBool('isFirstTime');
 
     print("________________________________________________________________");
     print(data.toString());
@@ -44,11 +58,6 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
-  //
-  // setSwipeToChangeIsEnable(){
-  //   swipeToChangeIsEnable = 1;
-  //   notifyListeners();
-  // }
 
    setSwipeToChangeIsDisable(){
     if(swipeToChangeIsEnable == 1){
@@ -57,6 +66,7 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
+
   disable_all_messages() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isFirstTime',true);
@@ -65,6 +75,7 @@ class CommandProvider with ChangeNotifier {
     swipeToChangeIsEnable = 0;
     notifyListeners();
   }
+
   isScallerSet(){
 
     scllerMapper.isScallerSet = true;
@@ -112,6 +123,7 @@ class CommandProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   SCALLER_ERROR_CLOSED(){
 
     if(scllerMapper.SCALLER_ERROR_IS_OPEN){
@@ -120,8 +132,6 @@ class CommandProvider with ChangeNotifier {
     }
   }
 
-
-
   ScallerMapperUpdateSucessfully(){
 
     if(!scllerMapper.UpdateSucessfully){
@@ -129,7 +139,7 @@ class CommandProvider with ChangeNotifier {
       notifyListeners();
       print("*********");
 
-     Future.delayed(Duration(seconds:1),(){
+     Future.delayed(const Duration(seconds:1),(){
 
        scllerMapper.UpdateSucessfully = false;
 
@@ -148,6 +158,7 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
+
   setMapper(newMapperValue){
 
     if(scllerMapper.mapperSelected!=newMapperValue){
@@ -156,6 +167,7 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
+
   set_RESPONSE_Scaller(newScallerValue){
 
     if(scllerMapper.RESPONSE_scallerSelected!=newScallerValue){
@@ -166,6 +178,7 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
+
   set_RESPONSE_Mapper(newMapperValue){
 
     if(scllerMapper.RESPONSE_mapperSelected!=newMapperValue){
@@ -183,6 +196,7 @@ class CommandProvider with ChangeNotifier {
     }
 
   }
+
   isNotRequesting(){
 
     if(scllerMapper.isRequesting){
@@ -192,7 +206,6 @@ class CommandProvider with ChangeNotifier {
 
   }
 
-  ///////////////////////
   startMovingTonextScreen() {
     // if(!MovingToNextScreen){
     MovingToNextScreen = true;
@@ -208,15 +221,6 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // decreasetimeRemaining() {
-  //   int intTimeReaamiaining = int.parse(timeRemaining);
-  //   if (intTimeReaamiaining > 0) {
-  //     intTimeReaamiaining++;
-  //   }
-  //   timeRemaining = intTimeReaamiaining.toString();
-  //   notifyListeners();
-  // }
-
   stopSendingRequests() {
     timeRemaining = "0";
     cancelledRequest = true;
@@ -224,16 +228,38 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool setTime(String newTime) {
+  bool setTime(String newTime , ) {
     print('logs from setTime function');
     print(newTime + '  -' + timeRemaining+'-');
-    if (isNumeric(newTime) &&  timeRemaining != newTime ) {
+    print(isNumeric(newTime));
+    print(timeRemaining =='0');
 
-      print("new TIME:${newTime}---");
+    if ((isNumeric(newTime) &&  timeRemaining != newTime) || (isNumeric(newTime) &&  timeRemaining =='0')  ) {
+
+      print("new TIME:$newTime---");
 
       timeRemaining = newTime;
       notifyListeners();
+
+      print(getIntTime());
+
+      print(timeIsZeroReported);
+
+      if(timeIsZeroReported  && getIntTime() >0){
+      print("APP SHOULD RESTART ");
+        timeIsZeroReported = false;
+
+        if(ScallerMapperContex !=null){
+          Navigator.pop(ScallerMapperContex);
+
+        }
+
+     //  restartApp();
+
+      }
+
       if (getIntTime() == 0) {
+        timeIsZeroReported = true;
         print("tiem is zero ");
         return true;
       }
@@ -259,28 +285,11 @@ class CommandProvider with ChangeNotifier {
     scllerMapper. syncIsOn = true;
     notifyListeners();
   }
+
   setSyncOff(){
     scllerMapper. syncIsOn = false;
     notifyListeners();
   }
-  //
-  // restartListening() {
-  //   timeRemaining = "31";
-  //   cancelledRequest = false;
-  //
-  //   notifyListeners();
-  // }
-
-  // write(){}
-  // Future<void> _getDeviceType() async {}
-  // Future<void> _getMap() async {}
-  // Future<void> _getScaller() async {}
-  // Future<void> _getWUT() async {}
-  // Future<void> _IntializeBlueSparkService() async {}
-  //
-  //
-
-
 
 }
 

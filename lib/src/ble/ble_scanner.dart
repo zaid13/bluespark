@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:bluespark/src/ble/reactive_state.dart';
-import 'package:bluespark/src/ui/device_detail/device_detail_screen.dart';
 import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 
-import '../utils.dart';
 
 class BleScanner implements ReactiveState<BleScannerState> {
 
@@ -45,8 +43,8 @@ class BleScanner implements ReactiveState<BleScannerState> {
       if (knownDeviceIndex >= 0) {
         _devices[knownDeviceIndex] = device;
       } else {
-        for (String device_name in KnownDeviceList){
-          if(device_name == device.name){
+        for (String deviceName in KnownDeviceList){
+          if(deviceName == device.name){
             btfound = device;
           }
         }

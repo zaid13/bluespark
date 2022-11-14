@@ -1,4 +1,4 @@
-import 'package:bluespark/billa_ui/SplashScreen.dart';
+import 'package:bluespark/screens/SplashScreen.dart';
 import 'package:bluespark/src/ble/ble_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -163,7 +163,7 @@ class _DeviceListState extends State<DeviceList> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              SpalshScreenStateManager( )));
+                              const SpalshScreenStateManager( )));
                   // widget.stopScan();
                   // await Navigator.push<void>(
                   //     context,
