@@ -1,32 +1,55 @@
 
 import 'package:flutter/services.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //
 
 
-final Location location = Location();
+
 
 
 Future<void> getLocation() async {
-  if (defaultTargetPlatform == TargetPlatform.android){
 
-    try {
-// For bluetooth permissions on Android 12+.
-    bool d = await Nearby().checkBluetoothPermission().then((value) async {
-      if (!value)
-        Nearby().askBluetoothPermission();
 
-      return value;
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.nearbyWifiDevices
+
+
+
+
+
+
+    ].request();
+
+
+
+
+
+    await Permission.bluetooth.request().then((value)  {
+
+
+      if(PermissionStatus.denied == value){
+        Permission.bluetooth.request();
+      }
+
     });
-// asks for BLUETOOTH_ADVERTISE, BLUETOOTH_CONNECT, BLUETOOTH_SCAN permissions.
+    await Permission.bluetoothScan.request();
+    await Permission.bluetoothConnect.request();
+    await Permission.location.request();
 
-    if (!d)
-      Nearby().askBluetoothPermission();
-  } on PlatformException {
+        Permission.location.request();
 
-  }
-}
+
+
+
+
+
 }

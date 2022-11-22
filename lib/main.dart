@@ -34,7 +34,7 @@ Future<void> main() async {
 
 
 
-  await   getLocation().then((value) async {
+     getLocation().then((value) async {
 
     final LocationData _locationResult = await location.getLocation();
 
@@ -43,8 +43,7 @@ Future<void> main() async {
   });
 
 }
-
-
+final Location location = Location();
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 

@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bracket.bluespark">
     <uses-sdk
         android:minSdkVersion="21"
@@ -15,19 +16,21 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
+<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>-->
+<!--    <uses-permission android:name="android.permission.ACCESS_FIN11E_LOCATION"/>-->
+
+
     <!-- required for API 23 - 30 -->
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"
-        android:maxSdkVersion="22" />
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="22" />
+
+<!--    <uses-permission-sdk-30 android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>-->
+<!--  //  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
+<!--    <uses-permission-sdk-30 android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>-->
+<!--  //  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>-->
 
     <!-- API 31+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission
-        android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation" />
+        android:name="android.permission.BLUETOOTH_SCAN" />
 
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
