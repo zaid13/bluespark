@@ -38,9 +38,12 @@ Future<void> main() async {
 
     final LocationData _locationResult = await location.getLocation();
 
-    runApp(Phoenix(child: MyApp()));
+
 
   });
+
+  runApp(Phoenix(child: MyApp()));
+
 
 }
 final Location location = Location();
