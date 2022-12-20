@@ -1,4 +1,5 @@
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/ConfigProvider.dart';
 
@@ -54,6 +55,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+// launchPopUpIfRequired(){
+//
+//      AwesomeDialog(
+//       context: context,
+//       dialogType: DialogType.INFO,
+//       animType: AnimType.BOTTOMSLIDE,
+//       title: 'location permissions',
+//       desc: 'Bluespark Connect uses location data permissions to allow Bluetooth Low Energy scanning only. It does not collect or otherwise store location data.',
+//   // btnCancelOnPress: () {
+//   //
+//   // },
+//   btnOkOnPress: () {},
+//   ).show().then((value) {
+//   context.read<CommandProvider>().MAPPER_ERROR_CLOSED();
+//   });
+//
+// }
+
+
 
     final _bleLogger = BleLogger();
     final _ble = FlutterReactiveBle();
