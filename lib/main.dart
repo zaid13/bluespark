@@ -35,13 +35,7 @@ Future<void> main() async {
 
 
 
-     getLocation().then((value) async {
 
-    final LocationData _locationResult = await location.getLocation();
-
-
-
-  });
 
   runApp(Phoenix(child: MyApp()));
 
@@ -55,23 +49,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-// launchPopUpIfRequired(){
-//
-//      AwesomeDialog(
-//       context: context,
-//       dialogType: DialogType.INFO,
-//       animType: AnimType.BOTTOMSLIDE,
-//       title: 'location permissions',
-//       desc: 'Bluespark Connect uses location data permissions to allow Bluetooth Low Energy scanning only. It does not collect or otherwise store location data.',
-//   // btnCancelOnPress: () {
-//   //
-//   // },
-//   btnOkOnPress: () {},
-//   ).show().then((value) {
-//   context.read<CommandProvider>().MAPPER_ERROR_CLOSED();
-//   });
-//
-// }
+
+
 
 
 
@@ -137,7 +116,7 @@ class MyApp extends StatelessWidget {
 }
 
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
 
 
   const HomeScreen({
@@ -145,24 +124,62 @@ class HomeScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Consumer<BleStatus?>(
-        builder: (_, status, __) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+
+    launchPopUpIfRequired(){
+
+      AwesomeDialog(
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'location permissions',
+          desc: 'Bluespark Connect uses location data permissions to enable "Bluetooth Low Energy scanning" only. It does not collect or otherwise store location data.',
+          // btnCancelOnPress: () {
+          //
+          // },
+          btnOkOnPress: () {
+            getLocation().then((value) async {
+
+              final LocationData _locationResult = await location.getLocation();
+
+
+
+            });
+          },
+          btnCancelOnPress: (){}
+      ).show();
+
+    }
+
+    Future.delayed(Duration(seconds: 2) ,
+          () {
+        launchPopUpIfRequired();
+      },
+    ) ;
+    return  Consumer<BleStatus?>(
+      builder: (_, status, __) {
 
 
 
 
-          if (status == BleStatus.ready) {
+        if (status == BleStatus.ready) {
 
 
 
-            return       const SpalshScreenStateManager();
-            return      const DeviceListScreen1(); //SpalshScreenStateManager();
+          return       const SpalshScreenStateManager();
+          return      const DeviceListScreen1(); //SpalshScreenStateManager();
 
-          } else {
-            return BleStatusScreen(status: status ?? BleStatus.unknown);
-          }
-        },
-      );
+        } else {
+          return BleStatusScreen(status: status ?? BleStatus.unknown);
+        }
+      },
+    );
+  }
 }
 // getDataforNumber(Mastrerls_SIZE21,int number){
 //   List lst = [];

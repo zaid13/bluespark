@@ -59,7 +59,7 @@
 <!--    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />-->
 
     <application
-        android:label="Bluespark"
+        android:label="Bluespark Connect"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
