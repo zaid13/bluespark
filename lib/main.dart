@@ -1,8 +1,6 @@
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/ConfigProvider.dart';
-
 
 import 'package:bluespark/providers/SendProvider.dart';
 import 'package:bluespark/screens/TestingScreen.dart';
@@ -23,37 +21,23 @@ import 'screens/SplashScreen.dart';
 import 'location/location.dart';
 import 'src/ble/ble_logger.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+
 const _themeColor = Colors.lightGreen;
 
-
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
-  Wakelock.toggle(enable:true);
-
-
-
-
-
-
+  Wakelock.toggle(enable: true);
 
   runApp(Phoenix(child: MyApp()));
-
-
 }
+
 final Location location = Location();
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
-
   @override
   Widget build(BuildContext context) {
-
-
-
-
-
     final _bleLogger = BleLogger();
     final _ble = FlutterReactiveBle();
     final _scanner = BleScanner(ble: _ble, logMessage: _bleLogger.addToLog);
@@ -71,16 +55,13 @@ class MyApp extends StatelessWidget {
       logMessage: _bleLogger.addToLog,
     );
 
-    return  MultiProvider(
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CommandProvider()),
         ChangeNotifierProvider(create: (_) => ConfigProvider()),
         ChangeNotifierProvider(create: (_) => SendProvider()),
-
-
         Provider.value(value: _scanner),
         Provider.value(value: _monitor),
-
         Provider.value(value: _connector),
         Provider.value(value: _serviceDiscoverer),
         Provider.value(value: _bleLogger),
@@ -115,10 +96,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class HomeScreen extends StatefulWidget {
-
-
   const HomeScreen({
     Key? key,
   }) : super(key: key);
@@ -127,54 +105,52 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+bool popUp_sowed = false;
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-
-    launchPopUpIfRequired(){
-
+    launchPopUpIfRequired() {
       AwesomeDialog(
-          context: context,
-          dialogType: DialogType.WARNING,
-          animType: AnimType.BOTTOMSLIDE,
-          title: 'location permissions',
-          desc: 'Bluespark Connect uses location data permissions to enable "Bluetooth Low Energy scanning" only. It does not collect or otherwise store location data.',
-          // btnCancelOnPress: () {
-          //
-          // },
-          btnOkOnPress: () {
-            getLocation().then((value) async {
-
-              final LocationData _locationResult = await location.getLocation();
-
-
-
-            });
-          },
-          btnCancelOnPress: (){}
-      ).show();
-
+              context: context,
+              dialogType: DialogType.WARNING,
+              animType: AnimType.BOTTOMSLIDE,
+              title: 'location permissions',
+              desc:
+                  'Bluespark Connect collects location data to enable "Bluetooth Low Energy scanning" even when the app is closed or not in use',
+              // btnCancelOnPress: () {
+              //
+              // },
+              btnOkOnPress: () {
+                getLocation().then((value) async {
+                  final LocationData _locationResult =
+                      await location.getLocation();
+                });
+              },
+              btnCancelOnPress: () {})
+          .show();
     }
 
-    Future.delayed(Duration(seconds: 2) ,
-          () {
-        launchPopUpIfRequired();
-      },
-    ) ;
-    return  Consumer<BleStatus?>(
+    return Consumer<BleStatus?>(
       builder: (_, status, __) {
-
-
-
-
+        print('status');
+        print(status);
         if (status == BleStatus.ready) {
+          return const SpalshScreenStateManager();
+          return const DeviceListScreen1(); //SpalshScreenStateManager();
 
-
-
-          return       const SpalshScreenStateManager();
-          return      const DeviceListScreen1(); //SpalshScreenStateManager();
+        }else if(status == BleStatus.locationServicesDisabled  || status == BleStatus.unauthorized){
+          Future.delayed(Duration(seconds: 2), () {
+            if (!popUp_sowed) {
+              popUp_sowed = true;
+              launchPopUpIfRequired();
+            }
+          });
+          return BleStatusScreen(status: status ?? BleStatus.unknown);
 
         } else {
+
+
           return BleStatusScreen(status: status ?? BleStatus.unknown);
         }
       },

@@ -16,7 +16,6 @@ Future<void> getLocation() async {
 
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
-      Permission.storage,
       Permission.bluetooth,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,

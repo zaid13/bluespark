@@ -520,7 +520,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.asset(
-                            'images/main_screen/logo.png',
+                            logo_url,
                           ),
                         ),
                       ),
@@ -763,7 +763,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
             children: [
               Center(
                   child: Image.asset(
-                'images/main_screen/logo.png',
+                    logo_url,
                 width: MediaQuery.of(context).size.width * 0.7,
               )),
               context.watch<CommandProvider>().scllerMapper.UpdateSucessfully
@@ -957,7 +957,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                 child: ListWheelScrollView(
                   onSelectedItemChanged: (x) {
 
-                    HapticFeedback.selectionClick();
+                    HapticFeedback.vibrate();
 
                     context.read<CommandProvider>().setMapper(mapperList[x]);
                   },
@@ -1082,7 +1082,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
                   onSelectedItemChanged: (x) {
                     print('555');
 
-                    HapticFeedback.selectionClick();
+                    HapticFeedback.vibrate();
+
 
 
                     context.read<CommandProvider>().setScaller(scallerList[x]);

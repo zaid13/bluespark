@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 
+import '../util/config.dart';
+
 
 
 
@@ -268,7 +270,7 @@ if(push) {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('images/main_screen/logo.png'),
+                Image.asset(logo_url),
                 Container(
                   height: 10,
                 ),
