@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 
+import '../../models/BoxModel.dart';
+import '../../providers/box_storage.dart';
+
 
 class BleScanner implements ReactiveState<BleScannerState> {
 
@@ -43,11 +46,20 @@ class BleScanner implements ReactiveState<BleScannerState> {
       if (knownDeviceIndex >= 0) {
         _devices[knownDeviceIndex] = device;
       } else {
-        for (String deviceName in KnownDeviceList){
-          if(deviceName == device.name){
+        Box_Model? box = await BoxStorage.getBox(device.id);
+        KnownDeviceList;
+
+        if(box!=null){
+          if(box.isConnected){
             btfound = device;
           }
         }
+
+        // for (String deviceName in KnownDeviceList){
+        //   if(deviceName == device.id){
+        //     btfound = device;
+        //   }
+        // }
 
         _devices.add(device);
       }

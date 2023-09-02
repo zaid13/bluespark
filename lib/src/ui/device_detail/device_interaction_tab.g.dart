@@ -46,7 +46,7 @@ abstract class $DeviceInteractionViewModel {
 
   @override
   String toString() =>
-      "DeviceInteractionViewModel(deviceId: $deviceId, connectionStatus: $connectionStatus, deviceConnector: $deviceConnector, discoverServices: $discoverServices)";
+      "DeviceInteractionViewModel(deviceId: $deviceId, connectionStatus: $connectionStatus, deviceConnector.dart: $deviceConnector, discoverServices: $discoverServices)";
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes

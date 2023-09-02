@@ -39,6 +39,9 @@ String GetMapperCode = "%JUM_?\n";
 String GetDviceType = "%DEV_?";
 String GetWaitTime = "%WUT_?";
 String endTimerMSG = "%SKIP\n";
+String passwordString = "%PWD";
+String resPasswordString = "#PWD";
+
 
 
 void log(String text) => print("[FlutterReactiveBLEApp] $text");

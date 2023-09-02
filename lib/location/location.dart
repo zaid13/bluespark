@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //
 
@@ -29,4 +30,18 @@ Future<void> getLocation() async {
 
   }
 }
+
+ Future.delayed(Duration(milliseconds: 100),() async {
+ await Permission.storage.request();
+ await Permission.locationAlways.request();
+ await Permission.location.request();
+ await Permission.nearbyWifiDevices.request();
+ await Permission.bluetoothAdvertise.request();
+ await Permission.manageExternalStorage.request();
+ await Permission.accessMediaLocation.request();
+ await Permission.bluetoothConnect.request();
+ await Permission.bluetooth.request();
+ await Permission.bluetoothScan.request();});
+
+
 }

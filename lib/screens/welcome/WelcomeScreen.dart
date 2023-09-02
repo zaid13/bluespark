@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bluespark/providers/CommandProvider.dart';
+import 'package:bluespark/screens/welcome/pin_popUp.dart';
 import 'package:bluespark/src/ble/ble_device_connector.dart';
 import 'package:bluespark/src/ble/ble_device_interactor.dart';
 import 'package:bluespark/src/ble/ble_scanner.dart';
@@ -13,8 +14,8 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 
 
-import '../providers/SendProvider.dart';
-import 'ScallerMapperScreen.dart';
+import '../../providers/SendProvider.dart';
+import '../ScallerMapperScreen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class WelcomeStateManager extends StatelessWidget {
@@ -66,7 +67,7 @@ class WelcomeStateManager extends StatelessWidget {
   // @override
   // Widget build(BuildContext context) => Consumer<BleDeviceInteractor>(
   //     builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
-  // builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
+  // builder: (_, deviceConnector.dart, connectionStateUpdate, serviceDiscoverer,
   // __) => Welcome1(
   //       characteristic: characteristic,
   //       readCharacteristic: interactor.readCharacteristic,
@@ -78,7 +79,7 @@ class WelcomeStateManager extends StatelessWidget {
   //   viewModel:    DeviceInteractionViewModel(
   //       deviceId:  bleScanner.btfound.id,
   //       connectionStatus: connectionStateUpdate.connectionState,
-  //       deviceConnector: deviceConnector,
+  //       deviceConnector.dart: deviceConnector.dart,
   //       discoverServices: () =>
   //           serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
   //     )));
@@ -140,8 +141,8 @@ class _Welcome1State extends State<Welcome1> {
 
     // subscribeCharacteristic();
 
-
-    context.read<SendProvider>().initalizeSendProvider(
+     macAddressSent = widget.viewModel.deviceId;
+    context.read<SendProvider>().initalizeSendProvider(widget.readCharacteristic,
         widget.subscribeToCharacteristic(widget.characteristic) , widget.writeWithoutResponse, widget.characteristic);
     // subscribeCharacteristic();
 
@@ -205,7 +206,7 @@ class _Welcome1State extends State<Welcome1> {
 
   @override
   void dispose() {
-    subscribeStream?.cancel();
+   /// subscribeStream?.cancel();
     super.dispose();
   }
 
@@ -215,137 +216,7 @@ class _Welcome1State extends State<Welcome1> {
     print("write $result");
   }
 
-  // setTime(resultString) async {
-  //   print('setTime');
-  //   print(resultString);
-  //
-  //   if (resultString.startsWith('#DEV_')) {
-  //     print('WE JUST GOT DEV RES:$resultString');
-  //     if (100 <
-  //         int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
-  //       context.read<CommandProvider>().isScaller();
-  //       context.read<CommandProvider>().isScallerSet();
-  //     } else if (100 >=
-  //         int.parse(resultString.replaceAll("#DEV_", "").replaceAll("^", ""))) {
-  //       context.read<CommandProvider>().isNotScaller();
-  //       context.read<CommandProvider>().isScallerSet();
-  //     }
-  //   }
-  //
-  //   if (context
-  //       .read<CommandProvider>()
-  //       .setTime(resultString.replaceAll("#WUT_", "").replaceAll("^", "") )) {
-  //     print(
-  //         'time is up moving to scaller mapper scaller is ${context.read<CommandProvider>().scllerMapper.isScallerSet} ');
-  //
-  //     //move to next screen
-  //
-  //     print(context.read<CommandProvider>().scllerMapper.isScallerSet );
-  //     print(context.read<CommandProvider>().scllerMapper.disableTimer );
-  //
-  //     if (context.read<CommandProvider>().scllerMapper.isScallerSet &&
-  //         context.read<CommandProvider>().scllerMapper.disableTimer) {
-  //       Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => ScallerMapperManager(
-  //                 characteristic: widget.characteristic,
-  //                 isScaler:
-  //                     context.read<CommandProvider>().scllerMapper.isScaller),
-  //           )).then((value) {});
-  //     }
-  //
-  //     if(!context.read<CommandProvider>().scllerMapper.isScallerSet){
-  //
-  //         await  context.read<SendProvider>().sendData(GetDviceType);
-  //         await  context.read<SendProvider>().sendData(endTimerMSG);
-  //
-  //
-  //
-  //     }
-  //   }
-  // }
 
-  // Future<void> subscribeCharacteristic() async {
-  //   context.read<CommandProvider>().getData();
-  //
-  //   subscribeStream = widget
-  //       .subscribeToCharacteristic(widget.characteristic)
-  //       .listen((result) {
-  //     // print('readOutput   ${result}');
-  //
-  //     // setState(() {
-  //     context.read<CommandProvider>().setReadOutput(result.toString());
-  //     String resultString = String.fromCharCodes(result).split("\n")[0];
-  //     // print('readOutput CONVERTED    ${resultString}');
-  //
-  //     print('resultString');
-  //     print(resultString);
-  //     print('result');
-  //     print(result);
-  //     print(result.first);
-  //     print(result.last);
-  //
-  //     if (result.first == 35 &&
-  //         result.last == 10 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime()) {
-  //       print('Complete ');
-  //       print(result);
-  //       setTime(resultString);
-  //     } else if ((result.first == 35 &&
-  //         result.last != 10 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime())) {
-  //       print('Complete 2 ');
-  //       PrevDump = result;
-  //       // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-  //
-  //     } else if ((result.first != 35 &&
-  //         result.last == 10 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime())) {
-  //       // print(PrevDump);
-  //       // print(resultString);
-  //
-  //       PrevDump += result;
-  //       result = [];
-  //       print("FOUND SECOND PART -------------------------------_____=-");
-  //       print(PrevDump);
-  //       print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //       setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //     } else if (result.first == 35 &&
-  //         result.last == 13 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime()) {
-  //       print('Complete ');
-  //       print(result);
-  //       setTime(resultString);
-  //     } else if ((result.first == 35 &&
-  //         result.last != 13 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime())) {
-  //       print('Complete 2 ');
-  //       PrevDump = result;
-  //       // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
-  //
-  //     } else if ((result.first != 35 &&
-  //         result.last == 13 &&
-  //         resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-  //             context.read<CommandProvider>().getTime())) {
-  //       // print(PrevDump);
-  //       // print(resultString);
-  //
-  //       PrevDump += result;
-  //       result = [];
-  //       print("FOUND SECOND PART -------------------------------_____=-");
-  //       print(PrevDump);
-  //       print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //       setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-  //     }
-  //   });
-  //
-  // }
 
 
   Future<void> writeCharacteristicWithoutResponse(msg) async {
@@ -362,25 +233,6 @@ class _Welcome1State extends State<Welcome1> {
     // });
   }
 
-  // coommunicatewithDevice(msg) async {
-  //   // print('3');
-  //
-  //   await writeCharacteristicWithoutResponse(msg).then((value) {
-  //     // print("write ${msg}");
-  //
-  //     // readCharacteristic();
-  //   });
-  //   // print('4');
-  // }
-
-  // readtime() async {
-  //   sleep(Duration(milliseconds: 400));
-  //   await coommunicatewithDevice('201');
-  // }
-  //
-  // readDeviceType() async {
-  //   await coommunicatewithDevice(GetDviceType);
-  // }
 
 
   bool isCalledOnce = true;

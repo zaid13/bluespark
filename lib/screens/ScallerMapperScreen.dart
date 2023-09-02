@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/SendProvider.dart';
+import 'package:bluespark/screens/tunningbox/change_tunning_box.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_haptic/haptic.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -71,25 +72,7 @@ class ScallerMapperManager extends StatelessWidget {
                         ))),
       );
 
-// @override
-// Widget build(BuildContext context) => Consumer<BleDeviceInteractor>(
-//     builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
-// builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
-// __) => Welcome1(
-//       characteristic: characteristic,
-//       readCharacteristic: interactor.readCharacteristic,
-//       writeWithResponse: interactor.writeCharacterisiticWithResponse,
-//       writeWithoutResponse:
-//       interactor.writeCharacterisiticWithoutResponse,
-//       subscribeToCharacteristic: interactor.subScribeToCharacteristic,
-//
-//   viewModel:    DeviceInteractionViewModel(
-//       deviceId:  bleScanner.btfound.id,
-//       connectionStatus: connectionStateUpdate.connectionState,
-//       deviceConnector: deviceConnector,
-//       discoverServices: () =>
-//           serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
-//     )));
+
 }
 
 class ScallerMapperScreen extends StatefulWidget {
@@ -246,14 +229,16 @@ class _Slider1State extends State<ScallerMapperScreen> {
       context.read<SendProvider>().sendData(GetMapperCode).then((d) {
         print(d);
         sleep(const Duration(milliseconds: 500));
-        context.read<SendProvider>().sendData(GetScallerCode).then((d) {
-          sleep(const Duration(seconds: 1));
-          print('Yyyyyyyyy');
+        context.read<SendProvider>().sendData(GetScallerCode).then((d) async {
 
-          context.read<CommandProvider>().setMapper(mapperList[int.parse(context
+       await Future.delayed(Duration(seconds: 1),(){
+          var mapvalue = mapperList[int.parse(context
               .read<CommandProvider>()
               .scllerMapper
-              .RESPONSE_mapperSelected)]);
+              .RESPONSE_mapperSelected)];
+          print('Yyyyyyyyy :$mapvalue');
+
+          context.read<CommandProvider>().setMapper(mapvalue);
 
           Future.delayed(const Duration(milliseconds: 400), () {
             if (widget.isScaler) {
@@ -287,9 +272,20 @@ class _Slider1State extends State<ScallerMapperScreen> {
               });
 
 
+            }else{
+              MapperfixedExtentScrollController.animateToItem(
+                int.parse(context
+                    .read<CommandProvider>()
+                    .scllerMapper
+                    .RESPONSE_mapperSelected),
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.fastOutSlowIn,
+              );
             }
           });
 
+
+        });
 
         });
       });
@@ -526,6 +522,31 @@ class _Slider1State extends State<ScallerMapperScreen> {
                       ),
                       Container(
                         height: 100,
+                      ),
+                      ListTile(
+                        onTap: () {
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => ChangeTunningBox(widget.viewModel.disconnect ))));
+
+
+                        },
+                        title: Container(
+                          alignment: Alignment.centerRight,
+                          child: const Text(
+                            "Change Tuning Box",
+                            style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        height: 0.1,
                       ),
                       ListTile(
                         onTap: () {

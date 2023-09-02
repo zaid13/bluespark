@@ -40,7 +40,7 @@
 // // @override
 // // Widget build(BuildContext context) => Consumer<BleDeviceInteractor>(
 // //     builder: (context, interactor, _) =>  Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
-// // builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
+// // builder: (_, deviceConnector.dart, connectionStateUpdate, serviceDiscoverer,
 // // __) => Welcome1(
 // //       characteristic: characteristic,
 // //       readCharacteristic: interactor.readCharacteristic,
@@ -52,7 +52,7 @@
 // //   viewModel:    DeviceInteractionViewModel(
 // //       deviceId:  bleScanner.btfound.id,
 // //       connectionStatus: connectionStateUpdate.connectionState,
-// //       deviceConnector: deviceConnector,
+// //       deviceConnector.dart: deviceConnector.dart,
 // //       discoverServices: () =>
 // //           serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
 // //     )));

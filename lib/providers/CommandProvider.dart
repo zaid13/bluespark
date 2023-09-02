@@ -1,16 +1,17 @@
+import 'dart:convert';
 
 import 'package:bluespark/util/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:bluespark/providers/SendProvider.dart';
+import '../main.dart';
+import '../models/BoxModel.dart';
 import '../util/functions.dart';
+import 'box_storage.dart';
 
 class CommandProvider with ChangeNotifier {
-
   String time = "25";
-  late Function fun ;
-
-
+  late Function fun;
 
   CommandProvider();
   String readOutput = "";
@@ -25,20 +26,13 @@ class CommandProvider with ChangeNotifier {
   ScallerMapper scllerMapper = ScallerMapper();
 
   var ScallerMapperContex = null;
-  setScallerMapperContext(context){
+  setScallerMapperContext(context) {
     ScallerMapperContex = context;
-
-
   }
 
-
-  nullScallerMapperContext(){
+  nullScallerMapperContext() {
     ScallerMapperContex = null;
   }
-
-
-
-
 
   getData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -47,163 +41,138 @@ class CommandProvider with ChangeNotifier {
 
     print("________________________________________________________________");
     print(data.toString());
-    if(data==null){
-
-    }
-    else if(data){
+    if (data == null) {
+    } else if (data) {
+      disable_all_messages();
+    } else {
       disable_all_messages();
     }
-    else{
-      disable_all_messages();
-    }
-
   }
 
-   setSwipeToChangeIsDisable(){
-    if(swipeToChangeIsEnable == 1){
+
+
+
+
+
+  setSwipeToChangeIsDisable() {
+    if (swipeToChangeIsEnable == 1) {
       swipeToChangeIsEnable = 2;
       notifyListeners();
     }
-
   }
 
   disable_all_messages() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFirstTime',true);
-
+    prefs.setBool('isFirstTime', true);
 
     swipeToChangeIsEnable = 0;
     notifyListeners();
   }
 
-  isScallerSet(){
-
+  isScallerSet() {
     scllerMapper.isScallerSet = true;
     notifyListeners();
   }
 
-  isScaller(){
-    scllerMapper. isScaller = true;
+  isScaller() {
+    scllerMapper.isScaller = true;
     notifyListeners();
   }
 
-  isNotScaller(){
-    scllerMapper. isScaller = false;
+  isNotScaller() {
+    scllerMapper.isScaller = false;
     notifyListeners();
   }
 
-  getErrorString(errorKey){
-
-
+  getErrorString(errorKey) {
     return scallerMapperErrorTable[errorKey];
   }
 
-  isMapperError(){
-
-    if(!scllerMapper.MAP_ERROR_IS_OPEN){
+  isMapperError() {
+    if (!scllerMapper.MAP_ERROR_IS_OPEN) {
       scllerMapper.MAP_ERROR_IS_OPEN = true;
       notifyListeners();
     }
-
   }
 
-  isScallerError(){
-
-    if(!scllerMapper.SCALLER_ERROR_IS_OPEN){
+  isScallerError() {
+    if (!scllerMapper.SCALLER_ERROR_IS_OPEN) {
       scllerMapper.SCALLER_ERROR_IS_OPEN = true;
       notifyListeners();
     }
-
   }
 
-  MAPPER_ERROR_CLOSED(){
-
-    if(scllerMapper.MAP_ERROR_IS_OPEN){
+  MAPPER_ERROR_CLOSED() {
+    if (scllerMapper.MAP_ERROR_IS_OPEN) {
       scllerMapper.MAP_ERROR_IS_OPEN = false;
       notifyListeners();
     }
   }
 
-  SCALLER_ERROR_CLOSED(){
-
-    if(scllerMapper.SCALLER_ERROR_IS_OPEN){
+  SCALLER_ERROR_CLOSED() {
+    if (scllerMapper.SCALLER_ERROR_IS_OPEN) {
       scllerMapper.SCALLER_ERROR_IS_OPEN = false;
       notifyListeners();
     }
   }
 
-  ScallerMapperUpdateSucessfully(){
-
-    if(!scllerMapper.UpdateSucessfully){
+  ScallerMapperUpdateSucessfully() {
+    if (!scllerMapper.UpdateSucessfully) {
       scllerMapper.UpdateSucessfully = true;
       notifyListeners();
       print("*********");
 
-     Future.delayed(const Duration(seconds:1),(){
+      Future.delayed(const Duration(seconds: 1), () {
+        scllerMapper.UpdateSucessfully = false;
 
-       scllerMapper.UpdateSucessfully = false;
-
-       notifyListeners();
-
-     });
-
-
-    }}
-
-  setScaller(newScallerValue){
-
-    if(scllerMapper.scallerSelected!=newScallerValue){
-      scllerMapper.scallerSelected=newScallerValue;
-      notifyListeners();
+        notifyListeners();
+      });
     }
-
   }
 
-  setMapper(newMapperValue){
-
-    if(scllerMapper.mapperSelected!=newMapperValue){
-      scllerMapper.mapperSelected=newMapperValue;
+  setScaller(newScallerValue) {
+    if (scllerMapper.scallerSelected != newScallerValue) {
+      scllerMapper.scallerSelected = newScallerValue;
       notifyListeners();
     }
-
   }
 
-  set_RESPONSE_Scaller(newScallerValue){
+  setMapper(newMapperValue) {
+    if (scllerMapper.mapperSelected != newMapperValue) {
+      scllerMapper.mapperSelected = newMapperValue;
+      notifyListeners();
+    }
+  }
 
-    if(scllerMapper.RESPONSE_scallerSelected!=newScallerValue){
-      scllerMapper.RESPONSE_scallerSelected=newScallerValue;
+  set_RESPONSE_Scaller(newScallerValue) {
+    if (scllerMapper.RESPONSE_scallerSelected != newScallerValue) {
+      scllerMapper.RESPONSE_scallerSelected = newScallerValue;
 
       notifyListeners();
       ScallerMapperUpdateSucessfully();
     }
-
   }
 
-  set_RESPONSE_Mapper(newMapperValue){
-
-    if(scllerMapper.RESPONSE_mapperSelected!=newMapperValue){
-      scllerMapper.RESPONSE_mapperSelected=newMapperValue;
+  set_RESPONSE_Mapper(newMapperValue) {
+    if (scllerMapper.RESPONSE_mapperSelected != newMapperValue) {
+      scllerMapper.RESPONSE_mapperSelected = newMapperValue;
       notifyListeners();
       ScallerMapperUpdateSucessfully();
     }
-
   }
 
-  isRequesting(){
-    if(!scllerMapper.isRequesting){
-      scllerMapper.isRequesting=true;
+  isRequesting() {
+    if (!scllerMapper.isRequesting) {
+      scllerMapper.isRequesting = true;
       notifyListeners();
     }
-
   }
 
-  isNotRequesting(){
-
-    if(scllerMapper.isRequesting){
-      scllerMapper.isRequesting=false;
+  isNotRequesting() {
+    if (scllerMapper.isRequesting) {
+      scllerMapper.isRequesting = false;
       notifyListeners();
     }
-
   }
 
   startMovingTonextScreen() {
@@ -228,13 +197,37 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool setTime(String newTime , ) {
+  bool setTime(String newTime) {
     print('logs from setTime function');
-    print(newTime + '  -' + timeRemaining+'-');
+    print(newTime + '  -' + timeRemaining + '-');
     print(isNumeric(newTime));
-    print(timeRemaining =='0');
 
-    if ((isNumeric(newTime) &&  timeRemaining != newTime) || (isNumeric(newTime) &&  timeRemaining =='0')  ) {
+    print(timeRemaining == '0');
+
+
+
+    if(isNumeric(newTime)){
+      print(sc);
+
+      if(sc == screen_state.welcome){
+        BoxStorage.connectedToBox(macAddressSent);
+      }
+      if (sc == screen_state.pinscreen) {
+        print('move to welcome screen');
+
+        Navigator.pop(NavigationService.navigatorKey.currentContext!);
+
+
+
+        sc = screen_state.welcome;
+        BoxStorage.storeBox(true);
+      }
+    }
+
+
+    if ((isNumeric(newTime) && timeRemaining != newTime) ||
+        (isNumeric(newTime) && timeRemaining == '0')) {
+
 
       print("new TIME:$newTime---");
 
@@ -245,17 +238,15 @@ class CommandProvider with ChangeNotifier {
 
       print(timeIsZeroReported);
 
-      if(timeIsZeroReported  && getIntTime() >0){
-      print("APP SHOULD RESTART ");
+      if (timeIsZeroReported && getIntTime() > 0) {
+        print("APP SHOULD RESTART ");
         timeIsZeroReported = false;
 
-        if(ScallerMapperContex !=null){
+        if (ScallerMapperContex != null) {
           Navigator.pop(ScallerMapperContex);
-
         }
 
-     //  restartApp();
-
+        //  restartApp();
       }
 
       if (getIntTime() == 0) {
@@ -280,17 +271,15 @@ class CommandProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-  setSyncOn(){
-    scllerMapper. syncIsOn = true;
+  setSyncOn() {
+    scllerMapper.syncIsOn = true;
     notifyListeners();
   }
 
-  setSyncOff(){
-    scllerMapper. syncIsOn = false;
+  setSyncOff() {
+    scllerMapper.syncIsOn = false;
     notifyListeners();
   }
-
 }
 
 bool isNumeric(String s) {
@@ -300,8 +289,7 @@ bool isNumeric(String s) {
   return double.tryParse(s) != null;
 }
 
-
-class ScallerMapper{
+class ScallerMapper {
   bool disableTimer = true;
   bool isRequesting = false;
   bool isScaller = true;
@@ -315,11 +303,6 @@ class ScallerMapper{
   String mapperSelected = "A";
   String scallerSelected = "3";
 
-
   String RESPONSE_mapperSelected = "2";
   String RESPONSE_scallerSelected = "3";
-
-
-
-
 }
