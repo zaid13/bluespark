@@ -155,14 +155,15 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                         const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
                         child: RichText(
                           text: TextSpan(
-                              text: "Enter Vehicle Code",
+                              text: "Enter Pin",
 
                               style:
                               const TextStyle(color: Colors.white, fontSize: 15)),
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      Container(height: 10,),
+                      Container(height: 10,
+                      ),
 
                       PinCodeTextField(
                         appContext: context,

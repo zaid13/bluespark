@@ -53,7 +53,7 @@ class _TestingScreenState extends State<TestingScreen> {
 
           }),
           getTile(4,(){
-            Clipboard.setData(ClipboardData());
+            Clipboard.setData(ClipboardData(text: 'TEXT'));
 
 
           }),

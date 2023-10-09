@@ -16,6 +16,7 @@ class CommandProvider with ChangeNotifier {
   CommandProvider();
   String readOutput = "";
   String timeRemaining = "0";
+  bool coldStartEnabled = true;
   bool cancelledRequest = false;
   bool MovingToNextScreen = false;
   bool syncingDatra = false;
@@ -230,7 +231,7 @@ class CommandProvider with ChangeNotifier {
 
 
       print("new TIME:$newTime---");
-
+      coldStartEnabled = false;
       timeRemaining = newTime;
       notifyListeners();
 
@@ -255,6 +256,13 @@ class CommandProvider with ChangeNotifier {
         return true;
       }
     }
+
+    if (getIntTime() != 0) {
+      coldStartEnabled = true;
+      print("tiem is NOT zero ");
+    notifyListeners();
+    }
+
     return false;
   }
 

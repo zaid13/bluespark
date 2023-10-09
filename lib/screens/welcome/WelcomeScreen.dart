@@ -254,6 +254,33 @@ class _Welcome1State extends State<Welcome1> {
       restartApp();
     }
 
+
+    if( !context.read<CommandProvider>().coldStartEnabled){
+      return  Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('images/main_screen/logo.png'),
+                    Container(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Loading...",
+                      style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color:Colors.white,fontWeight:FontWeight.bold),),
+
+                  ],
+                )),
+
+
+          ],
+        ),
+      );
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -411,7 +438,7 @@ class _Welcome1State extends State<Welcome1> {
                                                               CommandProvider>()
                                                           .scllerMapper
                                                           .isScaller),
-                                            )).then((value) {
+                                            )).then((value) {  
                                           context
                                               .read<CommandProvider>()
                                               .scllerMapper

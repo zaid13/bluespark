@@ -161,7 +161,7 @@ print(resultStringList);
     String resultString = String.fromCharCodes(result).split("\n")[0];
     dataFromDeviceStream.add(resultString);
 
-    // print('readOutput CONVERTED    ${resultString}');
+
 
     print('resultString SEND PROVDER ');
     print(resultString);
