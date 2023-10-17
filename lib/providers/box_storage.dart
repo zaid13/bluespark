@@ -123,6 +123,30 @@ class BoxStorage{
 
   }
 
+  static   Future<List<Box_Model>> updateConnectedBoxReturnAllBoxes(connectedBox)async{
+
+    print('connected device ID');
+    print(connectedBox);
+    await connectedToBox(connectedBox) ;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String>? maybeBoxStringList  = prefs.getStringList(boxkey );
+
+    if(maybeBoxStringList==null){
+      return [];
+    }else{
+      print('ALL BOXES ${maybeBoxStringList}');
+      List<Box_Model> boxList = [];
+      for( var i in maybeBoxStringList ){
+        boxList.add(Box_Model.fromJson(jsonDecode(i)));
+
+      }
+
+
+      return boxList;
+    }
+  }
   static Future<List<Box_Model>> getBoxes()async{
 
     final prefs = await SharedPreferences.getInstance();
@@ -151,7 +175,7 @@ class BoxStorage{
   static connectedToBox(boxId) async {
 
     final prefs = await SharedPreferences.getInstance();
-
+    await deleteBoxWithId("");
 
     List<Box_Model> maybeBoxStringList  = await getBoxes();
 
@@ -160,6 +184,8 @@ class BoxStorage{
     for (var i in maybeBoxStringList){
       if(boxId==i.mac_address){
         i.isConnected = true;
+      }else{
+        i.isConnected = false;
       }
       listOfString.add(jsonEncode(i));
     }

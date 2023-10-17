@@ -529,7 +529,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => ChangeTunningBox(widget.viewModel.disconnect ))));
+                                  builder: ((context) => ChangeTunningBox(widget.viewModel ))));
 
 
                         },

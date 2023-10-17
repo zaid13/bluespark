@@ -139,8 +139,10 @@ print(resultStringList);
         print("move to next screen");
         if(  await BoxStorage.checkIfboxDataIsAvailable(macAddressSent)){
           PushScreeenChangeStatus();
+          print("BOX DATA FOUND ");
 
          String pin =  await BoxStorage.getPasswordPin(macAddressSent);
+          print("BOX DATA FOUND for $macAddressSent ");
 
           sendData(passwordString+pin);
 

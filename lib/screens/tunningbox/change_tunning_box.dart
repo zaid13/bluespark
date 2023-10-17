@@ -8,14 +8,15 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import '../../models/BoxModel.dart';
 import '../../providers/box_storage.dart';
 import '../../providers/deviceConnector.dart';
+import '../../src/ui/device_detail/device_interaction_tab.dart';
 import '../../util/functions.dart';
 import '../ui_strings.dart';
 
 class ChangeTunningBox extends StatefulWidget {
 
-  Function disconnectDevice;
+  DeviceInteractionViewModel viewModel;
 
-   ChangeTunningBox(this.disconnectDevice,   {Key? key}) : super(key: key);
+   ChangeTunningBox(this.viewModel,   {Key? key}) : super(key: key);
 
   @override
   State<ChangeTunningBox> createState() => _ChangeTunningBoxState();
@@ -111,7 +112,7 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
               onTap: () async {
                 await BoxStorage.deleteBoxWithId(box.mac_address, );
                 if(box.isConnected){
-                  widget.disconnectDevice();
+                  widget.viewModel.disconnect();
 
                   restartApp();
                 } else
@@ -229,9 +230,10 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
               onTap: () async {
                await BoxStorage.disconnect_allBoxes();
 
-                widget.disconnectDevice();
+               widget.viewModel.disconnect();
 
-                restartApp();
+
+               restartApp();
                 // Navigator.of(context).pop();
               },
               //     textColor: Theme.of(context).primaryColor,
@@ -281,7 +283,7 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
          Expanded(
            child: FutureBuilder<List>(
              key: ValueKey<int>(key),
-             future:BoxStorage.getBoxes() ,
+             future:BoxStorage.updateConnectedBoxReturnAllBoxes(widget.viewModel.deviceId) ,
                builder: (ctx,data){
 
              if(data.hasData){

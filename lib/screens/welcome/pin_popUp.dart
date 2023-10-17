@@ -33,7 +33,7 @@ class PinCodeVerificationScreen extends StatefulWidget {
 
 class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   TextEditingController textEditingController = TextEditingController();
-  TextEditingController nameEditingController = TextEditingController(text: 'Box 1');
+  TextEditingController nameEditingController = TextEditingController( );
   // ..text = "123456";
 
   // ignore: close_sinks
@@ -109,7 +109,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                   decoration: InputDecoration(
                     labelText: 'Enter Vehicle Description',
 
-                      hintText: 'Enter Vehicle Description',
+                      hintText: 'eg. BMW M4 Comp 2023',
                       labelStyle: TextStyle(color: Colors.white),
 
                       hintStyle: TextStyle(color: Colors.white),
@@ -143,6 +143,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
 
                         controller: nameEditingController,
+
                         textInputAction: TextInputAction.next ,
                         autofocus: true,
                       ),
@@ -256,6 +257,15 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                     onPressed: () async {
                       formKey.currentState!.validate();
                       // conditions for validating  currentText.length != 6 || currentText != "123456"
+
+                   if(nameEditingController.value.text.isEmpty){
+                     final snackBar = SnackBar(
+                       content: const Text('Description is empty'),
+                       duration: Duration(seconds: 3),
+                     );
+                     ScaffoldMessenger.of(context).showSnackBar(snackBar,);
+                     return;
+                   }
                       if (false) {
                         errorController!.add(ErrorAnimationType
                             .shake); // Triggering error shake animation
