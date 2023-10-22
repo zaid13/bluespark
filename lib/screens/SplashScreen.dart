@@ -239,10 +239,6 @@ class _SpalshScreenState extends State<SpalshScreen> {
 
   }
 
-
-
-
-
   bool _isValidUuidInput() {
     final uuidText = _uuidController.text;
     if (uuidText.isEmpty) {
@@ -261,28 +257,34 @@ class _SpalshScreenState extends State<SpalshScreen> {
   bool push = true;
   @override
   Widget build(BuildContext context) {
+    return SplashWidget();
+  }
+}
 
+class SplashWidget extends StatelessWidget {
+  const SplashWidget({Key? key}) : super(key: key);
 
-
-    return Scaffold(
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('images/main_screen/logo.png'),
-                Container(
-                  height: 10,
-                ),
-                const Text(
-                  "Loading...",
-                  style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color:Colors.white,fontWeight:FontWeight.bold),),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('images/main_screen/logo.png'),
+                  Container(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Loading...",
+                    style: TextStyle(fontFamily: 'Montserrat',fontSize: 20,color:Colors.white,fontWeight:FontWeight.bold),),
 
-              ],
-            )),
+                ],
+              )),
 
 
         ],
