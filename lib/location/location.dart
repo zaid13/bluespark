@@ -35,6 +35,7 @@ Future<void> getLocation() async {
 
  Future.delayed(Duration(milliseconds: delay_time_V_small),() async {
  await Permission.storage.request();
+ await Permission.notification.request();
  await Permission.locationAlways.request();
  await Permission.location.request();
  await Permission.nearbyWifiDevices.request();

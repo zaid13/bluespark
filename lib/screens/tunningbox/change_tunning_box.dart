@@ -110,6 +110,8 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () async {
+                print("box.mac_address to delete");
+                print(box.mac_address);
                 await BoxStorage.deleteBoxWithId(box.mac_address, );
                 if(box.isConnected){
                   widget.viewModel.disconnect();

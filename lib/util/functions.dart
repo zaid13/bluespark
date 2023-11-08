@@ -7,11 +7,16 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_restart/flutter_restart.dart';
 import 'package:restart_app/restart_app.dart';
 
-
+  bool ok_restart = true;
 void restartApp() async {
-bool ok = await  Restart.restartApp();
+  if(ok_restart){
+    ok_restart = false;
+    print("restarting app ");
+    bool ok = await  Restart.restartApp();
 
-print("restarting app $ok");
+    print("restarting app $ok");
+  }
+
   // FlutterRestart.restartApp();
 }
 
