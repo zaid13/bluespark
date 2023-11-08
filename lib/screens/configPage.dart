@@ -17,6 +17,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import '../providers/ConfigProvider.dart';
 import '../providers/SendProvider.dart';
 import '../src/ui/device_detail/device_interaction_tab.dart';
+import '../util/config.dart';
 import '../util/functions.dart';
 
 import 'package:http/http.dart' as http;
@@ -954,7 +955,7 @@ print(message);
 print('%SNDC');
 print(message.toString().startsWith('%SNDC') );
 
-  Future.delayed(!message.toString().startsWith('%SNDC') ?const Duration(milliseconds:  600 ):const Duration(seconds:  5 ), () {
+  Future.delayed(!message.toString().startsWith('%SNDC') ?const Duration(milliseconds:  delay_time_V_small ):const Duration(seconds:  5 ), () {
     // deleayed code here
     //todo if current packet is not verified then send the packet again
 

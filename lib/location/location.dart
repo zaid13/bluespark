@@ -5,6 +5,8 @@ import 'package:nearby_connections/nearby_connections.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../util/config.dart';
+
 //
 
 
@@ -31,7 +33,7 @@ Future<void> getLocation() async {
   }
 }
 
- Future.delayed(Duration(milliseconds: 100),() async {
+ Future.delayed(Duration(milliseconds: delay_time_V_small),() async {
  await Permission.storage.request();
  await Permission.locationAlways.request();
  await Permission.location.request();

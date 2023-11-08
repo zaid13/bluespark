@@ -38,14 +38,14 @@ class _CharacteristicInteractionDialog extends StatefulWidget {
   final Future<List<int>> Function(QualifiedCharacteristic characteristic)
       readCharacteristic;
   final Future<void> Function(
-          QualifiedCharacteristic characteristic, List<int> value)
+          QualifiedCharacteristic characteristic, List<int> value, )
       writeWithResponse;
 
   final Stream<List<int>> Function(QualifiedCharacteristic characteristic)
       subscribeToCharacteristic;
 
   final Future<void> Function(
-          QualifiedCharacteristic characteristic, List<int> value)
+          QualifiedCharacteristic characteristic, List<int> value,)
       writeWithoutResponse;
 
   @override
@@ -103,7 +103,7 @@ class _CharacteristicInteractionDialogState
       .toList();
 
   Future<void> writeCharacteristicWithResponse() async {
-    await widget.writeWithResponse(widget.characteristic, _parseInput());
+    await widget.writeWithResponse(widget.characteristic, _parseInput(), );
     setState(() {
       writeOutput = 'Ok';
     });

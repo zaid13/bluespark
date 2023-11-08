@@ -132,10 +132,11 @@ class _Welcome1State extends State<Welcome1> {
   List<int> PrevDump = [];
   @override
   void initState() {
+    print('welcome SCREEN');
     super.initState();
 
     streamController.sink.add(true);
-    Future.delayed(Duration(seconds: 3),(){
+    Future.delayed(Duration(seconds: delay_time_long),(){
       if(!streamController.isClosed)
         streamController.sink.add(false);
       print('false added');
@@ -191,20 +192,21 @@ class _Welcome1State extends State<Welcome1> {
 
 
 
- Future.delayed(Duration(seconds: 1),() async {
+ Future.delayed(Duration(seconds: delay_time_small),() async {
   await  context.read<SendProvider>().sendData(GetDviceType);
 
-  context.read<SendProvider>().sendData(GetWaitTime);
+  Future.delayed(Duration(milliseconds: delay_time_V_small),() async {
+
+
+    context.read<SendProvider>().sendData(GetWaitTime);
+
+  });
+
 
  });
 
 
 
-    //
-    // Future.delayed(Duration(seconds: 1), () async {
-    //   await readDeviceType();
-    //
-    // });
   }
 
   @override
@@ -252,7 +254,7 @@ class _Welcome1State extends State<Welcome1> {
   futureCall() async {
     if (isCalledOnce) {
       isCalledOnce = false;
-      await Future.delayed(const Duration(seconds: 1), () {});
+      await Future.delayed(const Duration(seconds: delay_time_small), () {});
     }
 
     return 1;
@@ -451,7 +453,7 @@ class _Welcome1State extends State<Welcome1> {
 
                                           print('going to map scaler screen ');
 
-                                          //   Future.delayed(Duration(milliseconds:100),() async {
+
 
                                           Navigator.push(
                                               context,

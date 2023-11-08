@@ -47,3 +47,7 @@ String resPasswordString = "#PWD";
 void log(String text) => print("[FlutterReactiveBLEApp] $text");
 
 List<String> KnownDeviceList = ["BT05","TUNINGBOX","HM-10"];
+
+const int delay_time_V_small=200; //110 //100
+const int delay_time_small=1;
+const int delay_time_long=2;

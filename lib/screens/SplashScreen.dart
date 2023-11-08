@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 
+import '../util/config.dart';
+
 
 
 
@@ -36,30 +38,32 @@ class SpalshScreenStateManager extends StatelessWidget {
 
               Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
                   builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer,
-                      __) =>
-                      SpalshScreen(
-                        scannerState: bleScannerState ?? const BleScannerState(
-                          discoveredDevices: [],
-                          scanIsInProgress: false,
-                        ),
-                        startScan: bleScanner.startScan,
-                        stopScan: bleScanner.stopScan,
-                        device: bleScanner.btfound,
-                        disconnect: deviceConnector.disconnect,
+                      __) {
+                 return   SpalshScreen(
+                      scannerState: bleScannerState ?? const BleScannerState(
+                        discoveredDevices: [],
+                        scanIsInProgress: false,
+                      ),
+                      startScan: bleScanner.startScan,
+                      stopScan: bleScanner.stopScan,
+                      device: bleScanner.btfound,
+                      disconnect: deviceConnector.disconnect,
 
 
-                        viewModel:    DeviceInteractionViewModel(
-                            deviceId:  bleScanner.btfound.id,
-                            connectionStatus: connectionStateUpdate.connectionState,
-                            deviceConnector: deviceConnector,
-                            discoverServices: () =>
-                                serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
+                      viewModel:    DeviceInteractionViewModel(
+                          deviceId:  bleScanner.btfound.id,
+                          connectionStatus: connectionStateUpdate.connectionState,
+                          deviceConnector: deviceConnector,
+                          discoverServices: () =>
+                              serviceDiscoverer.discoverServices( bleScanner.btfound.id)),
 
 
-                        deviceConnector: deviceConnector,
+                      deviceConnector: deviceConnector,
 
 
-                      )
+                    );
+                  }
+
 
 
               )
@@ -111,7 +115,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
 
 
   startConnectingService(){
-    Future.delayed(const Duration(seconds: 1), () async {
+    Future.delayed(const Duration(seconds: delay_time_small), () async {
 
 
 
@@ -133,12 +137,12 @@ class _SpalshScreenState extends State<SpalshScreen> {
       print('1');
       await  widget.viewModel.connect().then((value) {
         print('2 ');
-
+        isconnecting = false;
       });
       print('3');
 
       while(push) {
-        await Future.delayed(const Duration(seconds: 1), () async {
+        await Future.delayed(const Duration(seconds: delay_time_small), () async {
           print(widget.viewModel.connectionStatus);
           print('widget.viewModel.connectionStatus');
 
@@ -217,6 +221,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
   }
   @override
   void initState() {
+    print('init state called ');
     super.initState();
     _uuidController = TextEditingController()
       ..addListener(() => setState(() {}));
@@ -235,9 +240,10 @@ class _SpalshScreenState extends State<SpalshScreen> {
 
 
 
-  Future.delayed(Duration(milliseconds: 100),(){startConnectingService();});
+  Future.delayed(Duration(milliseconds: delay_time_V_small),(){startConnectingService();});
 
   }
+
 
   bool _isValidUuidInput() {
     final uuidText = _uuidController.text;

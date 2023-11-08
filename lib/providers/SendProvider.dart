@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bluespark/providers/box_storage.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class SendProvider with ChangeNotifier {
 
 
   List<int> PrevDump = [];
+  List<int> PrevDump_inner = [];
 
 
   bool deviceAvailable = false;
@@ -66,19 +68,19 @@ class SendProvider with ChangeNotifier {
   return resultStringList;
   }
   sendData(String data) async {
-    print('SENDING DATA:$data FROM SEND PROVIDER');
+    print('SENDING DATA:$data FROM SEND PROVIDER de vice is $deviceAvailable');
 
     int time = DateTime.now().millisecond;
 
 
-    if(deviceAvailable) {
+    if(true) {
     print("MS TOOK: ${DateTime.now().millisecond-time}");
       writeCharacteristicWithoutResponse(characteristic, ASCII_TO_INT(data));
     }
     else{
       deviceAvailable = false;
       // notifyListeners();
-  await    Future.delayed(const Duration(milliseconds: 600),(){
+  await    Future.delayed(const Duration(milliseconds: delay_time_V_small),(){
     print("MS TOOK: ${DateTime.now().millisecond-time}");
 
     writeCharacteristicWithoutResponse(characteristic, ASCII_TO_INT(data));
@@ -90,7 +92,11 @@ class SendProvider with ChangeNotifier {
   listenTOWelcomeScreen( CommandProvider commandProvider , Function moveTOScallerMapperManager) {
       subscribeStream?.listen((result) {
 
-      List<String> resultStringList = String.fromCharCodes(result).split("\n");
+
+
+       String constructedString = String.fromCharCodes(result).replaceAll('>', '>\n');
+       List<String> resultStringList =  constructedString .split("\n");
+print('resultStringList');
 print(resultStringList);
 
       int i=0;
@@ -108,6 +114,8 @@ print(resultStringList);
 
 
       });
+
+
 
       handleTimerForWelcomeScreen(commandProvider,moveTOScallerMapperManager,result);
 
@@ -144,7 +152,12 @@ print(resultStringList);
          String pin =  await BoxStorage.getPasswordPin(macAddressSent);
           print("BOX DATA FOUND for $macAddressSent ");
 
-          sendData(passwordString+pin);
+          DateTime _now = DateTime.now();
+          await sendData(passwordString+pin);
+          Duration dur = _now.difference(DateTime.now());
+          print("seconds: ${dur.inSeconds} ${dur.inMilliseconds}");
+
+
 
 
         }
@@ -160,7 +173,16 @@ print(resultStringList);
   handleTimerForWelcomeScreen(CommandProvider commandProvider , Function moveTOScallerMapperManager , result){
 
     commandProvider.setReadOutput(result.toString());
+
+
     String resultString = String.fromCharCodes(result).split("\n")[0];
+
+
+    String constructedString = String.fromCharCodes(result).replaceAll('>', '>\n');
+    List<String> constructedresultStringList =  constructedString .split("\n");
+
+
+
     dataFromDeviceStream.add(resultString);
 
 
@@ -173,87 +195,218 @@ print(resultStringList);
     print(result.last);
 
 
+    print('constructedresultStringList');
+    print(constructedresultStringList);
+    print('constructedresultStringList LENGTH');
+    print(constructedresultStringList.length);
 
 
-    if (result.first == 35 &&
-        result.last == 10 &&
-        resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-            commandProvider.getTime()) {
-      print('Complete ');
-      print(result);
-      setTime(resultString, commandProvider, moveTOScallerMapperManager);
-    } else if ((result.first == 35 &&
-        result.last != 10 &&    result.last!=13 &&
-        resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-            commandProvider.getTime())) {
-      print('Complete 2 ');
-      PrevDump = result;
-      // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+    if(constructedresultStringList.length>1){
 
-    } else if ((result.first != 35 &&
-        result.last == 10 &&
-        resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-            commandProvider.getTime())) {
-      // print(PrevDump);
-      // print(resultString);
-
-      PrevDump += result;
-      result = [];
-      print("FOUND SECOND PA RT -------------------------------_____=-");
-      print(PrevDump);
-      print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
-      setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0],
-          commandProvider, moveTOScallerMapperManager);
+      for (String i in constructedresultStringList){
+        i = i.trim();
+        result = AsciiEncoder().convert(i);
+        resultString = i;
 
 
-    } else if (result.first == 35 &&
-        result.last == 13
-    // &&
-    // resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-    //     commandProvider.getTime()
-    ) {
-      print('Complete ');
-      print(result);
-      setTime(resultString, commandProvider, moveTOScallerMapperManager);
-    } else if ((result.first == 35 &&
-        result.last != 13 &&
-        resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-            commandProvider.getTime())) {
-      print('Complete 2 ');
-      PrevDump = result;
-      // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
 
-    } else if ((result.first != 35 &&
-        result.last == 13
-         )   ) {
+        if(i.contains("<")==false && i.isNotEmpty){
 
-      if(sc== screen_state.first   ){
+          print('inner loop ');
+          print(result);
+          print(resultString);
+          print('PrevDump');
+          print(PrevDump);
+          print('PrevDump_inner');
+          print(PrevDump_inner);
+
+          if (result.first == 35 &&
+              result.last == 10 &&
+              resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+                  commandProvider.getTime()) {
+            print('Complete ');
+            print(result);
+            setTime(resultString, commandProvider, moveTOScallerMapperManager);
+          } else if ((result.first == 35 &&
+              result.last != 10 &&    result.last!=13 &&
+              resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+                  commandProvider.getTime())) {
+            print('Complete 2 ');
+            PrevDump = result;
+            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+          } else if ((result.first != 35 &&
+              result.last == 10 &&
+              resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+                  commandProvider.getTime())) {
+            // print(PrevDump);
+            // print(resultString);
+
+            PrevDump += result;
+            result = [];
+            print("FOUND SECOND PA RT -------------------------------_____=-");
+            print(PrevDump);
+            print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+            setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0],
+                commandProvider, moveTOScallerMapperManager);
+
+
+          } else if (result.first == 35 &&
+              result.last == 13) {
+            print('Complete ');
+            print(result);
+            setTime(resultString, commandProvider, moveTOScallerMapperManager);
+          } else if ((result.first == 35 &&
+              result.last != 13 &&
+              resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+                  commandProvider.getTime())) {
+            print('Complete 2 ');
+            PrevDump = result;
+            // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+          } else if ((result.first != 35 &&
+              result.last == 13
+          )   ) {
+
+            if(sc== screen_state.first   ){
+              PrevDump += result;
+              result = [];
+              print("FOUND SECOND PART FOR THE FIRST STATE  -------------------------------_____=-");
+
+
+
+            }
+
+            if( resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+                commandProvider.getTime()){
+
+              List<int> intList = [];
+
+              for( var  t in result){
+                intList.add(t);
+              }
+              PrevDump += intList;
+              result = [];
+              print("FOUND SECOND PART -------------------------------_____=-");
+              print(PrevDump);
+              print(String.fromCharCodes(PrevDump).split("\n")[0]);
+              setTime(String.fromCharCodes(PrevDump).split("\n")[0],
+                  commandProvider, moveTOScallerMapperManager);
+            }
+
+
+
+
+          }
+
+          if(result.first==35 && result.last==94){
+            setTime(String.fromCharCodes(result),
+                commandProvider, moveTOScallerMapperManager);
+          }
+          else if (result.first==35 && result.last!=94) {
+            PrevDump_inner = result;
+          }
+          else if(result.first!=35 && result.last==94){
+
+            result =  PrevDump_inner+result ;
+            setTime(String.fromCharCodes(result),
+                commandProvider, moveTOScallerMapperManager);
+
+
+          }
+
+
+        }
+
+      }
+
+
+
+    }else{
+      if (result.first == 35 &&
+          result.last == 10 &&
+          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+              commandProvider.getTime()) {
+        print('Complete ');
+        print(result);
+        setTime(resultString, commandProvider, moveTOScallerMapperManager);
+      } else if ((result.first == 35 &&
+          result.last != 10 &&    result.last!=13 &&
+          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+              commandProvider.getTime())) {
+        print('Complete 2 ');
+        PrevDump = result;
+        // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+      } else if ((result.first != 35 &&
+          result.last == 10 &&
+          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+              commandProvider.getTime())) {
+        // print(PrevDump);
+        // print(resultString);
+
         PrevDump += result;
         result = [];
-        print("FOUND SECOND PART FOR THE FIRST STATE  -------------------------------_____=-");
-
-
-
-      }
-
-      if( resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
-          commandProvider.getTime()){
-
-        List<int> intList = [];
-
-         for( var  t in result){
-           intList.add(t);
-         }
-        PrevDump += intList;
-        result = [];
-        print("FOUND SECOND PART -------------------------------_____=-");
+        print("FOUND SECOND PA RT -------------------------------_____=-");
         print(PrevDump);
-        print(String.fromCharCodes(PrevDump).split("\n")[0]);
-        setTime(String.fromCharCodes(PrevDump).split("\n")[0],
+        print(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0]);
+        setTime(String.fromCharCodes(PrevDump).split("\n")[0].split('^')[0],
             commandProvider, moveTOScallerMapperManager);
-      }
 
+
+      } else if (result.first == 35 &&
+          result.last == 13) {
+        print('Complete ');
+        print(result);
+        setTime(resultString, commandProvider, moveTOScallerMapperManager);
+      } else if ((result.first == 35 &&
+          result.last != 13 &&
+          resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+              commandProvider.getTime())) {
+        print('Complete 2 ');
+        PrevDump = result;
+        // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+
+      } else if ((result.first != 35 &&
+          result.last == 13
+      )   ) {
+
+        if(sc== screen_state.first   ){
+          PrevDump += result;
+          result = [];
+          print("FOUND SECOND PART FOR THE FIRST STATE  -------------------------------_____=-");
+
+
+
+        }
+
+        if( resultString.replaceAll("#WUT_", "").replaceAll("#", "") !=
+            commandProvider.getTime()){
+
+          List<int> intList = [];
+
+          for( var  t in result){
+            intList.add(t);
+          }
+          PrevDump += intList;
+          result = [];
+          print("FOUND SECOND PART -------------------------------_____=-");
+          print(PrevDump);
+          print(String.fromCharCodes(PrevDump).split("\n")[0]);
+          setTime(String.fromCharCodes(PrevDump).split("\n")[0],
+              commandProvider, moveTOScallerMapperManager);
+        }
+
+
+
+
+      }
     }
+
+
+
+
+
   }
 
   callibrateSendTokenId(resultString){

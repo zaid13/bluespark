@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:bluespark/providers/CommandProvider.dart';
 import 'package:bluespark/providers/SendProvider.dart';
@@ -71,8 +72,6 @@ class ScallerMapperManager extends StatelessWidget {
                           isScaler: isScaler,
                         ))),
       );
-
-
 }
 
 class ScallerMapperScreen extends StatefulWidget {
@@ -155,10 +154,10 @@ class _Slider1State extends State<ScallerMapperScreen> {
     // ScallerfixedExtentScrollController =
     // new FixedExtentScrollController(initialItem: int.parse( context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected));
 
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: delay_time_long), () {
       context.read<CommandProvider>().setSwipeToChangeIsDisable();
 
-      Future.delayed(const Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: delay_time_long), () {
         context.read<CommandProvider>().disable_all_messages();
       });
     });
@@ -226,71 +225,71 @@ class _Slider1State extends State<ScallerMapperScreen> {
       // context.read<SendProvider>().sendData(GetMapperCode);
       // context.read<SendProvider>().sendData(GetScallerCode);
 
-      context.read<SendProvider>().sendData(GetMapperCode).then((d) {
-        print(d);
-        sleep(const Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: delay_time_V_small),(){});
+      await context.read<SendProvider>().sendData(GetMapperCode);
+
+
+      Future.delayed(Duration(milliseconds: delay_time_V_small), () {
         context.read<SendProvider>().sendData(GetScallerCode).then((d) async {
+          await Future.delayed(Duration(seconds: delay_time_small), () {
 
-       await Future.delayed(Duration(seconds: 1),(){
-          var mapvalue = mapperList[int.parse(context
-              .read<CommandProvider>()
-              .scllerMapper
-              .RESPONSE_mapperSelected)];
-          print('Yyyyyyyyy :$mapvalue');
+            var mapvalue = mapperList[int.parse(context
+                .read<CommandProvider>()
+                .scllerMapper
+                .RESPONSE_mapperSelected)];
+            print('Yyyyyyyyy :$mapvalue');
 
-          context.read<CommandProvider>().setMapper(mapvalue);
+            context.read<CommandProvider>().setMapper(mapvalue);
 
-          Future.delayed(const Duration(milliseconds: 400), () {
-            if (widget.isScaler) {
-              context.read<CommandProvider>().setScaller(context
-                  .read<CommandProvider>()
-                  .scllerMapper
-                  .RESPONSE_scallerSelected);
-            }
-
-            if (widget.isScaler) {
-              print(
-                  'animate the SCALLER to ${int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected)}');
-
-
-              MapperfixedExtentScrollController.animateToItem(
-                int.parse(context
+            Future.delayed(const Duration(milliseconds: delay_time_V_small), () {
+              if (widget.isScaler) {
+                context.read<CommandProvider>().setScaller(context
                     .read<CommandProvider>()
                     .scllerMapper
-                    .RESPONSE_mapperSelected),
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.fastOutSlowIn,
-              ).then((value) {
-                ScallerfixedExtentScrollController.animateToItem(
+                    .RESPONSE_scallerSelected);
+              }
+
+              if (widget.isScaler) {
+                print(
+                    'animate the SCALLER to ${int.parse(context.read<CommandProvider>().scllerMapper.RESPONSE_scallerSelected)}');
+
+                MapperfixedExtentScrollController.animateToItem(
                   int.parse(context
                       .read<CommandProvider>()
                       .scllerMapper
-                      .RESPONSE_scallerSelected),
+                      .RESPONSE_mapperSelected),
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.fastOutSlowIn,
+                ).then((value) {
+                  ScallerfixedExtentScrollController.animateToItem(
+                    int.parse(context
+                        .read<CommandProvider>()
+                        .scllerMapper
+                        .RESPONSE_scallerSelected),
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.fastOutSlowIn,
+                  );
+                });
+              } else {
+                MapperfixedExtentScrollController.animateToItem(
+                  int.parse(context
+                      .read<CommandProvider>()
+                      .scllerMapper
+                      .RESPONSE_mapperSelected),
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.fastOutSlowIn,
                 );
-              });
+              }
+            });
 
 
-            }else{
-              MapperfixedExtentScrollController.animateToItem(
-                int.parse(context
-                    .read<CommandProvider>()
-                    .scllerMapper
-                    .RESPONSE_mapperSelected),
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.fastOutSlowIn,
-              );
-            }
           });
-
-
-        });
-
         });
       });
-    } catch (e) {
 
+
+
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.toString()),
       ));
@@ -298,7 +297,6 @@ class _Slider1State extends State<ScallerMapperScreen> {
       print(e);
       print('ERROR 900');
     }
-
   }
 
   setScallerMapper() async {
@@ -311,21 +309,27 @@ class _Slider1State extends State<ScallerMapperScreen> {
       //     mapsArray[context.read<CommandProvider>().scllerMapper.mapperSelected]
       //         .toString());
 
-      context.read<SendProvider>().sendData(mapsArray[
+      context
+          .read<SendProvider>()
+          .sendData(mapsArray[
                   context.read<CommandProvider>().scllerMapper.mapperSelected]
               .toString())
           .then((d) {
         print(d);
         if (widget.isScaler) {
-          sleep(const Duration(milliseconds: 400));
+          // sleep(const Duration(milliseconds: 400));
           // context.read<SendProvider>().sendData(scalerArray[int.parse(
           //     context.read<CommandProvider>().scllerMapper.scallerSelected)]);
 
-          context.read<SendProvider>().sendData(scalerArray[int.parse(context
-                  .read<CommandProvider>()
-                  .scllerMapper
-                  .scallerSelected)])
-              .then((d) {});
+          Future.delayed(Duration(milliseconds: delay_time_V_small), () {
+            context
+                .read<SendProvider>()
+                .sendData(scalerArray[int.parse(context
+                    .read<CommandProvider>()
+                    .scllerMapper
+                    .scallerSelected)])
+                .then((d) {});
+          });
         }
       });
     } catch (e) {
@@ -337,6 +341,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
   }
 
   List<int> PrevDump = [];
+
+  List<int> PrevDump_inner = [];
 
   scanAndRespond(String intactString) async {
     print("intactString");
@@ -407,11 +413,20 @@ class _Slider1State extends State<ScallerMapperScreen> {
     subscribeStream = widget
         .subscribeToCharacteristic(widget.characteristic)
         .listen((result) {
-      // print('readOutput   ${result}');
+      print('readOutput 3 3  ${result}');
 
       // setState(() {
       context.read<CommandProvider>().setReadOutput(result.toString());
+
+
       String resultString = String.fromCharCodes(result).split("\n")[0];
+
+      String constructedString = String.fromCharCodes(result).replaceAll('>', '>\n');
+      List<String> resultStringList =  constructedString .split("\n");
+
+
+
+
       print('resulteadOutput CONVERTED    $resultString');
 
       print('resultString');
@@ -419,37 +434,76 @@ class _Slider1State extends State<ScallerMapperScreen> {
       print('result');
       print(result);
 
-      if(result.length>1 && result.first==13 && resultString.length>1){
-        result = result.sublist(1,result.length-1);
-        resultString = resultString.substring(1,resultString.length-1);
 
-      }
-      if (resultString == "201") {
-        // context.read<CommandProvider>().   stopSendingRequests();
+      for (String i in resultStringList) {
+        i = i.trim();
+        result = AsciiEncoder().convert(i);
+        resultString = i;
 
-      } else if (result.first == 35 && result.last == 13) {
-        scanAndRespond(resultString);
 
-        // setTime(resultString);
-      } else if ((result.first == 35 && result.last != 13)) {
-        PrevDump = result;
-        // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+        if (i.contains("<") == false && i.isNotEmpty) {
+          {
+            print('inner loop ');
+            print(result);
+            print(resultString);
+            print('PrevDump');
+            print(PrevDump);
+            // print('PrevDump_inner');
+            // print(PrevDump_inner);
+            //
 
-      } else if ((result.first != 35 && result.last == 13) ||
-          (result.first == 35 && result.length == 3)) {
-        // print(PrevDump);
-        // print(resultString);
+            if (result.first == 13 &&
+                resultString.length > 1) {
+              result = result.sublist(1, result.length - 1);
+              resultString = resultString.substring(1, resultString.length - 1);
+            }
+            if (resultString == "201") {
+              // context.read<CommandProvider>().   stopSendingRequests();
+            } else if (result.first == 35 && result.last == 13) {
+              scanAndRespond(resultString);
 
-        PrevDump += result;
-        print("FOUND SECOND PART -------------------------------_____=-");
-        print(PrevDump);
+              // setTime(resultString);
+            } else if ((result.first == 35 && result.last != 13)) {
+              PrevDump = result;
+              // print("FOUND FIRST PA RT -------------------------------_____=-$result.last");
+            } else if ((result.first != 35 && result.last == 13) ||
+                (result.first == 35 && result.length == 3)) {
+              // print(PrevDump);
+              // print(resultString);
 
-        if ((PrevDump.first == 35 && PrevDump.last == 13)) {
-          resultString = String.fromCharCodes(PrevDump).split("\n")[0];
-          scanAndRespond(resultString);
-          print(
-              "FOUND both parts -------------------------------_____=-$result.last   $resultString");
+              PrevDump += result;
+              print("FOUND SECOND PART -------------------------------_____=-");
+              print(PrevDump);
+
+              if ((PrevDump.first == 35 && PrevDump.last == 13)) {
+                resultString = String.fromCharCodes(PrevDump).split("\n")[0];
+                scanAndRespond(resultString);
+                print(
+                    "FOUND both parts -------------------------------_____=-$result.last   $resultString");
+              }
+
+
+
+
+            }
+
+            if(result.first==35 && result.last==94){
+              scanAndRespond(String.fromCharCodes(result));
+            }
+            else if (result.first==35 && result.last!=94) {
+              PrevDump_inner = result;
+
+            }
+            else if(result.first!=35 && result.last==94){
+
+              result =  PrevDump_inner+result ;
+              scanAndRespond(String.fromCharCodes(result));
+
+
+            }
+          }
         }
+
       }
     });
     // setState(() {
@@ -459,11 +513,7 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
-    context.read<CommandProvider>().setScallerMapperContext(context)   ;
-
-
+    context.read<CommandProvider>().setScallerMapperContext(context);
 
     print(widget.viewModel.connectionStatus);
     if (DeviceConnectionState.disconnected ==
@@ -481,7 +531,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
                 0.9), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
           ),
           child: ClipRRect(
-            borderRadius: const BorderRadius.horizontal(left: Radius.circular(20.0)),
+            borderRadius:
+                const BorderRadius.horizontal(left: Radius.circular(20.0)),
             child: Drawer(
               elevation: 16.0,
               child: SingleChildScrollView(
@@ -525,13 +576,11 @@ class _Slider1State extends State<ScallerMapperScreen> {
                       ),
                       ListTile(
                         onTap: () {
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => ChangeTunningBox(widget.viewModel ))));
-
-
+                                  builder: ((context) =>
+                                      ChangeTunningBox(widget.viewModel))));
                         },
                         title: Container(
                           alignment: Alignment.centerRight,
@@ -585,8 +634,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context, "Setup Guide", _buildSetupText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(
+                                    context, "Setup Guide", _buildSetupText()),
                           );
                         },
                         title: Container(
@@ -608,8 +658,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context, "User Guide", _buildUserGuideText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(context, "User Guide",
+                                    _buildUserGuideText()),
                           );
                         },
                         title: Container(
@@ -628,10 +679,11 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context,
-                                "Using the Bypass Plug",
-                                _buildUsingtheBypassPlugText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(
+                                    context,
+                                    "Using the Bypass Plug",
+                                    _buildUsingtheBypassPlugText()),
                           );
                         },
                         title: Container(
@@ -650,10 +702,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context,
-                                "Safety Information",
-                                _buildSafetyInformationText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(context, "Safety Information",
+                                    _buildSafetyInformationText()),
                           );
                         },
                         title: Container(
@@ -672,10 +723,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context,
-                                "App Information",
-                                _buildAppInformationText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(context, "App Information",
+                                    _buildAppInformationText()),
                           );
                         },
                         title: Container(
@@ -694,10 +744,9 @@ class _Slider1State extends State<ScallerMapperScreen> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildAboutDialog(
-                                context,
-                                "Contact BLUESPARK",
-                                _buildContactBluesparkText()),
+                            builder: (BuildContext context) =>
+                                _buildAboutDialog(context, "Contact BLUESPARK",
+                                    _buildContactBluesparkText()),
                           );
                         },
                         title: Container(
@@ -977,7 +1026,6 @@ class _Slider1State extends State<ScallerMapperScreen> {
                 quarterTurns: 3,
                 child: ListWheelScrollView(
                   onSelectedItemChanged: (x) {
-
                     HapticFeedback.selectionClick();
 
                     context.read<CommandProvider>().setMapper(mapperList[x]);
@@ -1008,8 +1056,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
                                           0
                                       ? blueColor
                                       : Colors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10.0))),
+                              borderRadius: const BorderRadius.all(
+                                  Radius.circular(10.0))),
                           child: RotatedBox(
                             quarterTurns: -3,
                             child: Center(
@@ -1105,7 +1153,6 @@ class _Slider1State extends State<ScallerMapperScreen> {
 
                     HapticFeedback.selectionClick();
 
-
                     context.read<CommandProvider>().setScaller(scallerList[x]);
                   },
                   controller: ScallerfixedExtentScrollController,
@@ -1134,8 +1181,8 @@ class _Slider1State extends State<ScallerMapperScreen> {
                                           0
                                       ? blueColor
                                       : Colors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10.0))),
+                              borderRadius: const BorderRadius.all(
+                                  Radius.circular(10.0))),
                           child: RotatedBox(
                             quarterTurns: -3,
                             child: Center(
@@ -1223,7 +1270,7 @@ Widget _buildAboutDialog(BuildContext context, String heading, widget) {
         onTap: () {
           Navigator.of(context).pop();
         },
-   //     textColor: Theme.of(context).primaryColor,
+        //     textColor: Theme.of(context).primaryColor,
         child: const Text('Okay, got it!'),
       ),
     ],
@@ -1365,8 +1412,8 @@ Widget _buildContactBluesparkText() {
         children: <TextSpan>[
           const TextSpan(
             text: 'Telephone:\n\n',
-            style: TextStyle(
-                color: Colors.black87, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
           ),
           TextSpan(
             text: '+ 44 (0) 191 385 9005\n\n',
@@ -1378,8 +1425,8 @@ Widget _buildContactBluesparkText() {
           ),
           const TextSpan(
             text: 'General Enquiries:\n\n',
-            style: TextStyle(
-                color: Colors.black87, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
           ),
           TextSpan(
             text: 'sales@bluesparkautomotive.com\n\n',
@@ -1391,8 +1438,8 @@ Widget _buildContactBluesparkText() {
           ),
           const TextSpan(
             text: 'Address:\n\n',
-            style: TextStyle(
-                color: Colors.black87, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
           ),
           const TextSpan(
             text: '''

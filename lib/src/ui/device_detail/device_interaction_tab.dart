@@ -33,7 +33,7 @@ class DeviceInteractionTab extends StatelessWidget {
         ),
       );
 }
-
+bool isconnecting = true;
 @immutable
 @FunctionalData()
 class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
@@ -45,7 +45,7 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
   });
 
   final String deviceId;
-  bool isconnecting = true;
+  //bool isconnecting = true;
 
     final DeviceConnectionState connectionStatus;
   final BleDeviceConnector deviceConnector;
@@ -64,7 +64,9 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
       print("print function in DeviceInteractionViewModel");
 
       await deviceConnector.connect(deviceId);
+     isconnecting = true;
     }
+
   }
 
   void disconnect() {

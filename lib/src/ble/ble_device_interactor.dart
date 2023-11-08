@@ -24,6 +24,9 @@ class BleDeviceInteractor {
         _subScribeToCharacteristic = subscribeToCharacteristic,
         _logMessage = logMessage;
 
+
+   List<DiscoveredService> discoveredServices=[];
+
   final Future<List<DiscoveredService>> Function(String deviceId)
       _bleDiscoverServices;
 
@@ -45,6 +48,7 @@ class BleDeviceInteractor {
     try {
       _logMessage('Start discovering services for: $deviceId');
       final result = await _bleDiscoverServices(deviceId);
+      discoveredServices = result;
       _logMessage('Discovering services finished');
       return result;
     } on Exception catch (e) {
@@ -56,6 +60,7 @@ class BleDeviceInteractor {
   Future<List<int>> readCharacteristic(
       QualifiedCharacteristic characteristic) async {
     try {
+
       final result = await _readCharacteristic(characteristic);
 
       _logMessage('Read ${characteristic.characteristicId}: value = $result');
@@ -71,13 +76,13 @@ class BleDeviceInteractor {
   }
 
   Future<void> writeCharacterisiticWithResponse(
-      QualifiedCharacteristic characteristic, List<int> value) async {
+      QualifiedCharacteristic characteristic, List<int> value,) async {
     try {
-      _logMessage(
+      print(
           'Write with response value : $value to ${characteristic.characteristicId}');
       await _writeWithResponse(characteristic, value: value);
     } on Exception catch (e, s) {
-      _logMessage(
+      print(
         'Error occured when writing ${characteristic.characteristicId} : $e',
       );
       // ignore: avoid_print
@@ -87,7 +92,32 @@ class BleDeviceInteractor {
   }
 
   Future<void> writeCharacterisiticWithoutResponse(
-      QualifiedCharacteristic characteristic, List<int> value) async {
+      QualifiedCharacteristic characteristic, List<int> value, ) async {
+
+    bool is_writablewithout = true;
+
+    discoveredServices.forEach((element) {
+      element.characteristics.forEach((element) {
+        if(element.characteristicId==characteristic.characteristicId){
+          print('element.isWritableWithoutResponse');
+          print(element.isWritableWithoutResponse);
+          print("element.isWritableWithResponse");
+          print(element.isWritableWithResponse);
+
+          if(element.isWritableWithResponse){
+            is_writablewithout = false;
+
+
+
+          }
+        }
+      });
+    });
+
+    if(!is_writablewithout){
+   await writeCharacterisiticWithResponse(characteristic,value);
+      return;
+    }
     try {
       await _writeWithoutResponse(characteristic, value: value);
       _logMessage(

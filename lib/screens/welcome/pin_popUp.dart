@@ -48,7 +48,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   @override
   void initState() {
     streamController.sink.add(true);
-    Future.delayed(Duration(seconds: 3),(){
+    Future.delayed(Duration(seconds: delay_time_long),(){
       if(!streamController.isClosed)
       streamController.sink.add(false);
 print('false added');
@@ -298,16 +298,7 @@ print('false added');
 
                                   await  context.read<SendProvider>().readDate();
 
-                                  Future.delayed(Duration(seconds: 1),(){
-                                    setState(() => hasError = true);
-                                  });
 
-                                  // setState(
-                                  //       () {
-                                  //     hasError = false;
-                                  //     snackBar("OTP Verified!!");
-                                  //   },
-                                  // );
                                 }
                               },
                               child: Center(

@@ -135,6 +135,8 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
     }
 
     getTile(Box_Model box){
+        print('box.mac_address');
+        print(box.mac_address);
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
         child: Container(
@@ -148,25 +150,29 @@ class _ChangeTunningBoxState extends State<ChangeTunningBox> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              Row(children: [
-                box.isConnected?Icon(Icons.check_circle,color: Colors.green,size: 30,)
-                    :Icon(Icons.circle_outlined,color: Colors.redAccent,size: 30,),
-                Container(width: 10,),
+              Expanded(
+                child: Row(children: [
+                  box.isConnected?Icon(Icons.check_circle,color: Colors.green,size: 30,)
+                      :Icon(Icons.circle_outlined,color: Colors.redAccent,size: 30,),
+                  Container(width: 10,),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(box.nick_name,style: TextStyle(color: Colors.white,fontSize: 25),),
-                    Text('MAC: '+box.mac_address,style: TextStyle(color: Colors.white),),
-
-
-
-                  ],)
-                ],
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(box.nick_name,style: TextStyle(color: Colors.white,fontSize: 25),),
+                        Text('MAC: '+box.mac_address,style: TextStyle(color: Colors.white,fontSize: 11),),
 
 
 
+                      ],),
+                  )
+                  ],
 
+
+
+
+                ),
               ),
 
 

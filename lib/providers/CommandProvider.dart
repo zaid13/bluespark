@@ -123,7 +123,7 @@ class CommandProvider with ChangeNotifier {
       notifyListeners();
       print("*********");
 
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: delay_time_small), () {
         scllerMapper.UpdateSucessfully = false;
 
         notifyListeners();
@@ -309,8 +309,8 @@ class ScallerMapper {
   bool syncIsOn = false;
 
   String mapperSelected = "A";
-  String scallerSelected = "3";
+  String scallerSelected = "1";
 
   String RESPONSE_mapperSelected = "2";
-  String RESPONSE_scallerSelected = "3";
+  String RESPONSE_scallerSelected = "2";
 }

@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
       ble: _ble,
       logMessage: _bleLogger.addToLog,
     );
+
     final _serviceDiscoverer = BleDeviceInteractor(
       bleDiscoverServices: _ble.discoverServices,
       readCharacteristic: _ble.readCharacteristic,
