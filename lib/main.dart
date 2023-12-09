@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         navigatorKey: NavigationService.navigatorKey, // set property
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Reactive BLE example',
+        title: 'BLE app',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),
         // home:  ChangeTunningBox((){}),
